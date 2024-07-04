@@ -8,7 +8,6 @@ public class CommonZenjectInstaller : MonoInstaller
     [SerializeField] private Player _player;
     [SerializeField] private Transform playerSpawnPoint;
 
-
     [Space(10)]
     [Header("Input")]
 
@@ -23,10 +22,6 @@ public class CommonZenjectInstaller : MonoInstaller
     [Space(10)]
     [Header("Camera")]
     [SerializeField] private CameraMove _cameraMove;
-
-
-
-
     
     public override void InstallBindings()
     {
@@ -36,17 +31,13 @@ public class CommonZenjectInstaller : MonoInstaller
         BindCamera();
     }
 
-
     public  void BindPlayer()
     {
         Container.Bind<IMove>().To<Movable>().AsSingle();
         var playerInstance = Container.InstantiatePrefabForComponent<Player>(_player, playerSpawnPoint.position, Quaternion.identity, null);
         Container.Bind<Player>().FromInstance(playerInstance).AsSingle();   
         
-    }
-
-   
-
+    } 
 
     public void BindInput()
     {
@@ -74,9 +65,4 @@ public class CommonZenjectInstaller : MonoInstaller
         Container.Bind<CameraMove>().FromInstance(cameraMove).AsSingle();
 
     }
-
-
-
-
-
 }

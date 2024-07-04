@@ -11,12 +11,12 @@ public class CameraMove : MonoBehaviour
     public void Construct(IController controller)
     {
         _controller= controller;
-    }
-   
+    }   
 
     private  void LateUpdate()
     {         
        if (_controller.GetCurrentEntity()== null) return;
+
        transform.position = _controller.GetCurrentEntity().transform.position + offset;         
     }
 }

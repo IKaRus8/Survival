@@ -2,7 +2,6 @@ using UnityEngine;
 using Zenject;
 
 public class Controller : MonoBehaviour, IController 
-
 {
     private IInput _input;
     [SerializeField] private Entity _currentEntity;
@@ -18,9 +17,8 @@ public class Controller : MonoBehaviour, IController
     private void Update()
     {
         if (_currentEntity == null) return;
+
         _input.TickUpdate();  
-        Debug.Log(_input.Dir);
-        Debug.Log(_currentEntity.config.baseSpeed);     
         _currentEntity.mover.Move(_currentEntity.transform,  new Vector3(_input.Dir.x, 0 , _input.Dir.y),
         _currentEntity.config.baseSpeed, Time.deltaTime);      
     }
@@ -30,7 +28,8 @@ public class Controller : MonoBehaviour, IController
         _currentEntity = entity;
     }
 
-    public Entity GetCurrentEntity(){
+    public Entity GetCurrentEntity()
+    {
         return _currentEntity;
     }
 }

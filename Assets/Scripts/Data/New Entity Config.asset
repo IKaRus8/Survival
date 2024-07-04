@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6446e673c0a30f64094c0a161bea4282, type: 3}
   m_Name: New Entity Config
   m_EditorClassIdentifier: 
-  baseSpeed: 0
-  baseRotationSpeed: 0
+  baseSpeed: 5
+  baseRotationSpeed: 10
