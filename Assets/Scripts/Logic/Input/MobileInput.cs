@@ -8,9 +8,7 @@ public class MobileInput : IInput
         get { return dir; }
         set { dir = value; }
     }
-
-    public bool attack { get; set ; }
-
+   
     private Vector2 dir;
     public Vector2 move; 
 

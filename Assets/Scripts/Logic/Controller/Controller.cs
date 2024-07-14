@@ -1,36 +1,36 @@
 using UnityEngine;
 using Zenject;
 
-public class Controller : MonoBehaviour, IController 
+public class Controller : MonoBehaviour, IController
 {
     private IInput _input;
-    [SerializeField] private Entity _currentEntity;
+    [SerializeField] private IPlayer _player;
+    private bool hasPlayer = false;
 
     [Inject]
 
-    public void Construct(IInput input, Player player)
+    public void Construct(IInput input)
     {
-        _input = input;
-        _currentEntity = player;
+        _input = input;        
+    }
+
+    public void SetPlayer(IPlayer player)
+    {
+        _player = player;       
+        hasPlayer = true;
+    }
+
+    public IPlayer GetPlayer()
+    {
+        return _player;
     }
 
     private void Update()
-    {
-        if (_currentEntity == null) return;
-
+    {     
+        if(!hasPlayer) return;
         _input.TickUpdate();  
-        _currentEntity.mover.Move(_currentEntity.transform,  new Vector3(_input.Dir.x, 0 , _input.Dir.y),
-        _currentEntity.config.baseSpeed, Time.deltaTime);      
+        _player.Move(new Vector3(_input.Dir.x, 0 , _input.Dir.y), _player.Speed, Time.deltaTime);      
     }
-
-    public void SetEntity(Entity entity)
-    {
-        _currentEntity = entity;
-    }
-
-    public Entity GetCurrentEntity()
-    {
-        return _currentEntity;
-    }
+   
 }
 

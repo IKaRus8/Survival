@@ -8,9 +8,7 @@ public class PCInput : IInput
         set { dir = value; }
     }
 
-    private Vector2 dir;
-
-    public bool attack { get; set; }
+    private Vector2 dir;   
 
     public void TickUpdate()
     {

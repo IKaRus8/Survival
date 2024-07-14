@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6446e673c0a30f64094c0a161bea4282, type: 3}
-  m_Name: New Entity Config
+  m_Script: {fileID: 11500000, guid: 3a189bb168d8d90478a09ea08c2f3d72, type: 3}
+  m_Name: DefaultObject
   m_EditorClassIdentifier: 
-  baseSpeed: 5
-  baseRotationSpeed: 10
+  m_AddressableAssetSettingsGuid: 34bf3b6ae3ac68d4292cfb90806639ec

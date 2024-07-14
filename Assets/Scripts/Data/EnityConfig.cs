@@ -1,9 +1,13 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Survival/Entity")]
-public class EntityConfig : ScriptableObject
+[CreateAssetMenu(fileName = "MovingSettings", menuName = "Survival/MovingSettings", order = 0)]
+public class MovingSettings : ScriptableObject, IMovingSettings
 {
-    public float baseSpeed;
-    
-    public float baseRotationSpeed;
+    [SerializeField]
+    private float _baseSpeed;
+    [SerializeField]
+    private float _baseRotationSpeed;
+
+    public float BaseSpeed => _baseSpeed;
+    public float BaseRotationSpeed => _baseRotationSpeed;
 }

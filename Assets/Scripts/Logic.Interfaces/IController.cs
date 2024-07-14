@@ -1,5 +1,7 @@
-public interface IController 
+using UnityEngine;
+
+public interface  IController 
 {
-    void SetEntity(Entity entity);
-    Entity GetCurrentEntity();
+    public void SetPlayer(IPlayer player);
+    public IPlayer GetPlayer();
 }
