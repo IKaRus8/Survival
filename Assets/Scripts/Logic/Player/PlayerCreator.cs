@@ -1,24 +1,27 @@
-using System.Threading.Tasks;
+
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 public class PlayerCreator: ICreator<IPlayer>
 {
-   private IAssetService _assetService;
-   private IInstatiator _instatiator;
+   private IAssetService _assetService;  
+   private IInstantiator _container;
 
-   public PlayerCreator(IAssetService  assetServise, IInstatiator instatiator)
+   public PlayerCreator(IAssetService  assetServise, IInstantiator diContainer)
    {
         _assetService = assetServise;
-        _instatiator = instatiator;
+        _container = diContainer;
    }
 
-   public async Task<IPlayer> CreateAsync()
+   public async UniTask<IPlayer> CreateAsync()
    {
         var playerGameObject = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Player.prefab");
        
         var playerPrefab = playerGameObject.GetComponent<IPlayer>();
 
-        _instatiator.InstantiateAsset(playerGameObject);
+        _container.InstantiatePrefab(playerGameObject);      
+
         return playerPrefab;
     }
 }

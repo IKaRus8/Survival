@@ -1,7 +1,6 @@
-using System.Threading.Tasks;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public interface ICreator<T>
 {
-    Task<T> CreateAsync();
+    UniTask<T> CreateAsync();
 }

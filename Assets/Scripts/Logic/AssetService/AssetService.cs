@@ -1,7 +1,5 @@
 using Cysharp.Threading.Tasks;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -9,7 +7,7 @@ public class AssetService: IAssetService
 {
     private Dictionary<string, object> _cache = new ();
 
-    public async Task<TAsset> GetAssetAsync<TAsset>(string addressableKey, bool isCached = true) where TAsset : class
+    public async UniTask <TAsset> GetAssetAsync<TAsset>(string addressableKey, bool isCached = true) where TAsset : class
     {
         if (_cache.TryGetValue(addressableKey, out var result))
         {
@@ -23,7 +21,7 @@ public class AssetService: IAssetService
     }
 
 
-    private async Task<TAsset> LoadNewAssetAsync<TAsset>(string addressableKey, bool isCached) where TAsset : class
+    private async UniTask <TAsset> LoadNewAssetAsync<TAsset>(string addressableKey, bool isCached) where TAsset : class
     {
         var asyncOperationHandle = Addressables.LoadAssetAsync<TAsset>(addressableKey);
         _cache.Add(addressableKey, asyncOperationHandle);
