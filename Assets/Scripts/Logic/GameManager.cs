@@ -2,23 +2,20 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using Zenject;
 
-public class GameManager : MonoBehaviour
+public class GameManager 
 {    
     private ICreator<IPlayer> _playerCreator;
-    private IController _controller;
-
-    [Inject]
-    public void Construct( ICreator<IPlayer> creator, IController controller)
+    private IController _controller;    
+    public  GameManager(ICreator<IPlayer> creator, IController controller)
     {        
         _playerCreator = creator;
         _controller = controller;
-    }
+        InitPlayer();
+    } 
 
-    private async void Awake()
+    public async void InitPlayer()
     {
         var player = await _playerCreator.CreateAsync();
         _controller.SetPlayer(player);
     }
-
-
 }

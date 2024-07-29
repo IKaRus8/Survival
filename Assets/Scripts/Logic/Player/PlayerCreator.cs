@@ -16,12 +16,10 @@ public class PlayerCreator: ICreator<IPlayer>
 
    public async UniTask<IPlayer> CreateAsync()
    {
-        var playerGameObject = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Player.prefab");
+        var playerGameObject = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Player.prefab");      
+      
+        var player = _container.InstantiatePrefabForComponent<IPlayer>(playerGameObject);
        
-        var playerPrefab = playerGameObject.GetComponent<IPlayer>();
-
-        _container.InstantiatePrefab(playerGameObject);      
-
-        return playerPrefab;
+        return player;
     }
 }

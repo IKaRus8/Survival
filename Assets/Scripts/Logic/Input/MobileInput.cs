@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using R3;
 public class MobileInput : IInput
 {
     private Joystick _joystick;
@@ -14,7 +14,8 @@ public class MobileInput : IInput
 
     public MobileInput(Joystick joystick)
     {
-        _joystick = joystick;       
+        _joystick = joystick; 
+        Observable.EveryUpdate().Subscribe(_ => TickUpdate());
     }
 
     public void TickUpdate()
