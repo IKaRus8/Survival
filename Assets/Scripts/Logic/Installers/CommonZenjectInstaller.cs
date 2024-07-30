@@ -1,11 +1,14 @@
+using Logic.Services;
 using UnityEngine;
 using Zenject;
 
 public class CommonZenjectInstaller : MonoInstaller
 {  
-   
-    [SerializeField] private Joystick _joystick;  
-    [SerializeField] private CameraMove _cameraMove;
+    [SerializeField] 
+    private Joystick _joystick;  
+    [SerializeField] 
+    private Camera _camera;
+    
     public override void InstallBindings()
     {
         Container.Bind<IAssetService>().To<AssetService>().AsSingle();
@@ -14,7 +17,8 @@ public class CommonZenjectInstaller : MonoInstaller
         Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
         Container.Bind<IInput>().To<MobileInput>().AsSingle();
         Container.BindInterfacesTo<PlayerHolder>().AsSingle();      
-        Container.Bind<CameraMove>().FromInstance(_cameraMove).AsSingle();
-        Container.Bind<GameManager>().AsSingle().NonLazy();
+        Container.Bind<Camera>().FromInstance(_camera).AsSingle();
+        Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
     }
 }

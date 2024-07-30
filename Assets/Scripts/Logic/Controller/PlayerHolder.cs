@@ -1,41 +1,41 @@
 using R3;
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
-public class PlayerHolder :  IController, IDisposable, IMovable
+public class PlayerHolder : IPlayerHolder, IDisposable
 {
-    private IInput _input;
-    private IPlayer _player;    
-    private CompositeDisposable _disposable = new();
+    private readonly ICreator<IPlayer> _creator;
+    private readonly CompositeDisposable _disposable;
        
+    public ReactiveProperty<IPlayer> PlayerRx { get; }
 
-    public PlayerHolder(IInput input)
+    public PlayerHolder(ICreator<IPlayer> creator)
     {
-        _input = input;        
-    }
-
-    public void SetPlayer(IPlayer player)
-    {
-        _player = player;       
+        _disposable = new CompositeDisposable();
+        _creator = creator;
+        PlayerRx = new ReactiveProperty<IPlayer>();
         
-        Observable.EveryUpdate().Subscribe(_ => MoveUpdate()).AddTo(_disposable);
+        CreatePlayer().Forget();
     }
 
-    public IPlayer GetPlayer()
+    private async UniTaskVoid CreatePlayer()
     {
-        return _player;
+        var player = await _creator.CreateAsync();
+        
+        SetPlayer(player);
     }
 
-    public void MoveUpdate()
-    {     
-        if(_player == null) return;
-        _player.Move(new Vector3(_input.Dir.x, 0 , _input.Dir.y), _player.Speed, Time.deltaTime);      
-    } 
-
-    void IDisposable.Dispose()
+    private void SetPlayer(IPlayer player)
     {
-        _disposable.Dispose();
+        PlayerRx.Value = player; 
+        
+    }
+
+    public void Dispose()
+    {
+        _disposable?.Dispose();
     }  
 }
 
