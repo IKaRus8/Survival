@@ -1,3 +1,4 @@
+using System;
 using R3;
 using UnityEngine;
 using Zenject;
@@ -6,12 +7,19 @@ public class Player : MonoBehaviour, IPlayer
 {  
     public float Speed => movingSettings.BaseSpeed;
 
-    public MovingSettings movingSettings;    
-   
-    public Transform Transform => transform;
+    public MovingSettings movingSettings;
+    
+    private Transform _transform;
+
+    public Transform Transform => _transform;
+
+    private void Awake()
+    {
+        _transform = transform;
+    }
 
     public  void Move(Vector3 direction, float speed, float delta)
     {
-        transform.position += direction * speed * delta;      
+        _transform.position += direction * speed * delta;      
     }
 }
