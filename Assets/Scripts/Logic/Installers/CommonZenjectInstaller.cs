@@ -20,5 +20,6 @@ public class CommonZenjectInstaller : MonoInstaller
         Container.Bind<Camera>().FromInstance(_camera).AsSingle();
         Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<RoadController>().AsSingle().NonLazy();
     }
 }
