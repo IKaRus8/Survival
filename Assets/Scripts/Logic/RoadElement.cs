@@ -3,22 +3,12 @@ using System;
 using UnityEngine;
 
 public class RoadElement : MonoBehaviour, IRoadElement
-{
-    private Vector2Int _index;
+{   
     private Transform _playerTransform;
     Bounds bounds;
-    public Vector2Int Index
-    {
-        get
-        {
-            return _index;
-        }
-        set
-        {
-            _index = value;
-        }
-    }
+   
     public bool IsPlayerInside { get; set; }
+    public bool IsOnRightPosition { get; set; }
 
     [SerializeField] private Transform _transform;
     public Transform Transform
@@ -33,14 +23,7 @@ public class RoadElement : MonoBehaviour, IRoadElement
 
     public void Setup(Transform playerTransform)
     {
-        _playerTransform = playerTransform;
-        bounds = _collider.bounds;
-        Observable.EveryUpdate().Subscribe(CheckPalyerPosition).AddTo(_collider);
-    }
-
-    public void SetIndex(Vector2Int index)
-    {
-        _index = index;      
+        _playerTransform = playerTransform;              
     }
 
     public void SetPosition(Vector3 position)
@@ -48,22 +31,14 @@ public class RoadElement : MonoBehaviour, IRoadElement
         transform.position = position;
     }
 
-    private void CheckPalyerPosition(Unit _)
+    private void OnTriggerEnter(Collider other)
     {
-        if ((_playerTransform.position.x <= bounds.max.x && _playerTransform.position.x >= bounds.min.x) &&
-            (_playerTransform.position.z <= bounds.max.z && _playerTransform.position.z >= bounds.min.z))
+        if (other.CompareTag("Player"))
         {
-            if (!IsPlayerInside)
-            {
-                PlayerEnter();
-            }            
-        }
-        else
-        {
-            RefreshCollider();
+           PlayerEnter();
         }
     }
-    
+
 
     public void PlayerEnter()
     {
@@ -80,8 +55,7 @@ public class RoadElement : MonoBehaviour, IRoadElement
 public interface IRoadElement
 {
     bool IsPlayerInside { get; set; }
-    public Vector2Int Index { get; set; }
-    void SetIndex(Vector2Int index);
+    bool IsOnRightPosition { get; set; }    
     void SetPosition(Vector3 position);
     void RefreshCollider();
     void PlayerEnter();

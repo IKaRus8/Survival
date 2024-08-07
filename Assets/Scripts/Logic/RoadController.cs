@@ -4,20 +4,24 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Zenject;
 
 public class RoadController: IDisposable
 {
-    private List<IRoadElement> _roads = new();
-    private ObservableCollection <IRoadElement> _roadsObservable;
-    private int countInRound = 5;
+    private List<IRoadElement> _roads = new(); 
+    private List<IRoadElement> _roadsInRightPos = new();   
+    private List<IRoadElement> _roadsInWrongPos = new();
+    
     private IInstantiator _container;
     private IAssetService _assetService;   
-    private IRoadElement _currentElement;
-    private float sizeElement=10;
-    private List<IRoadElement> tempList=new List<IRoadElement>();
+    private ReactiveProperty <IRoadElement> _currentElementRX;
+    private float offset=50;    
     private Transform _playerTransform;
     private CompositeDisposable _disposables;
+    private int countInMap = 9;
+    private Vector3[] positions;
+
     public RoadController(IInstantiator installer, IAssetService assetService, IPlayerHolder playerHolder)
     {
         _container = installer;
@@ -48,139 +52,111 @@ public class RoadController: IDisposable
 
     public void Init()
     {
+        CreatePositions();
         CreateStartField();
+    }
+
+    private void CreatePositions()
+    {
+      Vector3[] positions = new Vector3[]
+        {
+            new Vector3(-offset, 0, 0),
+            new Vector3(offset, 0, 0),
+            new Vector3(0, 0, offset),
+            new Vector3(0, 0, -offset),
+            new Vector3(offset, 0, offset),
+            new Vector3(-offset, 0, -offset),
+            new Vector3(offset, 0, -offset),
+            new Vector3(-offset, 0, offset)
+        };
     }
 
     private async void CreateStartField()
     {
-        var round = countInRound;
-        var column = countInRound;
 
         var roadParent = _container.CreateEmptyGameObject("Road");       
+        roadParent.transform.position = Vector3.zero;
         var roadPrefab = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Plane.prefab");
-
-        for (var i = 0; i < countInRound; i++)
-        {
-            for (var j = 0; j < countInRound; j++)
-            {
-                var currentRoad = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
-                currentRoad.SetIndex(new Vector2Int(i, j));
-                Debug.Log(currentRoad.Index);
-                currentRoad.SetPosition(new Vector3(i*sizeElement, 0, j * sizeElement));
-                currentRoad.OnPlayerEnter += RebuildRoad;
-                _roads.Add(currentRoad);
-            }
-        }
-        Debug.Log(_roads.Count);
-        var centrElement = new Vector3(countInRound / 2, 0, countInRound / 2);
-        var centr = new Vector3(-countInRound * sizeElement / 2+sizeElement/2, 0, -countInRound * sizeElement / 2+sizeElement/2);
-
-        roadParent.transform.position = centr;    
-        _currentElement = _roads.FirstOrDefault( x => x.Index.x == centrElement.x && x.Index.y == centrElement.z );
-        _currentElement.IsPlayerInside = true;
+        BuildStartRoad(roadPrefab, roadPrefab.transform);
     }
+
+    private  void BuildStartRoad(GameObject roadPrefab, Transform roadParent)
+    {
+        var currentRoad = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
+        _currentElementRX.Value = currentRoad;
+        _currentElementRX.Value.IsPlayerInside = true;
+        currentRoad.SetPosition(roadParent.transform.position);
+        _roads.Add(currentRoad);
+        for(int i = 0; i < countInMap-1; i++)
+        {
+            var currentRoadCircle = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
+            currentRoadCircle.SetPosition(positions[i]);
+            currentRoadCircle.OnPlayerEnter += RebuildRoad;
+            _roads.Add(currentRoadCircle);
+        }
+    }
+
+
+
 
 
     public void RebuildRoad(IRoadElement road)
     {
-        _currentElement.RefreshCollider();
-        var dir = CheckDirectrion(road.Index);     
-    
-        switch (dir)
+        RefreshRoad();
+        _roadsInRightPos.Clear();
+        _roadsInWrongPos.Clear();
+        _currentElementRX.Value = road;
+        var emptyPos = CheckEmptyPos();
+        _roadsInWrongPos = _roads.Except(_roadsInRightPos).ToList();
+        for(int i = 0; i < emptyPos.Count; i++)
         {
-            case Direction.left:
-                MoveElementsLeft();
-                //UpdateIndices(Direction.left, tempList);
-                break;
-            case Direction.right:
-               // MoveElementsRight(tempList);
-               // UpdateIndices(Direction.right, tempList);
-                break;
-            case Direction.up:
-              // MoveElementsUp(tempList);
-              //  UpdateIndices(Direction.up, tempList);
-                break;
-            case Direction.down:
-              //  MoveElementsDown(tempList);
-             //   UpdateIndices(Direction.down, tempList);
-                break;
+            _roadsInWrongPos[i].SetPosition(emptyPos[i]);
         }
-        _currentElement=road;
     }
 
-
-    public void MoveElementsLeft()
+    private List<Vector3> CheckEmptyPos()
     {
-
-        tempList.Clear();
-        tempList = new List<IRoadElement>();
-        tempList = _roads.Where(road => road.Index.x == countInRound - 1).ToList();
-        _roads = _roads.Where(road => road.Index.x != countInRound - 1).ToList();
-        Debug.Log(tempList.Count);
-        for (int i = 0; i < tempList.Count; i++)
+        var emptyPosList = new List<Vector3>();
+        _roadsInRightPos = new List<IRoadElement>();
+        for(int i = 0; i < countInMap-1; i++)
         {
-            tempList[i].Index = new Vector2Int(0, tempList[i].Index.y);
+            if(IsEmptyPos(_currentElementRX.Value.Transform.position, positions[i]))
+            {
+                emptyPosList.Add(positions[i]+_currentElementRX.Value.Transform.position);      
+            }
+            else
+            {
+                _roadsInRightPos.Add(_roads.FirstOrDefault(x => x.Transform.position == positions[i] + _currentElementRX.Value.Transform.position));
+            }
         }
-
-        for (int i = 0; i < tempList.Count; i++)
-        {
-            tempList[i].SetPosition(new Vector3(tempList[i].Transform.position.x - countInRound * sizeElement, 0, tempList[i].Transform.position.z));
-        }
-
-        //update indexes
-
-        for(int i = 0; i < _roads.Count; i++)
-        {
-            _roads[i].SetIndex(new Vector2Int(_roads[i].Index.x + 1, _roads[i].Index.y));
-        }
-       
+        return emptyPosList;
     }
 
-
-   
-  
-
-   
-    private Direction CheckDirectrion(Vector2Int index)
+    private bool IsEmptyPos(Vector3 currentPos, Vector3 offsetPos)
     {
-        var dir = Direction.none;
-        if (index.x > _currentElement.Index.x&& index.y == _currentElement.Index.y)
-        {
-           dir = Direction.right;
-        }
-        else if(index.x < _currentElement.Index.x && index.y == _currentElement.Index.y)
-        {
-            dir = Direction.left;
-        }
-        else if (index.x == _currentElement.Index.x && index.y > _currentElement.Index.y)
-        {
-            dir = Direction.up;
-        }
-        else if (index.x == _currentElement.Index.x && index.y < _currentElement.Index.y)
-        {
-            dir = Direction.down;
-        }    
-        else if(index.x > _currentElement.Index.x && index.y > _currentElement.Index.y)
-        {
-            dir = Direction.upRight;
-        }
-        else if (index.x < _currentElement.Index.x && index.y > _currentElement.Index.y)
-        {
-            dir = Direction.upLeft;
-        }
-        else if (index.x > _currentElement.Index.x && index.y < _currentElement.Index.y)
-        {
-            dir = Direction.downRight;
-        }
-        else if (index.x < _currentElement.Index.x && index.y < _currentElement.Index.y)
-        {
-            dir = Direction.downLeft;
-        }
+        var targetPos = currentPos + offsetPos;
         
-        Debug.Log(dir);
-        return dir;
+        foreach(var road in _roads)
+        {
+            if(road.Transform.position == targetPos)
+            {               
+                return false;
+            }
+        }
+        return true;
+    }
 
-    }  
+    private void RefreshRoad()
+    {
+        foreach(var road in _roads)
+        {
+            road.RefreshCollider();
+        }
+    }
+
+   
+
+   
 
     void IDisposable.Dispose()
     {
