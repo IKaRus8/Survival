@@ -1,10 +1,8 @@
 ﻿using R3;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Zenject;
 
 public class RoadController: IDisposable
@@ -15,40 +13,21 @@ public class RoadController: IDisposable
     
     private IInstantiator _container;
     private IAssetService _assetService;   
-    private ReactiveProperty <IRoadElement> _currentElementRX;
-    private float offset=50;    
+
+    private ReactiveProperty <IRoadElement> _currentElementRX= new ReactiveProperty<IRoadElement>();
+    private float offset=10;    
     private Transform _playerTransform;
     private CompositeDisposable _disposables;
     private int countInMap = 9;
-    private Vector3[] positions;
+    private List<Vector3> positions;
 
-    public RoadController(IInstantiator installer, IAssetService assetService, IPlayerHolder playerHolder)
+    public RoadController(IInstantiator installer, IAssetService assetService)
     {
         _container = installer;
         _assetService = assetService;       
         _disposables = new();
-        Init();
-        playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
-    }
-
-    private void OnPlayerCreated(IPlayer player)
-    {
-        if (player == null)
-        {
-            return;
-        }
-        _playerTransform = player.Transform;   
-        SetupRoads();        
-    }
-
-    private void SetupRoads()
-    {
-        foreach (var road in _roads)
-        {
-            road.Setup(_playerTransform);
-        }
-    }
-
+        Init();        
+    }   
 
     public void Init()
     {
@@ -58,8 +37,9 @@ public class RoadController: IDisposable
 
     private void CreatePositions()
     {
-      Vector3[] positions = new Vector3[]
-        {
+         positions = new List<Vector3>
+         {
+            new Vector3(0, 0, 0),
             new Vector3(-offset, 0, 0),
             new Vector3(offset, 0, 0),
             new Vector3(0, 0, offset),
@@ -68,37 +48,32 @@ public class RoadController: IDisposable
             new Vector3(-offset, 0, -offset),
             new Vector3(offset, 0, -offset),
             new Vector3(-offset, 0, offset)
-        };
+         };
     }
 
     private async void CreateStartField()
     {
-
         var roadParent = _container.CreateEmptyGameObject("Road");       
         roadParent.transform.position = Vector3.zero;
         var roadPrefab = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Plane.prefab");
-        BuildStartRoad(roadPrefab, roadPrefab.transform);
+        BuildStartRoad(roadPrefab, roadParent.transform);       
     }
 
     private  void BuildStartRoad(GameObject roadPrefab, Transform roadParent)
-    {
-        var currentRoad = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
-        _currentElementRX.Value = currentRoad;
-        _currentElementRX.Value.IsPlayerInside = true;
-        currentRoad.SetPosition(roadParent.transform.position);
-        _roads.Add(currentRoad);
-        for(int i = 0; i < countInMap-1; i++)
+    {      
+        for(int i = 0; i < countInMap; i++)
         {
             var currentRoadCircle = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
             currentRoadCircle.SetPosition(positions[i]);
             currentRoadCircle.OnPlayerEnter += RebuildRoad;
+            if (i == 0)
+            {
+                _currentElementRX.Value = currentRoadCircle;
+            }
             _roads.Add(currentRoadCircle);
         }
+        
     }
-
-
-
-
 
     public void RebuildRoad(IRoadElement road)
     {
@@ -118,7 +93,7 @@ public class RoadController: IDisposable
     {
         var emptyPosList = new List<Vector3>();
         _roadsInRightPos = new List<IRoadElement>();
-        for(int i = 0; i < countInMap-1; i++)
+        for(int i = 0; i < countInMap; i++)
         {
             if(IsEmptyPos(_currentElementRX.Value.Transform.position, positions[i]))
             {
@@ -145,19 +120,13 @@ public class RoadController: IDisposable
         }
         return true;
     }
-
     private void RefreshRoad()
     {
         foreach(var road in _roads)
         {
             road.RefreshCollider();
         }
-    }
-
-   
-
-   
-
+    } 
     void IDisposable.Dispose()
     {
         _disposables?.Dispose();
@@ -171,16 +140,4 @@ public class RoadController: IDisposable
     }
 }
 
-public enum Direction
-{
-    left,
-    right,
-    up,
-    down,
-    none,
-    upRight,
-    upLeft,
-    downRight,
-    downLeft
-}
 

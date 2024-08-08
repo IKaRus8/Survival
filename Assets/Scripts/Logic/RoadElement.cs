@@ -3,9 +3,7 @@ using System;
 using UnityEngine;
 
 public class RoadElement : MonoBehaviour, IRoadElement
-{   
-    private Transform _playerTransform;
-    Bounds bounds;
+{       
    
     public bool IsPlayerInside { get; set; }
     public bool IsOnRightPosition { get; set; }
@@ -18,13 +16,7 @@ public class RoadElement : MonoBehaviour, IRoadElement
     }
     public Action<IRoadElement> OnPlayerEnter { get; set; }
 
-    [SerializeField] private BoxCollider _collider;
-    
-
-    public void Setup(Transform playerTransform)
-    {
-        _playerTransform = playerTransform;              
-    }
+    [SerializeField] private BoxCollider _collider; 
 
     public void SetPosition(Vector3 position)
     {
@@ -52,14 +44,4 @@ public class RoadElement : MonoBehaviour, IRoadElement
     }
 }
 
-public interface IRoadElement
-{
-    bool IsPlayerInside { get; set; }
-    bool IsOnRightPosition { get; set; }    
-    void SetPosition(Vector3 position);
-    void RefreshCollider();
-    void PlayerEnter();
-    Transform Transform { get; set; }
-    public Action<IRoadElement> OnPlayerEnter { get; set; }
-    public void Setup(Transform playerTransform);
-}
+   
