@@ -21,5 +21,5 @@ public class PlayerCreator: ICreator<IPlayer>
         var player = _container.InstantiatePrefabForComponent<IPlayer>(playerGameObject);
        
         return player;
-    }
+   }
 }
