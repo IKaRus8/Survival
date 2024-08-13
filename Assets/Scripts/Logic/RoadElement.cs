@@ -3,12 +3,10 @@ using System;
 using UnityEngine;
 
 public class RoadElement : MonoBehaviour, IRoadElement
-{       
-   
-    public bool IsPlayerInside { get; set; }
-    public bool IsOnRightPosition { get; set; }
-
+{          
+    
     [SerializeField] private Transform _transform;
+
     public Transform Transform
     {
         get => _transform;
@@ -31,17 +29,10 @@ public class RoadElement : MonoBehaviour, IRoadElement
         }
     }
 
-
     public void PlayerEnter()
-    {
-        IsPlayerInside = true;      
+    {       
         OnPlayerEnter?.Invoke(this);
-    }
-
-    public void RefreshCollider()
-    {
-        IsPlayerInside = false;       
-    }
+    }  
 }
 
    

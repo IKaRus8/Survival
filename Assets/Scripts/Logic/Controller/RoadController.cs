@@ -7,7 +7,7 @@ using Zenject;
 
 public class RoadController: IDisposable
 {
-    private List<IRoadElement> _roads = new(); 
+    private readonly List<IRoadElement> _roads = new(); 
     private List<IRoadElement> _roadsInRightPos = new();   
     private List<IRoadElement> _roadsInWrongPos = new();
     
@@ -76,8 +76,7 @@ public class RoadController: IDisposable
     }
 
     public void RebuildRoad(IRoadElement road)
-    {
-        RefreshRoad();
+    {        
         _roadsInRightPos.Clear();
         _roadsInWrongPos.Clear();
         _currentElementRX.Value = road;
@@ -120,22 +119,14 @@ public class RoadController: IDisposable
         }
         return true;
     }
-    private void RefreshRoad()
-    {
-        foreach(var road in _roads)
-        {
-            road.RefreshCollider();
-        }
-    } 
+  
     void IDisposable.Dispose()
     {
         _disposables?.Dispose();
-        if(_roads.Count > 0)
+
+        foreach (var road in _roads)
         {
-            foreach(var road in _roads)
-            {
-                road.OnPlayerEnter -= RebuildRoad;
-            }
+            road.OnPlayerEnter -= RebuildRoad;
         }
     }
 }
