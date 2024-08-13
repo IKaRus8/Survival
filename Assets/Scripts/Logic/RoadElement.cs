@@ -1,20 +1,17 @@
-using R3;
 using System;
 using UnityEngine;
 
 public class RoadElement : MonoBehaviour, IRoadElement
-{          
-    
+{         
     [SerializeField] private Transform _transform;
+    [SerializeField] private BoxCollider _collider;
 
     public Transform Transform
     {
         get => _transform;
         set => _transform = value;
     }
-    public Action<IRoadElement> OnPlayerEnter { get; set; }
-
-    [SerializeField] private BoxCollider _collider; 
+    public Action<IRoadElement> OnPlayerEnter { get; set; }    
 
     public void SetPosition(Vector3 position)
     {
@@ -29,7 +26,7 @@ public class RoadElement : MonoBehaviour, IRoadElement
         }
     }
 
-    public void PlayerEnter()
+    private void PlayerEnter()
     {       
         OnPlayerEnter?.Invoke(this);
     }  

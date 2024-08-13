@@ -49,16 +49,16 @@ public class Enemy : MonoBehaviour, IPoolable<IMemoryPool>
     }    
 
 
-    public static async  void InitPool(DiContainer container, IAssetService assetService)
+    public static async UniTaskVoid InitPool(DiContainer container, IAssetService assetService)
     {
-        var enemyPrefab = assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Enemy.prefab");
+        var enemyPrefab = await assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Enemy.prefab");
        
-       /* container
+        container
             .BindFactory<Enemy, Factory>()
             .FromPoolableMemoryPool<Enemy, Pool>(poolBinder =>
                 poolBinder
                     .WithInitialSize(30)
-                    .FromComponentInNewPrefab(enemyPrefab)); //// как тут быть*/
+                    .FromComponentInNewPrefab(enemyPrefab)); 
     }
 
     public void OnSpawned(IAssetService assetService, IMemoryPool pool)

@@ -8,8 +8,7 @@ using Zenject;
 public class RoadController: IDisposable
 {
     private readonly List<IRoadElement> _roads = new(); 
-    private List<IRoadElement> _roadsInRightPos = new();   
-    private List<IRoadElement> _roadsInWrongPos = new();
+    private readonly List<IRoadElement> _roadsInRightPos = new();     
     
     private IInstantiator _container;
     private IAssetService _assetService;   
@@ -77,11 +76,10 @@ public class RoadController: IDisposable
 
     public void RebuildRoad(IRoadElement road)
     {        
-        _roadsInRightPos.Clear();
-        _roadsInWrongPos.Clear();
+        _roadsInRightPos.Clear();       
         _currentElementRX.Value = road;
         var emptyPos = CheckEmptyPos();
-        _roadsInWrongPos = _roads.Except(_roadsInRightPos).ToList();
+        var _roadsInWrongPos = _roads.Except(_roadsInRightPos).ToList();
         for(int i = 0; i < emptyPos.Count; i++)
         {
             _roadsInWrongPos[i].SetPosition(emptyPos[i]);
@@ -90,8 +88,7 @@ public class RoadController: IDisposable
 
     private List<Vector3> CheckEmptyPos()
     {
-        var emptyPosList = new List<Vector3>();
-        _roadsInRightPos = new List<IRoadElement>();
+        var emptyPosList = new List<Vector3>();        
         for(int i = 0; i < countInMap; i++)
         {
             if(IsEmptyPos(_currentElementRX.Value.Transform.position, positions[i]))
