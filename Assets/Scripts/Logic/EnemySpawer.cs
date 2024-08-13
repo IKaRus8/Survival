@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject
+using Zenject;
 
 public class EnemySpawer: IInitializable
 {

@@ -53,12 +53,12 @@ public class Enemy : MonoBehaviour, IPoolable<IMemoryPool>
     {
         var enemyPrefab = assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Enemy.prefab");
        
-        container
+       /* container
             .BindFactory<Enemy, Factory>()
             .FromPoolableMemoryPool<Enemy, Pool>(poolBinder =>
                 poolBinder
                     .WithInitialSize(30)
-                    .FromComponentInNewPrefab(enemyPrefab)); //// как тут быть
+                    .FromComponentInNewPrefab(enemyPrefab)); //// как тут быть*/
     }
 
     public void OnSpawned(IAssetService assetService, IMemoryPool pool)

@@ -10,12 +10,7 @@ namespace Zenject
             DiContainer bindContainer, BindInfo bindInfo, FactoryBindInfo factoryBindInfo, MemoryPoolBindInfo poolBindInfo)
             : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo)
         {
-        }
-
-        public void FromComponentInNewPrefab(global::Cysharp.Threading.Tasks.UniTask<GameObject> enemyPrefab)
-        {
-            throw new NotImplementedException();
-        }
+        }    
 
         public MemoryPoolExpandBinder<TContract> WithMaxSize(int size)
         {

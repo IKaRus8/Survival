@@ -22,6 +22,6 @@ public class CommonZenjectInstaller : MonoInstaller
         Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<RoadController>().AsSingle().NonLazy();
 
-        Enemy.InitPool(DiContainer, IAssetService);
+        //Enemy.InitPool(DiContainer, IAssetService);
     }
 }
