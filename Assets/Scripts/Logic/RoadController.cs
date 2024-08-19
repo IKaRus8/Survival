@@ -26,6 +26,7 @@ public class RoadController: IDisposable
 
     private IInstantiator _container;
     private IAssetService _assetService;
+    private ISceneObjectContainer _objectContainer;
 
     private ReactiveProperty<IRoadElement> _currentElementRX = new ReactiveProperty<IRoadElement>();
 
@@ -34,10 +35,11 @@ public class RoadController: IDisposable
     private int _countInMap = 9;
 
 
-    public RoadController(IInstantiator installer, IAssetService assetService)
+    public RoadController(IInstantiator installer, IAssetService assetService, ISceneObjectContainer objectContainer)
     {
         _container = installer;
-        _assetService = assetService;       
+        _assetService = assetService;   
+        _objectContainer = objectContainer;
         _disposables = new();
         Init();        
     }   
@@ -45,13 +47,11 @@ public class RoadController: IDisposable
     public void Init()
     {        
         CreateStartField();
-    }
-
-   
+    }  
 
     private async void CreateStartField()
     {
-        var roadParent = _container.CreateEmptyGameObject("Road");       
+        var roadParent = _objectContainer.RoadParent;     
         roadParent.transform.position = Vector3.zero;
         var roadPrefab = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Plane.prefab");
         CreateLevelGrid(roadPrefab, roadParent.transform);       
