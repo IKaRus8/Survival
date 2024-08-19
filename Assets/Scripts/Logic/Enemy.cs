@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using Zenject;
 
-public class Enemy : MonoBehaviour, IPoolable<IMemoryPool>
+public class Enemy : MonoBehaviour, IDisposable
 {
 
     public Action <Enemy>OnDead;
@@ -37,33 +37,16 @@ public class Enemy : MonoBehaviour, IPoolable<IMemoryPool>
 
     public void OnSpawned(IMemoryPool pool)
     {
+        _pool = pool;
        currentHealth = startHealth;       
     }
 
-    public class Factory : PlaceholderFactory<Enemy>
+    public void Dispose()
     {
+        _pool.Despawn(this);
     }
 
-    public class Pool : MonoPoolableMemoryPool<IMemoryPool, Enemy>
+    public class Pool : MonoMemoryPool<Enemy>
     {
-    }    
-
-
-    public static async UniTaskVoid InitPool(DiContainer container, IAssetService assetService)
-    {
-        var enemyPrefab = await assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Enemy.prefab");
-       
-        container
-            .BindFactory<Enemy, Factory>()
-            .FromPoolableMemoryPool<Enemy, Pool>(poolBinder =>
-                poolBinder
-                    .WithInitialSize(30)
-                    .FromComponentInNewPrefab(enemyPrefab)); 
-    }
-
-    public void OnSpawned(IAssetService assetService, IMemoryPool pool)
-    {
-        _assetService = assetService;
-        _pool = pool;
-    }
+    }       
 }

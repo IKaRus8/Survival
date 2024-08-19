@@ -1,22 +1,31 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 using Zenject;
 
-public class EnemySpawer: IInitializable
+public class EnemySpawer: IInitializable, IEnemySpawner
 {
-    private Enemy.Factory enemyFactory;
-    private List<Enemy> aliveEnemyes = new List<Enemy>();
-    private float spawnProbability=0;
+    private readonly Enemy.Pool _enemyPool;
+    private readonly IRoadController _roadController;
 
-    public EnemySpawer(Enemy.Factory enemyFactory)
+    private List<Enemy> aliveEnemyes = new List<Enemy>();
+    private float spawnProbability=100;
+
+    public EnemySpawer(Enemy.Pool enemyPool, IRoadController roadController)
     {
-        this.enemyFactory = enemyFactory;      
+        _enemyPool = enemyPool;
+        _roadController = roadController;
     }
 
     public void Initialize()
     {
-        UniTask.Create(SpawnEnemyTimer);
+        StartSpawn();
+    }
+
+    private async void StartSpawn()
+    {
+        await SpawnEnemyTimer();
     }
 
     private void AddEnemy(Enemy enemy)
@@ -28,10 +37,8 @@ public class EnemySpawer: IInitializable
     private void RemoveEnemy(Enemy enemy)
     {
         aliveEnemyes.Remove(enemy);
-        enemy.OnDead -= RemoveEnemy;
-
-        int countEnemysOnMap = aliveEnemyes.Count;
-        spawnProbability = GetCurrentProbability(countEnemysOnMap);
+        _enemyPool.Despawn(enemy);
+        enemy.OnDead -= RemoveEnemy;          
     }
 
     private float GetCurrentProbability(int countOfEnemyOnMap)
@@ -56,12 +63,13 @@ public class EnemySpawer: IInitializable
         return probability;
     }
 
-    private void SpawnEnemy(float probability)
+    private void SpawnEnemy()
     {
+        spawnProbability = GetCurrentProbability(aliveEnemyes.Count);
         float random = Random.Range(0, 101);
-        if (probability >= random)
+        if (spawnProbability >= random)
         {
-            var enemy = enemyFactory.Create();
+            var enemy = _enemyPool.Spawn();
             enemy.transform.position = GetEnemyPos();
             AddEnemy(enemy);
         }
@@ -69,21 +77,23 @@ public class EnemySpawer: IInitializable
 
     private Vector3 GetEnemyPos()
     {       
-        return new Vector3(0, 0, 0);
+        var pointForSpawn = _roadController.GetRoadsForSpawn();
+        Debug.Log(pointForSpawn.Count);
+        return pointForSpawn[Random.Range(0, pointForSpawn.Count)].Transform.position;
     }
 
-    private UniTask SpawnEnemyTimer()
+    private async UniTask SpawnEnemyTimer()
     {
         while (true)
         {
-            UniTask.Delay(1000);
-            SpawnEnemy(spawnProbability);
+            await UniTask.Delay(1000);
+            SpawnEnemy();
         }
-    }
-
-    
+    }    
 }
 
 public interface IEnemySpawner
-{    
+{
+    void AddEnemy(Enemy enemy) { }
+    void RemoveEnemy(Enemy enemy) { }    
 }

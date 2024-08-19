@@ -9,9 +9,11 @@ public class CommonZenjectInstaller : MonoInstaller
     [SerializeField] 
     private Camera _camera;
     [SerializeField]
-    private SceneObjectContainer _sceneObjectContainer;  
+    private SceneObjectContainer _sceneObjectContainer;
+    [SerializeField]
+    private Enemy _enemyPrefab;
     
-    public override void InstallBindings()
+    public override async void InstallBindings()
     {
         Container.Bind<IAssetService>().To<AssetService>().AsSingle();
         Container.Bind<ICreator<IPlayer>>().To<PlayerCreator>().AsSingle();
@@ -24,5 +26,10 @@ public class CommonZenjectInstaller : MonoInstaller
         Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<RoadController>().AsSingle().NonLazy();
         Container.Bind<ISceneObjectContainer>().FromInstance(_sceneObjectContainer).AsSingle();
+        Container.BindInterfacesTo<EnemySpawer>().AsSingle().NonLazy();
+        Container.BindMemoryPool<Enemy, Enemy.Pool>()
+            .WithInitialSize(30)
+            .FromComponentInNewPrefab(_enemyPrefab)
+            .UnderTransformGroup("Enemies");
     }
 }

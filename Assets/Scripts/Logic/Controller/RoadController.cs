@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-public class RoadController: IDisposable
+public class RoadController: IDisposable, IRoadController
 {
     private const float _offset = 10;
 
@@ -67,16 +67,17 @@ public class RoadController: IDisposable
             if (i == 0)
             {
                 _currentElementRX.Value = currentRoadGrid;
-            }
+            }           
+            _roadsInRightPos.Add(currentRoadGrid);            
             _roads.Add(currentRoadGrid);
-        }
-        
+        }        
     }
 
     public void RebuildRoad(IRoadElement road)
     {        
-        _roadsInRightPos.Clear();       
-        _currentElementRX.Value = road;
+        _roadsInRightPos.Clear();
+        _currentElementRX.Value.Reset();
+        _currentElementRX.Value = road;        
 
         var emptyPos = CheckEmptyPos();
         var _roadsInWrongPos = _roads.Except(_roadsInRightPos).ToList();
@@ -119,7 +120,12 @@ public class RoadController: IDisposable
         }
         return true;
     }
-  
+
+    public List<IRoadElement> GetRoadsForSpawn()
+    {
+        return _roadsInRightPos.Where(x => x.IsPlayerInside == false).ToList();
+    }
+    
     void IDisposable.Dispose()
     {
         _disposables?.Dispose();
@@ -129,6 +135,11 @@ public class RoadController: IDisposable
             road.OnPlayerEnter -= RebuildRoad;
         }
     }
+}
+
+public interface IRoadController
+{
+    List<IRoadElement> GetRoadsForSpawn();
 }
 
 
