@@ -7,69 +7,68 @@ using Zenject;
 
 public class RoadController: IDisposable
 {
-    private readonly List<IRoadElement> _roads = new(); 
-    private readonly List<IRoadElement> _roadsInRightPos = new();     
-    
-    private IInstantiator _container;
-    private IAssetService _assetService;   
+    private const float _offset = 10;
 
-    private ReactiveProperty <IRoadElement> _currentElementRX= new ReactiveProperty<IRoadElement>();
-    private float offset=10;    
+    private readonly List<IRoadElement> _roads = new();
+    private readonly List<IRoadElement> _roadsInRightPos = new();
+    private readonly List<Vector3> _positions = new List<Vector3>
+         {
+            new Vector3(0, 0, 0),
+            new Vector3(-_offset, 0, 0),
+            new Vector3(_offset, 0, 0),
+            new Vector3(0, 0, _offset),
+            new Vector3(0, 0, -_offset),
+            new Vector3(_offset, 0, _offset),
+            new Vector3(-_offset, 0, -_offset),
+            new Vector3(_offset, 0, -_offset),
+            new Vector3(-_offset, 0, _offset)
+         };
+
+    private IInstantiator _container;
+    private IAssetService _assetService;
+    private ISceneObjectContainer _objectContainer;
+
+    private ReactiveProperty<IRoadElement> _currentElementRX = new ReactiveProperty<IRoadElement>();
+
     private Transform _playerTransform;
     private CompositeDisposable _disposables;
-    private int countInMap = 9;
-    private List<Vector3> positions;
+    private int _countInMap = 9;
 
-    public RoadController(IInstantiator installer, IAssetService assetService)
+
+    public RoadController(IInstantiator installer, IAssetService assetService, ISceneObjectContainer objectContainer)
     {
         _container = installer;
-        _assetService = assetService;       
+        _assetService = assetService;   
+        _objectContainer = objectContainer;
         _disposables = new();
         Init();        
     }   
 
     public void Init()
-    {
-        CreatePositions();
+    {        
         CreateStartField();
-    }
-
-    private void CreatePositions()
-    {
-         positions = new List<Vector3>
-         {
-            new Vector3(0, 0, 0),
-            new Vector3(-offset, 0, 0),
-            new Vector3(offset, 0, 0),
-            new Vector3(0, 0, offset),
-            new Vector3(0, 0, -offset),
-            new Vector3(offset, 0, offset),
-            new Vector3(-offset, 0, -offset),
-            new Vector3(offset, 0, -offset),
-            new Vector3(-offset, 0, offset)
-         };
-    }
+    }  
 
     private async void CreateStartField()
     {
-        var roadParent = _container.CreateEmptyGameObject("Road");       
+        var roadParent = _objectContainer.RoadParent;     
         roadParent.transform.position = Vector3.zero;
         var roadPrefab = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Plane.prefab");
-        BuildStartRoad(roadPrefab, roadParent.transform);       
+        CreateLevelGrid(roadPrefab, roadParent.transform);       
     }
 
-    private  void BuildStartRoad(GameObject roadPrefab, Transform roadParent)
+    private  void CreateLevelGrid(GameObject roadPrefab, Transform roadParent)
     {      
-        for(int i = 0; i < countInMap; i++)
+        for(int i = 0; i < _countInMap; i++)
         {
-            var currentRoadCircle = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
-            currentRoadCircle.SetPosition(positions[i]);
-            currentRoadCircle.OnPlayerEnter += RebuildRoad;
+            var currentRoadGrid = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
+            currentRoadGrid.SetPosition(_positions[i]);
+            currentRoadGrid.OnPlayerEnter += RebuildRoad;
             if (i == 0)
             {
-                _currentElementRX.Value = currentRoadCircle;
+                _currentElementRX.Value = currentRoadGrid;
             }
-            _roads.Add(currentRoadCircle);
+            _roads.Add(currentRoadGrid);
         }
         
     }
@@ -78,9 +77,11 @@ public class RoadController: IDisposable
     {        
         _roadsInRightPos.Clear();       
         _currentElementRX.Value = road;
+
         var emptyPos = CheckEmptyPos();
         var _roadsInWrongPos = _roads.Except(_roadsInRightPos).ToList();
-        for(int i = 0; i < emptyPos.Count; i++)
+
+        for (int i = 0; i < emptyPos.Count; i++)
         {
             _roadsInWrongPos[i].SetPosition(emptyPos[i]);
         }
@@ -88,24 +89,26 @@ public class RoadController: IDisposable
 
     private List<Vector3> CheckEmptyPos()
     {
-        var emptyPosList = new List<Vector3>();        
-        for(int i = 0; i < countInMap; i++)
+        var emptyPosList = new List<Vector3>();
+        var centerPosition = _currentElementRX.Value.Transform.position;
+
+        foreach (var pos in _positions)
         {
-            if(IsEmptyPos(_currentElementRX.Value.Transform.position, positions[i]))
+            if (IsEmptyPos(centerPosition, pos))
             {
-                emptyPosList.Add(positions[i]+_currentElementRX.Value.Transform.position);      
+                emptyPosList.Add(pos + centerPosition);
             }
             else
             {
-                _roadsInRightPos.Add(_roads.FirstOrDefault(x => x.Transform.position == positions[i] + _currentElementRX.Value.Transform.position));
+                _roadsInRightPos.Add(_roads.FirstOrDefault(x => x.Transform.position == pos + centerPosition));
             }
         }
         return emptyPosList;
     }
 
-    private bool IsEmptyPos(Vector3 currentPos, Vector3 offsetPos)
+    private bool IsEmptyPos(Vector3 centerPos, Vector3 offsetPos)
     {
-        var targetPos = currentPos + offsetPos;
+        var targetPos = centerPos + offsetPos;
         
         foreach(var road in _roads)
         {

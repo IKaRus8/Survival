@@ -8,6 +8,8 @@ public class CommonZenjectInstaller : MonoInstaller
     private Joystick _joystick;  
     [SerializeField] 
     private Camera _camera;
+    [SerializeField]
+    private SceneObjectContainer _sceneObjectContainer;  
     
     public override void InstallBindings()
     {
@@ -21,7 +23,6 @@ public class CommonZenjectInstaller : MonoInstaller
         Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<RoadController>().AsSingle().NonLazy();
-
-        //Enemy.InitPool(DiContainer, IAssetService);
+        Container.Bind<ISceneObjectContainer>().FromInstance(_sceneObjectContainer).AsSingle();
     }
 }
