@@ -500,7 +500,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roadParent: {fileID: 1297955341}
-  _enemyPrefab: {fileID: 0}
 --- !u!4 &1297955341
 Transform:
   m_ObjectHideFlags: 0
@@ -700,8 +699,6 @@ MonoBehaviour:
   _joystick: {fileID: 1414365011}
   _camera: {fileID: 2019116382}
   _sceneObjectContainer: {fileID: 1297955340}
-  _enemyPrefab: {fileID: 6856445466840253172, guid: 9fee3d429ed89dd4a924b4513d9a9949,
-    type: 3}
 --- !u!1 &1604795986
 GameObject:
   m_ObjectHideFlags: 0
