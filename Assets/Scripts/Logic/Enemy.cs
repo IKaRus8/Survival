@@ -5,15 +5,11 @@ using Zenject;
 
 public class Enemy : MonoBehaviour, IDisposable
 {
-
     public Action <Enemy>OnDead;
     private int startHealth=100;
     private int currentHealth;
 
-    private IMemoryPool _pool;
-    private IAssetService _assetService;
-
-
+    private IMemoryPool _pool;  
 
     public void Die()
     {
@@ -48,5 +44,6 @@ public class Enemy : MonoBehaviour, IDisposable
 
     public class Pool : MonoMemoryPool<Enemy>
     {
+
     }       
 }

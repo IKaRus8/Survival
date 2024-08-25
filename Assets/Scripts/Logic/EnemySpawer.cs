@@ -4,7 +4,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using Zenject;
 
-public class EnemySpawer: IInitializable, IEnemySpawner
+public class EnemySpawer: IEnemySpawner
 {
     private readonly Enemy.Pool _enemyPool;
     private readonly IRoadController _roadController;
@@ -16,15 +16,11 @@ public class EnemySpawer: IInitializable, IEnemySpawner
     {
         _enemyPool = enemyPool;
         _roadController = roadController;
-    }
-
-    public void Initialize()
-    {
         StartSpawn();
     }
-
+    
     private async void StartSpawn()
-    {
+    {       
         await SpawnEnemyTimer();
     }
 
