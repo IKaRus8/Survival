@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
+using Logic.Interfaces.Providers;
 using UnityEditorInternal;
 using UnityEngine;
 using Zenject;
@@ -7,15 +9,20 @@ using Zenject;
 public class EnemySpawer: IEnemySpawner
 {
     private readonly Enemy.Pool _enemyPool;
-    private readonly IRoadController _roadController;
+    private readonly IGridController _gridController;
+    private readonly IEnemySpawnSettingsProvider _enemySpawnSettingsProvider;
 
-    private List<Enemy> aliveEnemyes = new List<Enemy>();
-    private float spawnProbability=100;
+    private List<Enemy> aliveEnemyes = new();
+    private float spawnProbability = 1f;
 
-    public EnemySpawer(Enemy.Pool enemyPool, IRoadController roadController)
+    public EnemySpawer(
+        Enemy.Pool enemyPool, 
+        IGridController gridController,
+        IEnemySpawnSettingsProvider enemySpawnSettingsProvider)
     {
         _enemyPool = enemyPool;
-        _roadController = roadController;
+        _gridController = gridController;
+        _enemySpawnSettingsProvider = enemySpawnSettingsProvider;
         StartSpawn();
     }
     
@@ -39,41 +46,38 @@ public class EnemySpawer: IEnemySpawner
 
     private float GetCurrentProbability(int countOfEnemyOnMap)
     {
-        float probability; 
-        if(countOfEnemyOnMap < 10)
+        var enemyParameters = _enemySpawnSettingsProvider.GetAllParameters();
+
+        foreach (var enemyParameter in enemyParameters.OrderBy(p => p.enemyQuantity))
         {
-            probability = 100;
+            if (countOfEnemyOnMap < enemyParameter.enemyQuantity)
+            {
+                return enemyParameter.spawnChance;
+            }
         }
-        else if(countOfEnemyOnMap >=10&&countOfEnemyOnMap < 20)
-        {
-            probability = 70;
-        }
-        else if(countOfEnemyOnMap >= 20 && countOfEnemyOnMap < 30)
-        {
-            probability = 30;
-        }
-        else
-        {
-            probability = 0;
-        }
-        return probability;
+        
+        return 0;
     }
 
     private void SpawnEnemy()
     {
         spawnProbability = GetCurrentProbability(aliveEnemyes.Count);
-        float random = Random.Range(0, 101);
+        
+        var random = Random.Range(0f, 1f);
+        
         if (spawnProbability >= random)
         {
             var enemy = _enemyPool.Spawn();
+            
             enemy.transform.position = GetEnemyPos();
+            
             AddEnemy(enemy);
         }
     }
 
     private Vector3 GetEnemyPos()
     {       
-        var pointForSpawn = _roadController.GetRoadsForSpawn();
+        var pointForSpawn = _gridController.GetRoadsForSpawn();
         Debug.Log(pointForSpawn.Count);
         return pointForSpawn[Random.Range(0, pointForSpawn.Count)].Transform.position;
     }
