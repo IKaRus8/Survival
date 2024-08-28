@@ -1,10 +1,11 @@
-using System.Collections.Generic;
-using Data.ScriptableObjects;
+using R3;
 
 namespace Logic.Interfaces.Providers
 {
     public interface IEnemySpawnSettingsProvider
     {
-        List<EnemySpawnSettings.SpawnParameter> GetAllParameters();
+        ReactiveProperty<bool> IsSettingLoadedRx { get; }
+
+        float GetChanceForSpawn(int enemyCount);
     }
 }

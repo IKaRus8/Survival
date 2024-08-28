@@ -4,7 +4,7 @@ using Logic.Services;
 using UnityEngine;
 using Zenject;
 
-public class CommonZenjectInstaller : MonoInstaller
+public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
 {
     [SerializeField]
     private Joystick _joystick;
@@ -15,21 +15,22 @@ public class CommonZenjectInstaller : MonoInstaller
     [SerializeField] 
     private GameObject _enemyPrefab;
     
-    public override async void InstallBindings()
+    public override void InstallBindings()
     {
-        Container.Bind<IAssetService>().To<AssetService>().AsSingle();
+        // Services
         Container.Bind<ICreator<IPlayer>>().To<PlayerCreator>().AsSingle();
-        Container.Bind<IPlayer>().To<Player>().AsSingle();
-        Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
-        Container.Bind<IInput>().To<MobileInput>().AsSingle();
         Container.BindInterfacesTo<PlayerHolder>().AsSingle();
-        Container.Bind<Camera>().FromInstance(_camera).AsSingle();
         Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<GridController>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<EnemySpawner>().AsSingle().NonLazy();      
+        
+        // Scene objects 
+        Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
+        Container.Bind<Camera>().FromInstance(_camera).AsSingle();
         Container.Bind<ISceneObjectContainer>().FromInstance(_sceneObjectContainer).AsSingle();
+        
         Container.BindMemoryPool<Enemy, Enemy.Pool>().WithInitialSize(30).FromComponentInNewPrefab(_enemyPrefab).UnderTransformGroup("Enemyes");
-        Container.Bind<IEnemySpawner>().To<EnemySpawer>().AsSingle().NonLazy();      
         
         // Providers
         Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();

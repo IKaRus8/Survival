@@ -14,7 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Default Local Group
   m_GUID: 99d235805aeb8af4695b786b62a9c23f
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: ba0ab515e5da74342a36c980eb55e8f0
+    m_Address: Assets/Prefabs/Game/Plane.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 34bf3b6ae3ac68d4292cfb90806639ec, type: 2}
   m_SchemaSet:
