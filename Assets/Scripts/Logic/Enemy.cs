@@ -2,25 +2,23 @@
 using UnityEngine;
 using Zenject;
 
-public class Enemy : MonoBehaviour, IDisposable
+public class Enemy : MonoBehaviour
 {
     private int startHealth = 100;
-    private int currentHealth;
-
-    private IMemoryPool _pool;
+    private int currentHealth;  
 
     public Action<Enemy> OnDead;
 
+    public void Start()
+    {
+        currentHealth = startHealth;
+    }
+
     public void Die()
     {
-        OnDead?.Invoke(this);
-        _pool.Despawn(this);
-    }
-
-    public void OnDespawned()
-    {
-
-    }
+       OnDead?.Invoke(this);
+       gameObject.SetActive(false);
+    }  
 
     public void TakeDamage(int damage)
     {
@@ -29,21 +27,6 @@ public class Enemy : MonoBehaviour, IDisposable
         {
             Die();
         }
-    }
-
-    public void OnSpawned(IMemoryPool pool)
-    {
-        _pool = pool;
-        currentHealth = startHealth;
-    }
-
-    public void Dispose()
-    {
-        _pool.Despawn(this);
-    }
-
-    public class Pool : MonoMemoryPool<Enemy>
-    {
-
-    }
+    } 
+    
 }

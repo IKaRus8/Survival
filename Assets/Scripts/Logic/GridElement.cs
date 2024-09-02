@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class RoadElement : MonoBehaviour, IGridElement
+public class GridElement : MonoBehaviour, IGridElement
 {         
     [SerializeField] private Transform _transform;
     [SerializeField] private BoxCollider _collider;
@@ -11,9 +11,14 @@ public class RoadElement : MonoBehaviour, IGridElement
         get => _transform;
         set => _transform = value;
     }
-    public Action<IGridElement> OnPlayerEnter { get; set; }
-    public bool IsPlayerInside { get=> isPlayerInside;  }
+    public BoxCollider Collider
+    {
+        get => _collider;
+        set => _collider = value;
+    }
 
+    public Action<IGridElement> OnPlayerEnter { get; set; }
+    public bool IsPlayerInside => isPlayerInside;  
     private bool isPlayerInside = false;
     public void SetPosition(Vector3 position)
     {

@@ -7,8 +7,7 @@ namespace Logic.Installers
         public override void InstallBindings()
         {
             // Services
-            Container.Bind<IAssetService>().To<AssetService>().AsSingle();
-            Container.Bind<IInput>().To<MobileInput>().AsSingle();
+            Container.Bind<IAssetService>().To<AssetService>().AsSingle();                    
         }
     }
 }

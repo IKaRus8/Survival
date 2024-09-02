@@ -18,6 +18,7 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
     public override void InstallBindings()
     {
         // Services
+        Container.Bind<IInput>().To<MobileInput>().AsSingle();
         Container.Bind<ICreator<IPlayer>>().To<PlayerCreator>().AsSingle();
         Container.BindInterfacesTo<PlayerHolder>().AsSingle();
         Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
@@ -30,7 +31,7 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         Container.Bind<Camera>().FromInstance(_camera).AsSingle();
         Container.Bind<ISceneObjectContainer>().FromInstance(_sceneObjectContainer).AsSingle();
         
-        Container.BindMemoryPool<Enemy, Enemy.Pool>().WithInitialSize(30).FromComponentInNewPrefab(_enemyPrefab).UnderTransformGroup("Enemyes");
+       
         
         // Providers
         Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();

@@ -17,3 +17,5 @@ MonoBehaviour:
     spawnChance: 1
   - enemyQuantity: 20
     spawnChance: 0.7
+  - enemyQuantity: 30
+    spawnChance: 0.3
