@@ -1,32 +1,38 @@
-﻿using System;
+﻿using DG.Tweening;
 using UnityEngine;
-using Zenject;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour //Ienemy
 {
-    private int startHealth = 100;
-    private int currentHealth;  
+    private const int StartHealth = 100;
+    private int currentHealth;
+    public float AttackDistance => 50f;
 
-    public Action<Enemy> OnDead;
+    public int CurrentHealth => currentHealth;
+    public bool IsDead { get; private set; }
 
     public void Start()
     {
-        currentHealth = startHealth;
+        currentHealth = StartHealth;
     }
 
     public void Die()
     {
-       OnDead?.Invoke(this);
-       gameObject.SetActive(false);
-    }  
+        IsDead = true;
+        gameObject.SetActive(false);
+    }
+
+    public void Move(Vector3 newPosition)
+    {
+        transform.DOMove(newPosition, 0f);
+    }
+
+    public void Attack()
+    {
+        
+    }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
-    } 
-    
+    }
 }

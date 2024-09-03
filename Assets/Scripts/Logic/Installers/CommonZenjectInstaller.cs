@@ -24,16 +24,16 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<GridController>().AsSingle().NonLazy();
-        Container.BindInterfacesTo<EnemySpawner>().AsSingle().NonLazy();      
+        Container.BindInterfacesTo<EnemySpawner>().AsSingle().NonLazy();
+        Container.Bind<EnemyDeathObserver>().AsSingle().NonLazy();
         
         // Scene objects 
         Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
         Container.Bind<Camera>().FromInstance(_camera).AsSingle();
         Container.Bind<ISceneObjectContainer>().FromInstance(_sceneObjectContainer).AsSingle();
         
-       
-        
         // Providers
         Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
+        Container.BindInterfacesTo<AliveEnemyProvider>().AsSingle();
     }
 }

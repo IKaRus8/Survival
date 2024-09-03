@@ -11,21 +11,27 @@ namespace Logic.Providers
         private const string EnemySpawnSettingsKey = "EnemySpawnSettings";
         
         private readonly IAssetService _assetService;
-        
+        private readonly IAliveEnemyProvider _enemyProvider;
+
         private EnemySpawnSettings _settings;
         
         public ReactiveProperty<bool> IsSettingLoadedRx { get; } 
 
-        public EnemySpawnSettingsProvider(IAssetService assetService)
+        public EnemySpawnSettingsProvider(
+            IAssetService assetService,
+            IAliveEnemyProvider enemyProvider)
         {
             _assetService = assetService;
+            _enemyProvider = enemyProvider;
             IsSettingLoadedRx = new ReactiveProperty<bool>();
             
             LoadSettings().Forget();
         }
 
-        public float GetChanceForSpawn(int enemyCount)
+        public float GetChanceForSpawn()
         {
+            var enemyCount = _enemyProvider.AliveEnemyCount;
+            
             foreach (var enemyParameter in _settings.SpawnParameters.OrderBy(p => p.enemyQuantity))
             {
                 if (enemyCount < enemyParameter.enemyQuantity)

@@ -6,6 +6,6 @@ namespace Logic.Interfaces.Providers
     {
         ReactiveProperty<bool> IsSettingLoadedRx { get; }
 
-        float GetChanceForSpawn(int enemyCount);
+        float GetChanceForSpawn();
     }
 }
