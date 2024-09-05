@@ -14,6 +14,7 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
     private SceneObjectContainer _sceneObjectContainer;
     [SerializeField] 
     private GameObject _enemyPrefab;
+    [SerializeField] GameObject _bulletPrefab;
     
     public override void InstallBindings()
     {
@@ -22,10 +23,12 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         Container.Bind<ICreator<IPlayer>>().To<PlayerCreator>().AsSingle();
         Container.BindInterfacesTo<PlayerHolder>().AsSingle();
         Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<PlayerRotateSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<CameraMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<GridController>().AsSingle().NonLazy();
         Container.BindInterfacesTo<EnemySpawner>().AsSingle().NonLazy();
         Container.Bind<EnemyDeathObserver>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<EnemyMoveSystem>().AsSingle().NonLazy(); 
         
         // Scene objects 
         Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
@@ -35,5 +38,12 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         // Providers
         Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
         Container.BindInterfacesTo<AliveEnemyProvider>().AsSingle();
+        Container.BindInterfacesTo<PlayerTargetsProvider>().AsSingle().NonLazy();
+
+        Container.BindInterfacesTo<PlayerWeapon>().AsSingle().NonLazy();
+
+        Container.BindFactory<Enemy, Transform, Bullet, Bullet.Factory>().FromMonoPoolableMemoryPool(
+            x => x.WithInitialSize(30).FromComponentInNewPrefab(_bulletPrefab).UnderTransformGroup("BulletPool"));
+
     }
 }

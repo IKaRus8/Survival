@@ -13,10 +13,13 @@ namespace Logic.Providers
         
         public ObservableList<Enemy> EnemiesRx { get; }
 
-        public IReadOnlyCollection<Enemy> AliveEnemies => GetAliveEnemies();
-        
+        public IReadOnlyCollection<Enemy> AliveEnemies => GetAliveEnemyes();
+        public IReadOnlyCollection<Enemy> DeadEnemies => GetDeadEnemyes();
+
+
         public int AliveEnemyCount => AliveEnemies.Count;
 
+       
         public AliveEnemyProvider()
         {
             Enemies = new List<Enemy>();
@@ -34,12 +37,19 @@ namespace Logic.Providers
             EnemiesRx.Remove(enemy);
             Enemies.Remove(enemy);
         }
-
-        private List<Enemy> GetAliveEnemies()
+        private List<Enemy> GetAliveEnemyes()
         {
             var aliveEnemies = Enemies.Where(e => e.IsDead == false).ToList();
             
             return aliveEnemies;
         }
+
+        private List<Enemy> GetDeadEnemyes()
+        {
+            var deadEnemies = Enemies.Where(e => e.IsDead == true).ToList();
+            
+            return deadEnemies;
+        }
+        
     }
 }

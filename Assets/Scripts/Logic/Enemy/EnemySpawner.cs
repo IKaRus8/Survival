@@ -87,10 +87,24 @@ public class EnemySpawner : IDisposable
             return;
         }
 
-        var enemy = _container.InstantiatePrefabForComponent<Enemy>(_enemyPrefab);
+        
+        if (_aliveEnemyProvider.DeadEnemies.Count == 0)
+        {
+            var enemy = _container.InstantiatePrefabForComponent<Enemy>(_enemyPrefab);
+            PrepareEnemy(enemy);
+        }
+        else
+        {
+            var  enemyList = (List<Enemy>)_aliveEnemyProvider.DeadEnemies;
+            var enemy = enemyList[0];
+            PrepareEnemy(enemy);
+        }       
+    }
 
+    private void PrepareEnemy(Enemy enemy)
+    {
+        enemy.Reset();
         enemy.transform.position = GetEnemyPos();
-
         AddEnemy(enemy);
     }
 
@@ -110,11 +124,10 @@ public class EnemySpawner : IDisposable
         var minBounds = gameField.bounds.min;
         var maxBounds = gameField.bounds.max;
 
-        var randomX = Random.Range(minBounds.x, maxBounds.x);
-        var randomY = Random.Range(minBounds.y, maxBounds.y);
+        var randomX = Random.Range(minBounds.x, maxBounds.x);        
         var randomZ = Random.Range(minBounds.z, maxBounds.z);
 
-        return new Vector3(randomX, randomY, randomZ);
+        return new Vector3(randomX, 0, randomZ);
     }
 
     public void Dispose()
