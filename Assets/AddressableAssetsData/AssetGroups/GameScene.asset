@@ -15,13 +15,8 @@ MonoBehaviour:
   m_GroupName: GameScene
   m_GUID: cb08bcd8d9f92b84fa9b0c0199931ea9
   m_SerializeEntries:
-  - m_GUID: 9fee3d429ed89dd4a924b4513d9a9949
-    m_Address: Assets/Prefabs/Game/Enemy.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ba0ab515e5da74342a36c980eb55e8f0
-    m_Address: Assets/Prefabs/Game/Plane.prefab
+  - m_GUID: 1fce62393c8074cc88d3f140e3c3f856
+    m_Address: EnemySpawnSettings
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

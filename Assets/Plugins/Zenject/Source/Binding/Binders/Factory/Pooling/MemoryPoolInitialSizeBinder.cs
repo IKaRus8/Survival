@@ -1,3 +1,6 @@
+using System;
+using UnityEngine;
+
 namespace Zenject
 {
     [NoReflectionBaking]
@@ -7,7 +10,7 @@ namespace Zenject
             DiContainer bindContainer, BindInfo bindInfo, FactoryBindInfo factoryBindInfo, MemoryPoolBindInfo poolBindInfo)
             : base(bindContainer, bindInfo, factoryBindInfo, poolBindInfo)
         {
-        }
+        }    
 
         public MemoryPoolExpandBinder<TContract> WithMaxSize(int size)
         {

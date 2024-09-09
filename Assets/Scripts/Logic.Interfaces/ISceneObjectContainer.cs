@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface ISceneObjectContainer 
+public interface ISceneObjectContainer
 {
     Transform RoadParent { get; }
-}
+}   

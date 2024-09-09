@@ -5,37 +5,37 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-public class RoadController: IDisposable
+public class GridController: IDisposable, IGridController
 {
-    private const float _offset = 10;
+    private const float Offset = 10;
 
-    private readonly List<IRoadElement> _roads = new();
-    private readonly List<IRoadElement> _roadsInRightPos = new();
-    private readonly List<Vector3> _positions = new List<Vector3>
-         {
+    private readonly List<IGridElement> _roads = new();
+    private readonly List<IGridElement> _roadsInRightPos = new();
+    private readonly List<Vector3> _positions = new()
+    {
             new Vector3(0, 0, 0),
-            new Vector3(-_offset, 0, 0),
-            new Vector3(_offset, 0, 0),
-            new Vector3(0, 0, _offset),
-            new Vector3(0, 0, -_offset),
-            new Vector3(_offset, 0, _offset),
-            new Vector3(-_offset, 0, -_offset),
-            new Vector3(_offset, 0, -_offset),
-            new Vector3(-_offset, 0, _offset)
+            new Vector3(-Offset, 0, 0),
+            new Vector3(Offset, 0, 0),
+            new Vector3(0, 0, Offset),
+            new Vector3(0, 0, -Offset),
+            new Vector3(Offset, 0, Offset),
+            new Vector3(-Offset, 0, -Offset),
+            new Vector3(Offset, 0, -Offset),
+            new Vector3(-Offset, 0, Offset)
          };
 
     private IInstantiator _container;
     private IAssetService _assetService;
     private ISceneObjectContainer _objectContainer;
 
-    private ReactiveProperty<IRoadElement> _currentElementRX = new ReactiveProperty<IRoadElement>();
+    private readonly ReactiveProperty<IGridElement> _currentElementRx = new();
 
     private Transform _playerTransform;
     private CompositeDisposable _disposables;
     private int _countInMap = 9;
 
 
-    public RoadController(IInstantiator installer, IAssetService assetService, ISceneObjectContainer objectContainer)
+    public GridController(IInstantiator installer, IAssetService assetService, ISceneObjectContainer objectContainer)
     {
         _container = installer;
         _assetService = assetService;   
@@ -61,22 +61,23 @@ public class RoadController: IDisposable
     {      
         for(int i = 0; i < _countInMap; i++)
         {
-            var currentRoadGrid = _container.InstantiatePrefabForComponent<IRoadElement>(roadPrefab, roadParent.transform);
+            var currentRoadGrid = _container.InstantiatePrefabForComponent<IGridElement>(roadPrefab, roadParent.transform);
             currentRoadGrid.SetPosition(_positions[i]);
             currentRoadGrid.OnPlayerEnter += RebuildRoad;
             if (i == 0)
             {
-                _currentElementRX.Value = currentRoadGrid;
-            }
+                _currentElementRx.Value = currentRoadGrid;
+            }           
+            _roadsInRightPos.Add(currentRoadGrid);            
             _roads.Add(currentRoadGrid);
-        }
-        
+        }        
     }
 
-    public void RebuildRoad(IRoadElement road)
+    public void RebuildRoad(IGridElement grid)
     {        
-        _roadsInRightPos.Clear();       
-        _currentElementRX.Value = road;
+        _roadsInRightPos.Clear();
+        _currentElementRx.Value.Reset();
+        _currentElementRx.Value = grid;        
 
         var emptyPos = CheckEmptyPos();
         var _roadsInWrongPos = _roads.Except(_roadsInRightPos).ToList();
@@ -90,7 +91,7 @@ public class RoadController: IDisposable
     private List<Vector3> CheckEmptyPos()
     {
         var emptyPosList = new List<Vector3>();
-        var centerPosition = _currentElementRX.Value.Transform.position;
+        var centerPosition = _currentElementRx.Value.Transform.position;
 
         foreach (var pos in _positions)
         {
@@ -119,7 +120,12 @@ public class RoadController: IDisposable
         }
         return true;
     }
-  
+
+    public List<IGridElement> GetRoadsForSpawn()
+    {
+        return _roadsInRightPos.Where(x => x.IsPlayerInside == false).ToList();
+    }
+    
     void IDisposable.Dispose()
     {
         _disposables?.Dispose();
@@ -129,6 +135,11 @@ public class RoadController: IDisposable
             road.OnPlayerEnter -= RebuildRoad;
         }
     }
+}
+
+public interface IGridController
+{
+    List<IGridElement> GetRoadsForSpawn();
 }
 
 
