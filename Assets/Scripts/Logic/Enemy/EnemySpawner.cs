@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Data.ScriptableObjects;
-using Logic.Interfaces.Providers;
 using R3;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
+using Logic.Interfaces.Providers;
+
 
 public class EnemySpawner : IDisposable
 {
@@ -58,7 +59,6 @@ public class EnemySpawner : IDisposable
     {
         _aliveEnemyProvider.AddEnemy(enemy);
     }
-
     private void StartSpawn(bool value)
     {
         if (!value)

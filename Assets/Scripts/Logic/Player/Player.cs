@@ -1,8 +1,8 @@
-using UnityEngine;
 using R3;
+using UnityEngine;
 
 public class Player : MonoBehaviour, IPlayer
-{  
+{
     public float Speed => movingSettings.BaseSpeed;
     public float RotateSpeed => movingSettings.BaseRotationSpeed;
 
@@ -11,10 +11,10 @@ public class Player : MonoBehaviour, IPlayer
     private float _currentHealth;
 
     public MovingSettings movingSettings;
-    
-    private Transform _transform;
-    public Transform Transform => _transform;    
 
+    private Transform _transform;
+    public Transform Transform => _transform;
+   
     [SerializeField] private Transform _weaponShootPoint;
     public Transform WeaponShootPoint => _weaponShootPoint;
 
@@ -28,13 +28,13 @@ public class Player : MonoBehaviour, IPlayer
         _currentHealth = 100f;
     }
 
-    public  void Move(Vector3 direction, float speed, float delta)
+    public void Move(Vector3 direction, float speed, float delta)
     {
-        if (IsDead) 
+        if (IsDead)
         {
-            return; 
+            return;
         }
-        _transform.position += direction * speed * delta;      
+        _transform.position += direction * speed * delta;
     }
 
     public void Rotate(Vector3 direction, float speed, float delta)
@@ -50,8 +50,8 @@ public class Player : MonoBehaviour, IPlayer
 
     public void TakeDamage(float damage)
     {
-       _currentHealth -= damage;
-        if(_currentHealth <= 0)
+        _currentHealth -= damage;
+        if (_currentHealth <= 0)
         {
             Die();
         }
@@ -62,3 +62,4 @@ public class Player : MonoBehaviour, IPlayer
         _currentHealth = 0;
     }
 }
+
