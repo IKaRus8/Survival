@@ -41,7 +41,7 @@ public class PlayerWeapon : IWeapon, IDisposable
 
     public void TryFire()
     {
-        if (_player == null || _targetRx.Value == null || _targetRx.Value.IsDead||_player.IsAiming.Value||_shotPoint==null) return;
+        if (_player == null || _targetRx.Value == null || _targetRx.Value.IsDead||_player.IsRotating.Value||_shotPoint==null) return;
 
         Shot();
     }

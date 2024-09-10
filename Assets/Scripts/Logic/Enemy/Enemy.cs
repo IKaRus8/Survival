@@ -1,52 +1,74 @@
-﻿using Cysharp.Threading.Tasks;
-using DG.Tweening;
+﻿using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour //Ienemy
 {
     private const float StartHealth = 100;
+    
+    private readonly TimeSpan _attackDelay = TimeSpan.FromSeconds(0.5f);
+
     private float currentHealth;
-    public float AttackDistance => 2.5f;
-    public float MoveSpeed => moveSpeed;
-
     private float moveSpeed;
+    private bool isCanAttack;
 
+    public float AttackDistance => 2.5f;
     public float CurrentHealth => currentHealth;
     public bool IsDead { get; private set; }
-    private bool isCanAttack;
-    private float attackDelay = 1f;  
+    public float MoveSpeed => moveSpeed;
 
-    public void Start()
+    private void OnEnable()
     {
         currentHealth = StartHealth;
-        moveSpeed = Random.Range(1, 3f);        
         IsDead = false;
         isCanAttack = true;
+        moveSpeed = Random.Range(1, 3f);
     }
 
     public void Die()
     {
         gameObject.SetActive(false);
-        IsDead = true;       
+        IsDead = true;
     }
 
-    public void Move(Vector3 newPosition)
+    //to newPosition
+    public void Move(Vector3 offset)
     {
-        transform.position+=newPosition;
+        transform.position += offset;
     }
 
-    public void Attack(IPlayer player)
+    public virtual void Attack(IPlayer player)
     {
-       if(!isCanAttack) return;
+        if (!isCanAttack)
+        {
+            return;
+        }
 
-       player.TakeDamage(1f);
-       AttackDelayTimer().Forget();
-    }  
-
-    private async UniTaskVoid AttackDelayTimer()
-    {
         isCanAttack = false;
-        await UniTask.Delay((int)attackDelay * 1000);
+        
+       AttackPrepare(player).Forget();
+    }
+
+    private async UniTaskVoid AttackPrepare(IPlayer player)
+    {
+        await UniTask.Delay(_attackDelay);
+        
+        AttackProcess(player);
+    }
+
+    private void AttackProcess(IPlayer player)
+    {
+        //to damage system
+        player.TakeDamage(1f);
+
+        PostAttack().Forget();
+    }
+
+    private async UniTask PostAttack()
+    {
+        await UniTask.Delay(_attackDelay);
+        
         isCanAttack = true;
     }
 
@@ -58,7 +80,5 @@ public class Enemy : MonoBehaviour //Ienemy
     public void Reset()
     {
         gameObject.SetActive(true);
-        currentHealth = StartHealth;
-        IsDead = false;
     }
 }

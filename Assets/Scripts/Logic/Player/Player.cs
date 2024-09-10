@@ -20,7 +20,7 @@ public class Player : MonoBehaviour, IPlayer
 
     public bool IsDead => _currentHealth <= 0;
 
-    public ReactiveProperty<bool> IsAiming { get; } = new ReactiveProperty<bool>(false);
+    public ReactiveProperty<bool> IsRotating { get; } = new ReactiveProperty<bool>(false);
 
     private void Awake()
     {

@@ -17,6 +17,6 @@ public interface IPlayer
     float RotateSpeed { get; }
     Transform Transform { get; }
 
-    ReactiveProperty<bool> IsAiming { get; }
+    ReactiveProperty<bool> IsRotating { get; }
     Transform WeaponShootPoint { get; }
 }

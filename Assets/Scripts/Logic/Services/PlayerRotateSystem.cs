@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerRotateSystem : IRotatable, IDisposable
 {
     private IPlayer _player;   
-    private ReactiveProperty<Enemy> _targetRX;
+    private Enemy _target;
 
     private readonly CompositeDisposable _disposables;
 
@@ -18,7 +18,7 @@ public class PlayerRotateSystem : IRotatable, IDisposable
         _disposables = new CompositeDisposable();
         playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
 
-        _targetRX = targetProvider.TargetRX;
+        targetProvider.TargetRX.Subscribe(OnTargetChanged).AddTo(_disposables);
     }    
 
     private void OnPlayerCreated(IPlayer player)
@@ -31,24 +31,30 @@ public class PlayerRotateSystem : IRotatable, IDisposable
         _player = player;
 
         Observable.EveryUpdate().Subscribe(_ => RotateUpdate()).AddTo(_disposables);
-    }    
+    }
+
+    private void OnTargetChanged(Enemy enemy)
+    {
+        _target = enemy;
+    }
 
     public void RotateUpdate()
     {
-        if (_player.Transform == null || _targetRX.Value == null)
+        if (_player.Transform == null || _target == null)
         {
             return;
         }
 
-        var direction = _targetRX.Value.transform.position - _player.Transform.position;
+        var direction = _target.transform.position - _player.Transform.position;
+        
         if ((_player.Transform.forward - direction.normalized).sqrMagnitude > 0.1f)
         {
-            _player.IsAiming.Value = true;
+            _player.IsRotating.Value = true;
             _player.Rotate(direction, _player.Speed, Time.deltaTime);
         }
         else
         {
-            _player.IsAiming.Value = false;
+            _player.IsRotating.Value = false;
         }
     }
 
