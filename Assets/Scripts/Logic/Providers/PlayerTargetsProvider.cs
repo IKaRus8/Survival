@@ -12,13 +12,13 @@ namespace Logic.Providers
         private IPlayerHolder _playerHolder;
         private CompositeDisposable _disposables=new CompositeDisposable();
 
-        public ReactiveProperty<Enemy> TargetRX { get; }
+        public ReactiveProperty<IEnemy> TargetRX { get; }
 
         public PlayerTargetsProvider(IAliveEnemyProvider aliveEnemyProvider, IPlayerHolder playerHolder)
         {
             _aliveEnemyProvider = aliveEnemyProvider;
             _playerHolder = playerHolder;
-            TargetRX= new ReactiveProperty<Enemy>();
+            TargetRX= new ReactiveProperty<IEnemy>();
             playerHolder.PlayerRx.Subscribe(InitTargetsObserv).AddTo(_disposables);
         }
 
@@ -34,10 +34,14 @@ namespace Logic.Providers
 
         public void FindNearestAliveTarget()
         {
+            if (TargetRX.Value != null && !TargetRX.Value.IsDead) 
+            { 
+                return;
+            }
 
             var enemies = _aliveEnemyProvider.AliveEnemies;
             var minDistance = float.MaxValue;
-            var nearestEnemy = default(Enemy);
+            var nearestEnemy = default(IEnemy);
 
             if (enemies == null || enemies.Count == 0)
             {
@@ -46,7 +50,7 @@ namespace Logic.Providers
 
             foreach (var enemy in enemies)
             {
-                var distance = Vector3.SqrMagnitude(_playerHolder.PlayerRx.Value.Transform.position - enemy.transform.position);
+                var distance = Vector3.SqrMagnitude(_playerHolder.PlayerRx.Value.Transform.position - enemy.Transform.position);
                 if (distance < minDistance)
                 {
                     minDistance = distance;

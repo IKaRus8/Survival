@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerRotateSystem : IRotatable, IDisposable
 {
     private IPlayer _player;   
-    private Enemy _target;
+    private IEnemy _target;
 
     private readonly CompositeDisposable _disposables;
 
@@ -33,7 +33,7 @@ public class PlayerRotateSystem : IRotatable, IDisposable
         Observable.EveryUpdate().Subscribe(_ => RotateUpdate()).AddTo(_disposables);
     }
 
-    private void OnTargetChanged(Enemy enemy)
+    private void OnTargetChanged(IEnemy enemy)
     {
         _target = enemy;
     }
@@ -45,7 +45,7 @@ public class PlayerRotateSystem : IRotatable, IDisposable
             return;
         }
 
-        var direction = _target.transform.position - _player.Transform.position;
+        var direction = _target.Transform.position - _player.Transform.position;
         
         if ((_player.Transform.forward - direction.normalized).sqrMagnitude > 0.1f)
         {

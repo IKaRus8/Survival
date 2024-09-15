@@ -20,9 +20,7 @@ public class EnemySpawner : IDisposable
     private readonly IAliveEnemyProvider _aliveEnemyProvider;
 
     private GameObject _enemyPrefab;
-    private bool _isGetPrefab;
-
-    private List<EnemySpawnSettings.SpawnParameter> _enemyParameters;
+    private bool _isGetPrefab;    
 
     public EnemySpawner(
         IGridController gridController,
@@ -55,7 +53,7 @@ public class EnemySpawner : IDisposable
         _isGetPrefab = true;
     }
 
-    private void AddEnemy(Enemy enemy)
+    private void AddEnemy(IEnemy enemy)
     {
         _aliveEnemyProvider.AddEnemy(enemy);
     }
@@ -90,21 +88,21 @@ public class EnemySpawner : IDisposable
         
         if (_aliveEnemyProvider.DeadEnemies.Count == 0)
         {
-            var enemy = _container.InstantiatePrefabForComponent<Enemy>(_enemyPrefab);
+            var enemy = _container.InstantiatePrefabForComponent<IEnemy>(_enemyPrefab);
             PrepareEnemy(enemy);
         }
         else
         {
-            var  enemyList = (List<Enemy>)_aliveEnemyProvider.DeadEnemies;
+            var  enemyList = (List<IEnemy>)_aliveEnemyProvider.DeadEnemies;
             var enemy = enemyList[0];
             PrepareEnemy(enemy);
         }       
     }
 
-    private void PrepareEnemy(Enemy enemy)
+    private void PrepareEnemy(IEnemy enemy)
     {
         enemy.Reset();
-        enemy.transform.position = GetEnemyPos();
+        enemy.Transform.position = GetEnemyPos();
         AddEnemy(enemy);
     }
 

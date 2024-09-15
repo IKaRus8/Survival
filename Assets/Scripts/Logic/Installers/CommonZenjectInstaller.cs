@@ -29,6 +29,7 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         Container.BindInterfacesTo<EnemySpawner>().AsSingle().NonLazy();
         Container.Bind<EnemyDeathObserver>().AsSingle().NonLazy();
         Container.BindInterfacesTo<EnemyMoveSystem>().AsSingle().NonLazy();
+        Container.BindInterfacesTo<EnemyAttackSystem>().AsSingle().NonLazy();
 
         // Scene objects 
         Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
@@ -41,7 +42,7 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         Container.BindInterfacesTo<PlayerTargetsProvider>().AsSingle().NonLazy();
         Container.BindInterfacesTo<PlayerWeapon>().AsSingle().NonLazy();
 
-        Container.BindFactory<Enemy, Transform, Bullet, Bullet.Factory>().FromMonoPoolableMemoryPool(
+        Container.BindFactory<IEnemy, Transform, Bullet, Bullet.Factory>().FromMonoPoolableMemoryPool(
             x => x.WithInitialSize(30).FromComponentInNewPrefab(_bulletPrefab).UnderTransformGroup("BulletPool"));
     }
 }

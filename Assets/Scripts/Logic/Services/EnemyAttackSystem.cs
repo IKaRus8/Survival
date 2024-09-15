@@ -5,27 +5,27 @@ using UnityEngine;
 using System.Linq;
 using R3;
 
-public class EnemyMoveSystem : IMovable, IDisposable
+public class EnemyAttackSystem : IDisposable
 {
     private readonly IAliveEnemyProvider _aliveEnemyProvider;
     private readonly CompositeDisposable _disposables;
-  
+   
     private IPlayer _player;
 
-    public EnemyMoveSystem(IAliveEnemyProvider aliveEnemyProvider, IPlayerHolder playerHolder)
+    public EnemyAttackSystem(IAliveEnemyProvider aliveEnemyProvider, IPlayerHolder playerHolder)
     {
         _aliveEnemyProvider = aliveEnemyProvider;
         _disposables = new CompositeDisposable();
 
-        Observable.EveryUpdate().Subscribe(MoveUpdate).AddTo(_disposables);
+        Observable.EveryUpdate().Subscribe(CheckAttack).AddTo(_disposables);
         playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
     }
 
-    private void MoveUpdate(Unit _)
-    {
-        if (_player == null)
-        {
-            return;
+    private void  CheckAttack(Unit _)
+    {      
+        if (_player == null) 
+        { 
+            return; 
         }
 
         foreach (var enemy in _aliveEnemyProvider.AliveEnemies)
@@ -35,14 +35,11 @@ public class EnemyMoveSystem : IMovable, IDisposable
                       enemy.Transform.position;
 
             var distance = direction.sqrMagnitude;
-            
-            if (distance > enemy.AttackDistance * enemy.AttackDistance)
-            {
-                var newdirection = direction.normalized * enemy.MoveSpeed * UnityEngine.Random.Range(0.2f, 1.2f) *
-                                   Time.deltaTime;
-                
-                enemy.Move(newdirection);
-            }                      
+
+            if (distance <= enemy.AttackDistance * enemy.AttackDistance)
+            {               
+                enemy.Attack(_player);
+            }          
         }
     }
 
@@ -56,3 +53,4 @@ public class EnemyMoveSystem : IMovable, IDisposable
         _disposables.Dispose();
     }
 }
+

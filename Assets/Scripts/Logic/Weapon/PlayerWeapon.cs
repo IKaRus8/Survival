@@ -8,7 +8,7 @@ using Cysharp.Threading.Tasks;
 public class PlayerWeapon : IWeapon, IDisposable
 {
     private IPlayer _player;
-    private ReactiveProperty<Enemy> _targetRx;
+    private ReactiveProperty<IEnemy> _targetRx;
     private  CompositeDisposable _disposables = new CompositeDisposable();
     private float _shotDelay=1f;
 
@@ -65,15 +65,4 @@ public class PlayerWeapon : IWeapon, IDisposable
     {
        _disposables.Dispose();
     }
-}
-
-public interface IWeapon
-{   
-    bool IsCanShoot { get; }
-
-    float ShotDelay { get; }
-
-    void TryFire();
-
-    void Shot();   
 }

@@ -3,8 +3,8 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Enemy : MonoBehaviour //Ienemy
-{
+public class Enemy : MonoBehaviour, IEnemy 
+{ 
     private const float StartHealth = 100;
     
     private readonly TimeSpan _attackDelay = TimeSpan.FromSeconds(0.5f);
@@ -17,6 +17,8 @@ public class Enemy : MonoBehaviour //Ienemy
     public float CurrentHealth => currentHealth;
     public bool IsDead { get; private set; }
     public float MoveSpeed => moveSpeed;
+
+    public Transform Transform => transform;
 
     private void OnEnable()
     {
@@ -81,4 +83,21 @@ public class Enemy : MonoBehaviour //Ienemy
     {
         gameObject.SetActive(true);
     }
+}
+
+public interface IEnemy
+{
+    public Transform Transform { get; }
+    public float AttackDistance { get; }
+    public float MoveSpeed { get; }
+    public bool IsDead { get; }
+
+    public float CurrentHealth { get; }
+
+    void Die();
+    void Reset();
+    void Move(Vector3 offset);
+    void Attack(IPlayer player); 
+    void TakeDamage(float damage);
+
 }

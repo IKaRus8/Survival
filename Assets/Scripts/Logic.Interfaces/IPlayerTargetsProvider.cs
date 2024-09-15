@@ -5,7 +5,7 @@ namespace Logic.Providers
 {
     public interface IPlayerTargetsProvider
     {
-        ReactiveProperty<Enemy> TargetRX { get; }
+        ReactiveProperty<IEnemy> TargetRX { get; }
         void InitTargetsObserv(IPlayer player);
     }
 }
