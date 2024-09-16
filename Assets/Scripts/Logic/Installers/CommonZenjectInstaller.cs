@@ -11,9 +11,7 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
     [SerializeField]
     private Camera _camera;
     [SerializeField]
-    private SceneObjectContainer _sceneObjectContainer;
-    [SerializeField] 
-    private GameObject _enemyPrefab;
+    private SceneObjectContainer _sceneObjectContainer;  
     [SerializeField] GameObject _bulletPrefab;
 
     public override void InstallBindings()
