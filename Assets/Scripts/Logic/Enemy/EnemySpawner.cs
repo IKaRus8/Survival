@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Data.ScriptableObjects;
-using Logic.Interfaces.Providers;
 using R3;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
+using Logic.Interfaces.Providers;
+
 
 public class EnemySpawner : IDisposable
 {
@@ -19,9 +20,7 @@ public class EnemySpawner : IDisposable
     private readonly IAliveEnemyProvider _aliveEnemyProvider;
 
     private GameObject _enemyPrefab;
-    private bool _isGetPrefab;
-
-    private List<EnemySpawnSettings.SpawnParameter> _enemyParameters;
+    private bool _isGetPrefab;    
 
     public EnemySpawner(
         IGridController gridController,
@@ -54,11 +53,10 @@ public class EnemySpawner : IDisposable
         _isGetPrefab = true;
     }
 
-    private void AddEnemy(Enemy enemy)
+    private void AddEnemy(IEnemy enemy)
     {
         _aliveEnemyProvider.AddEnemy(enemy);
     }
-
     private void StartSpawn(bool value)
     {
         if (!value)
@@ -87,10 +85,24 @@ public class EnemySpawner : IDisposable
             return;
         }
 
-        var enemy = _container.InstantiatePrefabForComponent<Enemy>(_enemyPrefab);
+        
+        if (_aliveEnemyProvider.DeadEnemies.Count == 0)
+        {
+            var enemy = _container.InstantiatePrefabForComponent<IEnemy>(_enemyPrefab);
+            PrepareEnemy(enemy);
+        }
+        else
+        {
+            var  enemyList = (List<IEnemy>)_aliveEnemyProvider.DeadEnemies;
+            var enemy = enemyList[0];
+            PrepareEnemy(enemy);
+        }       
+    }
 
-        enemy.transform.position = GetEnemyPos();
-
+    private void PrepareEnemy(IEnemy enemy)
+    {
+        enemy.Reset();
+        enemy.Transform.position = GetEnemyPos();
         AddEnemy(enemy);
     }
 
@@ -110,11 +122,10 @@ public class EnemySpawner : IDisposable
         var minBounds = gameField.bounds.min;
         var maxBounds = gameField.bounds.max;
 
-        var randomX = Random.Range(minBounds.x, maxBounds.x);
-        var randomY = Random.Range(minBounds.y, maxBounds.y);
+        var randomX = Random.Range(minBounds.x, maxBounds.x);        
         var randomZ = Random.Range(minBounds.z, maxBounds.z);
 
-        return new Vector3(randomX, randomY, randomZ);
+        return new Vector3(randomX, 0, randomZ);
     }
 
     public void Dispose()

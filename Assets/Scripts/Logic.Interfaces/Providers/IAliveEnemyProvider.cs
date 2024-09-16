@@ -3,14 +3,16 @@ using UnityEngine.Rendering;
 
 namespace Logic.Interfaces.Providers
 {
+
     public interface IAliveEnemyProvider
     {
-        List<Enemy> Enemies { get; }
-        ObservableList<Enemy> EnemiesRx { get; }
-        IReadOnlyCollection<Enemy> AliveEnemies { get; }
+        List<IEnemy> Enemies { get; }
+        ObservableList<IEnemy> EnemiesRx { get; }
+        IReadOnlyCollection<IEnemy> AliveEnemies { get; }
+        IReadOnlyCollection<IEnemy> DeadEnemies { get; }
         int AliveEnemyCount { get; }
-        
-        void AddEnemy(Enemy enemy);
-        void RemoveEnemy(Enemy enemy);
+        void AddEnemy(IEnemy enemy);
+        void RemoveEnemy(IEnemy enemy);
     }
+
 }

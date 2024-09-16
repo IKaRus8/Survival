@@ -701,6 +701,8 @@ MonoBehaviour:
   _sceneObjectContainer: {fileID: 1297955340}
   _enemyPrefab: {fileID: 632290905278451709, guid: 9fee3d429ed89dd4a924b4513d9a9949,
     type: 3}
+  _bulletPrefab: {fileID: 6756244108611802762, guid: dccc47b88b43928468ec7a445319f743,
+    type: 3}
 --- !u!1 &1604795986
 GameObject:
   m_ObjectHideFlags: 0
