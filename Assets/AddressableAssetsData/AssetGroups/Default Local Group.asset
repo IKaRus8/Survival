@@ -18,14 +18,12 @@ MonoBehaviour:
   - m_GUID: 9fee3d429ed89dd4a924b4513d9a9949
     m_Address: Enemy
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - Game
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ba0ab515e5da74342a36c980eb55e8f0
     m_Address: Assets/Prefabs/Game/Plane.prefab
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - Game
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 34bf3b6ae3ac68d4292cfb90806639ec, type: 2}
