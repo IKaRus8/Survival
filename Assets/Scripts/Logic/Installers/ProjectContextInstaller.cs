@@ -8,7 +8,7 @@ namespace Logic.Installers
         {
             // Services
             Container.Bind<IAssetService>().To<AssetService>().AsSingle();   
-            Container.Bind<ISceneController>().To<SceneController>().AsSingle();
+            Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
         }
     }
 }

@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using Logic.Interfaces.Presenters;
 using Logic.Providers;
 using Logic.Interfaces.Providers;
 using R3;
@@ -9,10 +10,14 @@ namespace Logic.Services
     public class EnemyDeathObserver
     {
         private readonly IAliveEnemyProvider _aliveEnemyProvider;
+        private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
 
-        public EnemyDeathObserver(IAliveEnemyProvider aliveEnemyProvider)
+        public EnemyDeathObserver(
+            IAliveEnemyProvider aliveEnemyProvider,
+            IGameEndedPopupPresenter gameEndedPopupPresenter)
         {
             _aliveEnemyProvider = aliveEnemyProvider;
+            _gameEndedPopupPresenter = gameEndedPopupPresenter;
 
             Observable.EveryUpdate().Subscribe(_ => UpdateState());
         }
@@ -34,6 +39,7 @@ namespace Logic.Services
                 }
                 
                 enemy.Die();
+                _gameEndedPopupPresenter.ShowPopup();
             }
         }
     }

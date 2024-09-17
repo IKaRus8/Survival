@@ -1,8 +1,6 @@
 using R3;
 using System;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
-using Zenject;
 
 public class PlayerHolder : IPlayerHolder, IDisposable
 {

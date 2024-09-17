@@ -5,6 +5,6 @@ public class BootstrapSceneInstaller : MonoInstaller<BootstrapSceneInstaller>
 {
     public override void InstallBindings()
     {
-        Container.Bind<IServicesLoader>().To<ServicesLoader>().AsSingle().NonLazy();
+        Container.Bind<IGameBootstraper>().To<GameBootstraper>().AsSingle().NonLazy();
     }
 }

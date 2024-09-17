@@ -1,9 +1,12 @@
+using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Providers;
+using Logic.Presenters;
 using Logic.Providers;
 using Logic.Services;
 using UnityEngine;
 using Zenject;
 
+//TODO: переименовать 
 public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
 {
     [SerializeField]
@@ -12,7 +15,8 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
     private Camera _camera;
     [SerializeField]
     private SceneObjectContainer _sceneObjectContainer;  
-    [SerializeField] GameObject _bulletPrefab;
+    [SerializeField] 
+    GameObject _bulletPrefab;
 
     public override void InstallBindings()
     {
@@ -42,5 +46,8 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
 
         Container.BindFactory<IEnemy, Transform, Bullet, Bullet.Factory>().FromMonoPoolableMemoryPool(
             x => x.WithInitialSize(30).FromComponentInNewPrefab(_bulletPrefab).UnderTransformGroup("BulletPool"));
+        
+        //Presenters
+        Container.Bind<IGameEndedPopupPresenter>().To<GameEndedPopupPresenter>().AsSingle();
     }
 }

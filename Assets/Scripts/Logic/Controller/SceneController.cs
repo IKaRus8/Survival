@@ -3,15 +3,24 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.AddressableAssets;
 
-public class SceneController: ISceneController
+public class SceneLoader: ISceneLoader
 { 
+    private const string MapSceneKey = "MainMenu"; 
+    
     public async UniTask LoadSceneAsync(string sceneName)
     {
-        await Addressables.LoadSceneAsync(sceneName, LoadSceneMode.Single, true);
+        await Addressables.LoadSceneAsync(sceneName);
+    }
+
+    public async UniTask LoadMapSceneAsync()
+    {
+        await Addressables.LoadSceneAsync(MapSceneKey);
     }
 }
 
-public interface ISceneController
+public interface ISceneLoader
 {
     UniTask LoadSceneAsync(string sceneName);
+
+    UniTask LoadMapSceneAsync();
 }

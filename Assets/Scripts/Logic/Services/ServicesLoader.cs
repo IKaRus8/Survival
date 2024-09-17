@@ -1,32 +1,32 @@
 ﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class ServicesLoader : IServicesLoader
+public class GameBootstraper : IGameBootstraper
 {
     private const string sceneName = "MainMenu";
-    private ISceneController _sceneController;
-    public ServicesLoader(ISceneController sceneController)
+    
+    private ISceneLoader _sceneLoader;
+    
+    public GameBootstraper(ISceneLoader sceneLoader)
     {
-        _sceneController = sceneController;
-        LoadingServices();
+        _sceneLoader = sceneLoader;
+        
+        LoadServices().Forget();
     }
-
-    public void LoadingServices()
-    {
-        LoadServices();
-    }
+    
     public async UniTaskVoid LoadServices()
     {
         //что-то там грузим
         //грузим первую сцену
         Debug.Log("Loading services");
         await UniTask.Delay(3000);
+        
         Debug.Log("Dropping scene");
-        await _sceneController.LoadSceneAsync(sceneName);
+        await _sceneLoader.LoadSceneAsync(sceneName);
     }
 }
 
-public interface IServicesLoader
+public interface IGameBootstraper
 {
     UniTaskVoid LoadServices(); 
 }
