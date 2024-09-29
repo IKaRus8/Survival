@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using Zenject;
 
-public class Bullet : MonoBehaviour, IPoolable<IEnemy, Transform, IMemoryPool>, IDisposable
+public class Bullet : MonoBehaviour, IPoolable<IPlayer, IEnemy, Transform, IDamageSystem, IMemoryPool>, IDisposable
 {
     private IMemoryPool _pool;
     private float damage=50f;
@@ -21,17 +21,17 @@ public class Bullet : MonoBehaviour, IPoolable<IEnemy, Transform, IMemoryPool>, 
         _pool = null;        
     }
 
-    public void OnSpawned(IEnemy target, Transform SpawnPoint, IMemoryPool pool)
+    public void OnSpawned(IPlayer player, IEnemy target, Transform SpawnPoint, IDamageSystem damageSystem, IMemoryPool pool)
     {
         transform.position = SpawnPoint.position;
         transform.rotation = SpawnPoint.rotation;
         _pool = pool;
         _tween?.Kill();
         _tween = transform.DOMove(target.Transform.position, 0.15f).OnComplete(() => _pool.Despawn(this));
-        target.TakeDamage(damage);
+        damageSystem.TakeDamage(player, target, damage);      
     }
 
-    public class Factory : PlaceholderFactory<IEnemy, Transform, Bullet>
+    public class Factory : PlaceholderFactory<IPlayer, IEnemy, Transform, IDamageSystem, Bullet>
     {
     }
 }

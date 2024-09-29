@@ -9,16 +9,18 @@ public class EnemyAttackSystem : IDisposable
 {
     private readonly IAliveEnemyProvider _aliveEnemyProvider;
     private readonly CompositeDisposable _disposables;
+    private IDamageSystem _damageSystem;
    
     private IPlayer _player;
 
-    public EnemyAttackSystem(IAliveEnemyProvider aliveEnemyProvider, IPlayerHolder playerHolder)
+    public EnemyAttackSystem(IAliveEnemyProvider aliveEnemyProvider, IPlayerHolder playerHolder, IDamageSystem damageSystem)
     {
         _aliveEnemyProvider = aliveEnemyProvider;
         _disposables = new CompositeDisposable();
 
         Observable.EveryUpdate().Subscribe(CheckAttack).AddTo(_disposables);
         playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
+        _damageSystem = damageSystem;
     }
 
     private void  CheckAttack(Unit _)
@@ -38,7 +40,7 @@ public class EnemyAttackSystem : IDisposable
 
             if (distance <= enemy.AttackDistance * enemy.AttackDistance)
             {               
-                enemy.Attack(_player);
+                enemy.Attack(_player, _damageSystem);
             }          
         }
     }

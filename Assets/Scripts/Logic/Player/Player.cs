@@ -22,6 +22,14 @@ public class Player : MonoBehaviour, IPlayer
 
     public ReactiveProperty<bool> IsRotating { get; } = new ReactiveProperty<bool>(false);
 
+    public float Armor { get; }
+
+    public float DamageResistance  { get; }
+
+    public float DamageReflection { get; }
+
+    public float Vampirism   { get; }
+
     private void Awake()
     {
         _transform = transform;
@@ -47,8 +55,14 @@ public class Player : MonoBehaviour, IPlayer
         Quaternion rotation = Quaternion.Euler(0, rotationAngle * speed * delta, 0);
         _transform.rotation *= rotation;
     }
+   
 
-    public void TakeDamage(float damage)
+    public void Die()
+    {
+        _currentHealth = 0;
+    }
+
+    public void TakeDamage(IDamageble attacker, float damage)
     {
         _currentHealth -= damage;
         if (_currentHealth <= 0)
@@ -57,9 +71,10 @@ public class Player : MonoBehaviour, IPlayer
         }
     }
 
-    public void Die()
+    public void Heal(float healAmount)
     {
-        _currentHealth = 0;
+        _currentHealth += healAmount;
+        _currentHealth = Mathf.Clamp(_currentHealth, 0, 100);
     }
 }
 

@@ -2,12 +2,10 @@ using R3;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public interface IPlayer 
+public interface IPlayer: IDamageble 
 {   
     void Move(Vector3 direction, float speed, float time);
-    void Rotate(Vector3 direction, float speed, float time);
-
-    void TakeDamage(float damage);
+    void Rotate(Vector3 direction, float speed, float time);    
 
     void Die();
 

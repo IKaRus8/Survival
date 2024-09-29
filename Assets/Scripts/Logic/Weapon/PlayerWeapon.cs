@@ -10,6 +10,7 @@ public class PlayerWeapon : IWeapon, IDisposable
     private IPlayer _player;
     private ReactiveProperty<IEnemy> _targetRx;
     private  CompositeDisposable _disposables = new CompositeDisposable();
+    private IDamageSystem _damageSystem;
     private float _shotDelay=1f;
 
     private Bullet.Factory _bulletFactory;
@@ -18,12 +19,12 @@ public class PlayerWeapon : IWeapon, IDisposable
     public float ShotDelay => _shotDelay; 
 
     private Transform _shotPoint;
-    public PlayerWeapon(IPlayerHolder playerHolder, IPlayerTargetsProvider targetProvider, Bullet.Factory bulletFactory)
+    public PlayerWeapon(IPlayerHolder playerHolder, IPlayerTargetsProvider targetProvider, Bullet.Factory bulletFactory, IDamageSystem damageSystem)
     {
         _bulletFactory = bulletFactory;
         playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
         _targetRx = targetProvider.TargetRX;   
-        
+        _damageSystem = damageSystem;
         IsCanShoot = true;
     }
 
@@ -50,7 +51,7 @@ public class PlayerWeapon : IWeapon, IDisposable
     {
         if(!IsCanShoot) return;       
         ShotDelayTimer().Forget();
-        _bulletFactory.Create(_targetRx.Value, _shotPoint);
+        _bulletFactory.Create(_player, _targetRx.Value, _shotPoint, _damageSystem);
     }
 
     private async UniTaskVoid ShotDelayTimer()

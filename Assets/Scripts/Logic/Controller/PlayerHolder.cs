@@ -27,8 +27,7 @@ public class PlayerHolder : IPlayerHolder, IDisposable
 
     private void SetPlayer(IPlayer player)
     {
-        PlayerRx.Value = player; 
-        
+        PlayerRx.Value = player;         
     }
 
     public void Dispose()

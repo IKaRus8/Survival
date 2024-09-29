@@ -9,15 +9,12 @@ namespace Logic.Services
     [UsedImplicitly]
     public class EnemyDeathObserver
     {
-        private readonly IAliveEnemyProvider _aliveEnemyProvider;
-        private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
+        private readonly IAliveEnemyProvider _aliveEnemyProvider;       
 
         public EnemyDeathObserver(
-            IAliveEnemyProvider aliveEnemyProvider,
-            IGameEndedPopupPresenter gameEndedPopupPresenter)
+            IAliveEnemyProvider aliveEnemyProvider)
         {
-            _aliveEnemyProvider = aliveEnemyProvider;
-            _gameEndedPopupPresenter = gameEndedPopupPresenter;
+            _aliveEnemyProvider = aliveEnemyProvider;          
 
             Observable.EveryUpdate().Subscribe(_ => UpdateState());
         }
@@ -38,8 +35,7 @@ namespace Logic.Services
                     continue;
                 }
                 
-                enemy.Die();
-                _gameEndedPopupPresenter.ShowPopup();
+                enemy.Die();              
             }
         }
     }

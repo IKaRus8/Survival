@@ -6,8 +6,7 @@ using Logic.Services;
 using UnityEngine;
 using Zenject;
 
-//TODO: переименовать 
-public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
+public class SurvivalSceneInstaller : MonoInstaller<SurvivalSceneInstaller>
 {
     [SerializeField]
     private Joystick _joystick;
@@ -32,7 +31,8 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         Container.Bind<EnemyDeathObserver>().AsSingle().NonLazy();
         Container.BindInterfacesTo<EnemyMoveSystem>().AsSingle().NonLazy();
         Container.BindInterfacesTo<EnemyAttackSystem>().AsSingle().NonLazy();
-
+        Container.BindInterfacesTo<DamageSystem>().AsSingle().NonLazy();
+        Container.Bind<PlayerDeathObserver>().AsSingle().NonLazy();
         // Scene objects 
         Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
         Container.Bind<Camera>().FromInstance(_camera).AsSingle();
@@ -44,7 +44,7 @@ public class CommonZenjectInstaller : MonoInstaller<CommonZenjectInstaller>
         Container.BindInterfacesTo<PlayerTargetsProvider>().AsSingle().NonLazy();
         Container.BindInterfacesTo<PlayerWeapon>().AsSingle().NonLazy();
 
-        Container.BindFactory<IEnemy, Transform, Bullet, Bullet.Factory>().FromMonoPoolableMemoryPool(
+        Container.BindFactory<IPlayer, IEnemy, Transform, IDamageSystem, Bullet, Bullet.Factory>().FromMonoPoolableMemoryPool(
             x => x.WithInitialSize(30).FromComponentInNewPrefab(_bulletPrefab).UnderTransformGroup("BulletPool"));
         
         //Presenters

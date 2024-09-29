@@ -3,10 +3,11 @@ using Cysharp.Threading.Tasks;
 using Data.ScriptableObjects;
 using Logic.Interfaces.Providers;
 using R3;
+using System;
 
 namespace Logic.Providers
 {
-    public class EnemySpawnSettingsProvider : IEnemySpawnSettingsProvider
+    public class EnemySpawnSettingsProvider : IEnemySpawnSettingsProvider, IDisposable
     {
         private const string EnemySpawnSettingsKey = "EnemySpawnSettings";
         
@@ -48,6 +49,12 @@ namespace Logic.Providers
             _settings = await _assetService.GetAssetAsync<EnemySpawnSettings>(EnemySpawnSettingsKey);
             
             IsSettingLoadedRx.Value = true;
+        }
+
+        public void Dispose()
+        {
+            IsSettingLoadedRx.Value = false;
+            IsSettingLoadedRx.Dispose();
         }
     }
 }

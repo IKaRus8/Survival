@@ -63,7 +63,7 @@ namespace Logic.Providers
 
         public void Dispose()
         {
-            _disposables.Dispose();
+            _disposables?.Dispose();
         }
     }
        

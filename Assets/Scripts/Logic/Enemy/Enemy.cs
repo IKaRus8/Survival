@@ -1,22 +1,30 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
-public class Enemy : MonoBehaviour, IEnemy 
-{ 
+public class Enemy : MonoBehaviour, IEnemy
+{
     private const float StartHealth = 100;
-    
+
     private readonly TimeSpan _attackDelay = TimeSpan.FromSeconds(0.5f);
 
     private float currentHealth;
     private float moveSpeed;
+    private float damage=10f;   
+
     private bool isCanAttack;
 
     public float AttackDistance => 2.5f;
     public float CurrentHealth => currentHealth;
     public bool IsDead { get; private set; }
     public float MoveSpeed => moveSpeed;
+    public float Armor { get; }
+    public float DamageResistance { get; }
+    public float DamageReflection { get; }
+    public float Vampirism { get; }
+
 
     public Transform Transform => transform;
 
@@ -40,7 +48,7 @@ public class Enemy : MonoBehaviour, IEnemy
         transform.position += offset;
     }
 
-    public virtual void Attack(IPlayer player)
+    public virtual void Attack(IPlayer player, IDamageSystem damageSystem)
     {
         if (!isCanAttack)
         {
@@ -48,21 +56,21 @@ public class Enemy : MonoBehaviour, IEnemy
         }
 
         isCanAttack = false;
-        
-       AttackPrepare(player).Forget();
+
+        AttackPrepare(player, damageSystem).Forget();
     }
 
-    private async UniTaskVoid AttackPrepare(IPlayer player)
+    private async UniTaskVoid AttackPrepare(IPlayer player, IDamageSystem damageSystem)
     {
         await UniTask.Delay(_attackDelay);
-        
-        AttackProcess(player);
+
+        AttackProcess(player, damageSystem);
     }
 
-    private void AttackProcess(IPlayer player)
+    private void AttackProcess(IPlayer player, IDamageSystem damageSystem)
     {
         //to damage system
-        player.TakeDamage(1f);
+        damageSystem.TakeDamage(this, player, damage);
 
         PostAttack().Forget();
     }
@@ -70,34 +78,23 @@ public class Enemy : MonoBehaviour, IEnemy
     private async UniTask PostAttack()
     {
         await UniTask.Delay(_attackDelay);
-        
-        isCanAttack = true;
-    }
 
-    public void TakeDamage(float damage)
-    {
-        currentHealth -= damage;
+        isCanAttack = true;
     }
 
     public void Reset()
     {
         gameObject.SetActive(true);
     }
+
+    public void TakeDamage(IDamageble attacker, float damage)
+    {
+        currentHealth -= damage;
+    }
+    public void Heal(float healAmount)
+    {
+        currentHealth += healAmount;
+        currentHealth= Math.Clamp(currentHealth, 0, StartHealth);
+    }
 }
 
-public interface IEnemy
-{
-    public Transform Transform { get; }
-    public float AttackDistance { get; }
-    public float MoveSpeed { get; }
-    public bool IsDead { get; }
-
-    public float CurrentHealth { get; }
-
-    void Die();
-    void Reset();
-    void Move(Vector3 offset);
-    void Attack(IPlayer player); 
-    void TakeDamage(float damage);
-
-}

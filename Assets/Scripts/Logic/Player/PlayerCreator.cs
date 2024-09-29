@@ -17,7 +17,7 @@ public class PlayerCreator : ICreator<IPlayer>
      }
 
      public async UniTask<IPlayer> CreateAsync()
-     {
+     {      
           var playerGameObject = await _assetService.GetAssetAsync<GameObject>(PlayerKey);
 
           var player = _container.InstantiatePrefabForComponent<IPlayer>(playerGameObject);
