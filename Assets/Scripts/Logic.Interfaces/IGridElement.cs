@@ -1,12 +1,16 @@
 using System;
 using UnityEngine;
 
-public interface IGridElement
-{  
-    void SetPosition(Vector3 position);
-    BoxCollider Collider { get; set; }
-    Transform Transform { get; set; }
-    public Action<IGridElement> OnPlayerEnter { get; set; }
-    public bool IsPlayerInside { get; }
-    void Reset();
+namespace Logic.Interfaces
+{
+    public interface IGridElement
+    {
+        BoxCollider Collider { get; }
+        Transform Transform { get; }
+        bool IsPlayerInside { get; }
+        Action<IGridElement> OnPlayerEnter { get; set; }
+        
+        void Reset();
+        void SetPosition(Vector3 position);
+    }
 }

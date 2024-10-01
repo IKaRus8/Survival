@@ -1,6 +1,7 @@
-using UnityEngine;
-
-public interface IHealth 
+namespace Logic.Interfaces
 {
+    public interface IHealth 
+    {
     
+    }
 }

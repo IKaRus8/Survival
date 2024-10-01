@@ -1,6 +1,9 @@
 using Cysharp.Threading.Tasks;
 
-public interface ICreator<T>
+namespace Logic.Interfaces
 {
-    UniTask<T> CreateAsync();
+    public interface ICreator<T>
+    {
+        UniTask<T> CreateAsync();
+    }
 }

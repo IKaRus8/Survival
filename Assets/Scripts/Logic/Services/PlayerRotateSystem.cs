@@ -1,65 +1,68 @@
 using System;
+using Logic.Interfaces;
 using R3;
-using Logic.Providers;
 using UnityEngine;
 
-public class PlayerRotateSystem : IRotatable, IDisposable
+namespace Logic.Services
 {
-    private IPlayer _player;   
-    private IEnemy _target;
+    public class PlayerRotateSystem : IRotatable, IDisposable
+    {
+        private IPlayer _player;   
+        private IEnemy _target;
 
-    private readonly CompositeDisposable _disposables;
+        private readonly CompositeDisposable _disposables;
 
-    public PlayerRotateSystem(
+        public PlayerRotateSystem(
             IPlayerHolder playerHolder,
-            IPlayerTargetsProvider targetProvider)
-    {
-
-        _disposables = new CompositeDisposable();
-        playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
-
-        targetProvider.TargetRX.Subscribe(OnTargetChanged).AddTo(_disposables);
-    }    
-
-    private void OnPlayerCreated(IPlayer player)
-    {
-        if (player == null)
+            IPlayerTargetObserver targetProvider)
         {
-            return;
-        }
-
-        _player = player;
-
-        Observable.EveryUpdate().Subscribe(_ => RotateUpdate()).AddTo(_disposables);
-    }
-
-    private void OnTargetChanged(IEnemy enemy)
-    {
-        _target = enemy;
-    }
-
-    public void RotateUpdate()
-    {
-        if (_player.Transform == null || _target == null)
-        {
-            return;
-        }
-
-        var direction = _target.Transform.position - _player.Transform.position;
+            _disposables = new CompositeDisposable();
         
-        if ((_player.Transform.forward - direction.normalized).sqrMagnitude > 0.1f)
-        {
-            _player.IsRotating.Value = true;
-            _player.Rotate(direction, _player.Speed, Time.deltaTime);
-        }
-        else
-        {
-            _player.IsRotating.Value = false;
-        }
-    }
+            playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
+            targetProvider.TargetRx.Subscribe(OnTargetChanged).AddTo(_disposables);
+        }    
 
-    public void Dispose()
-    {
-        _disposables?.Dispose();
+        private void OnPlayerCreated(IPlayer player)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            _player = player;
+
+            Observable.EveryUpdate().Subscribe(_ => RotateUpdate()).AddTo(_disposables);
+        }
+
+        private void OnTargetChanged(IEnemy enemy)
+        {
+            _target = enemy;
+        }
+
+        public void RotateUpdate()
+        {
+            if (_player.Transform == null || _target == null)
+            {
+                return;
+            }
+
+            var direction = _target.Transform.position - _player.Transform.position;
+        
+            if ((_player.Transform.forward - direction.normalized).sqrMagnitude > 0.1f)
+            {
+                _player.IsRotating.Value = true;
+            
+                _player.Rotate(direction, _player.Speed, Time.deltaTime);
+            }
+            else
+            {
+                _player.IsRotating.Value = false;
+            }
+        }
+
+        public void Dispose()
+        {
+            _disposables?.Dispose();
+        }
     }
 }

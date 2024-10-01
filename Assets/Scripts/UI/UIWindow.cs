@@ -1,32 +1,37 @@
+using Logic.Services;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 //to play button
-public class UIWindow : MonoBehaviour
+namespace UI
 {
-    [SerializeField] private Button _startGameButton;
-   
-    private ISceneLoader _sceneLoader;
-  
-    private const string gameSceneName = "Survivour";
-
-    [Inject]
-    public void Construct(ISceneLoader sceneLoader)
+    public class UIWindow : MonoBehaviour
     {
-        _sceneLoader = sceneLoader;       
-    }
+        private const string GameSceneName = "Survivour";
+        [SerializeField]
+        private Button _startGameButton;
 
-    public void Awake()
-    {
-        _startGameButton.onClick.RemoveAllListeners();
-        _startGameButton.onClick.AddListener(StartGame);
-    }
+        private ISceneLoader _sceneLoader;
 
-    private void StartGame()
-    {
-        _startGameButton.onClick.RemoveAllListeners();
-        
-        _sceneLoader.LoadSceneAsync(gameSceneName);
+
+        [Inject]
+        public void Construct(ISceneLoader sceneLoader)
+        {
+            _sceneLoader = sceneLoader;
+        }
+
+        public void Awake()
+        {
+            _startGameButton.onClick.RemoveAllListeners();
+            _startGameButton.onClick.AddListener(StartGame);
+        }
+
+        private void StartGame()
+        {
+            _startGameButton.onClick.RemoveAllListeners();
+
+            _sceneLoader.LoadSceneAsync(GameSceneName);
+        }
     }
 }

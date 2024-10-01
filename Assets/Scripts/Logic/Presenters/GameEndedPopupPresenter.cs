@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
+using Logic.Interfaces;
 using Logic.Interfaces.Presenters;
-using Logic.Popup;
+using Logic.Popups;
 using UnityEngine;
 using Zenject;
 

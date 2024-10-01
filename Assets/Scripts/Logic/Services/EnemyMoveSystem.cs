@@ -1,58 +1,71 @@
-using Logic.Interfaces.Providers;
-using System.Collections.Generic;
 using System;
-using UnityEngine;
-using System.Linq;
+using Logic.Interfaces;
+using Logic.Interfaces.Providers;
 using R3;
+using UnityEngine;
 
-public class EnemyMoveSystem : IMovable, IDisposable
+namespace Logic.Services
 {
-    private readonly IAliveEnemyProvider _aliveEnemyProvider;
-    private readonly CompositeDisposable _disposables;
+    public class EnemyMoveSystem : IMovable, IDisposable
+    {
+        private readonly IAliveEnemyProvider _aliveEnemyProvider;
+        private readonly CompositeDisposable _disposables;
   
-    private IPlayer _player;
+        private IPlayer _player;
 
-    public EnemyMoveSystem(IAliveEnemyProvider aliveEnemyProvider, IPlayerHolder playerHolder)
-    {
-        _aliveEnemyProvider = aliveEnemyProvider;
-        _disposables = new CompositeDisposable();
-
-        Observable.EveryUpdate().Subscribe(MoveUpdate).AddTo(_disposables);
-        playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
-    }
-
-    private void MoveUpdate(Unit _)
-    {
-        if (_player == null)
+        public EnemyMoveSystem(
+            IAliveEnemyProvider aliveEnemyProvider, 
+            IPlayerHolder playerHolder)
         {
-            return;
+            _aliveEnemyProvider = aliveEnemyProvider;
+            _disposables = new CompositeDisposable();
+
+            Observable.EveryUpdate().Subscribe(MoveUpdate).AddTo(_disposables);
+            playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
         }
 
-        foreach (var enemy in _aliveEnemyProvider.AliveEnemies)
+        private void MoveUpdate(Unit _)
         {
-            var direction = _player.Transform.position +
-                      new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, UnityEngine.Random.Range(-1f, 1f)) -
-                      enemy.Transform.position;
-
-            var distance = direction.sqrMagnitude;
-            
-            if (distance > enemy.AttackDistance * enemy.AttackDistance)
+            if (_player == null)
             {
-                var newdirection = direction.normalized * enemy.MoveSpeed * UnityEngine.Random.Range(0.2f, 1.2f) *
-                                   Time.deltaTime;
+                return;
+            }
+
+            foreach (var enemy in _aliveEnemyProvider.AliveEnemies)
+            {
+                var direction = GetDirection(enemy.Transform.position);
+
+                var distance = direction.sqrMagnitude;
+            
+                if (distance > Math.Sqrt(enemy.Model.AttackDistance))
+                {
+                    var newDirection = direction.normalized 
+                                       * enemy.Model.MoveSpeed 
+                                       * UnityEngine.Random.Range(0.2f, 1.2f) 
+                                       * Time.deltaTime;
                 
-                enemy.Move(newdirection);
-            }                      
+                    enemy.Move(newDirection);
+                }                      
+            }
         }
-    }
 
-    private void OnPlayerCreated(IPlayer player)
-    {
-        _player = player;
-    }
+        private Vector3 GetDirection(Vector3 enemyPosition)
+        {
+            var dir = _player.Transform.position +
+                      new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, UnityEngine.Random.Range(-1f, 1f)) -
+                      enemyPosition;
 
-    public void Dispose()
-    {
-        _disposables.Dispose();
+            return dir;
+        }
+
+        private void OnPlayerCreated(IPlayer player)
+        {
+            _player = player;
+        }
+
+        public void Dispose()
+        {
+            _disposables.Dispose();
+        }
     }
 }

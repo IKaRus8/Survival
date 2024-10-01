@@ -1,8 +1,11 @@
 using UnityEngine;
 
-public interface IInput 
+namespace Logic.Interfaces
 {
-     public Vector2 Dir { get; set; }        
+     public interface IInput 
+     {
+          public Vector2 Dir { get; set; }        
 
-     public void TickUpdate();
+          public void TickUpdate();
+     }
 }

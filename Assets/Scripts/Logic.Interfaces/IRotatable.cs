@@ -1,6 +1,7 @@
-using UnityEngine;
-
-public interface IRotatable  
+namespace Logic.Interfaces
 {
-    void RotateUpdate();
+    public interface IRotatable  
+    {
+        void RotateUpdate();
+    }
 }

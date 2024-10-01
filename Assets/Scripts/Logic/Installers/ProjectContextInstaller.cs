@@ -1,3 +1,5 @@
+using Logic.Interfaces;
+using Logic.Services;
 using Zenject;
 
 namespace Logic.Installers
@@ -9,6 +11,8 @@ namespace Logic.Installers
             // Services
             Container.Bind<IAssetService>().To<AssetService>().AsSingle();   
             Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
+            
+            //IGameEntities
         }
     }
 }
