@@ -1,6 +1,4 @@
 using JetBrains.Annotations;
-using Logic.Interfaces.Presenters;
-using Logic.Providers;
 using Logic.Interfaces.Providers;
 using R3;
 
@@ -11,11 +9,11 @@ namespace Logic.Services
     {
         private readonly IAliveEnemyProvider _aliveEnemyProvider;       
 
-        public EnemyDeathObserver(
-            IAliveEnemyProvider aliveEnemyProvider)
+        public EnemyDeathObserver(IAliveEnemyProvider aliveEnemyProvider)
         {
             _aliveEnemyProvider = aliveEnemyProvider;          
 
+            //TODO: добавить отписку на диспоз
             Observable.EveryUpdate().Subscribe(_ => UpdateState());
         }
 

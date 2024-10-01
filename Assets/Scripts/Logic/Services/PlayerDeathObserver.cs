@@ -1,22 +1,21 @@
-using System;
 using Logic.Interfaces;
 using R3;
-using UnityEngine;
+using Logic.Interfaces.Presenters;
 
 namespace Logic.Services
 {
-    public class PlayerMoveSystem : IMovable, IDisposable
+    public class PlayerDeathObserver
     {
-        private readonly IInput _input;
+        private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
         private readonly CompositeDisposable _disposables;
         
         private IPlayer _player;
-        
-        public PlayerMoveSystem(
+
+        public PlayerDeathObserver(
             IPlayerHolder playerHolder,
-            IInput input)
+            IGameEndedPopupPresenter gameEndedPopupPresenter)
         {
-            _input = input;
+            _gameEndedPopupPresenter = gameEndedPopupPresenter;
             _disposables = new CompositeDisposable();
             
             playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
@@ -28,20 +27,18 @@ namespace Logic.Services
             {
                 return;
             }
-            
+
             _player = player;
             
-            Observable.EveryUpdate().Subscribe(_ => MoveUpdate()).AddTo(_disposables);
+            Observable.EveryUpdate().Subscribe(CheckIsPlayerDead).AddTo(_disposables);
         }
 
-        public void MoveUpdate()
-        {     
-            _player.Move(new Vector3(_input.Dir.x, 0 , _input.Dir.y), _player.Speed, Time.deltaTime);      
-        }
-
-        public void Dispose()
+        private void CheckIsPlayerDead(Unit _)
         {
-            _disposables?.Dispose();
+            if (_player.IsDead)
+            {
+                _gameEndedPopupPresenter.ShowPopup();
+            }
         }
     }
 }

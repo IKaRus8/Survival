@@ -1,6 +1,7 @@
-using UnityEngine;
-
-public  interface IMovable 
+namespace Logic.Interfaces
 {
-    void MoveUpdate() { }   
+    public  interface IMovable 
+    {
+        void MoveUpdate() { }   
+    }
 }

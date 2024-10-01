@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public interface IMove 
+namespace Logic.Interfaces
 {
-    void Move(Transform transform, Vector3 direction, float speed, float delta);    
+    public interface IMove 
+    {
+        void Move(Transform transform, Vector3 direction, float speed, float delta);    
+    }
 }

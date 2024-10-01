@@ -1,7 +1,10 @@
 using UnityEngine;
 
-public interface ISceneObjectContainer
+namespace Logic.Interfaces
 {
-    Transform RoadParent { get; }
-    RectTransform PopupContainer { get; }
-}   
+    public interface ISceneObjectContainer
+    {
+        Transform RoadParent { get; }
+        RectTransform PopupContainer { get; }
+    }
+}

@@ -1,9 +1,11 @@
-using UnityEngine;
 using Zenject;
 
-public class MainMenuSceneInstaller : MonoInstaller
+namespace Logic.Installers
 {
-    public override void InstallBindings()
-    {       
+    public class MainMenuSceneInstaller : MonoInstaller
+    {
+        public override void InstallBindings()
+        {       
+        }
     }
 }

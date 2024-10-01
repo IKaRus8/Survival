@@ -1,10 +1,13 @@
-using UnityEngine;
+using Logic.Services;
 using Zenject;
 
-public class BootstrapSceneInstaller : MonoInstaller<BootstrapSceneInstaller>
+namespace Logic.Installers
 {
-    public override void InstallBindings()
+    public class BootstrapSceneInstaller : MonoInstaller<BootstrapSceneInstaller>
     {
-        Container.Bind<IGameBootstraper>().To<GameBootstraper>().AsSingle().NonLazy();
+        public override void InstallBindings()
+        {
+            Container.Bind<IGameBootstraper>().To<GameBootstraper>().AsSingle().NonLazy();
+        }
     }
 }

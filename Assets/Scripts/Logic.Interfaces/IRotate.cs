@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public interface IRotate 
+namespace Logic.Interfaces
 {
-    void Rotate(Vector3 axis, float speed);
+    public interface IRotate 
+    {
+        void Rotate(Vector3 axis, float speed);
+    }
 }
