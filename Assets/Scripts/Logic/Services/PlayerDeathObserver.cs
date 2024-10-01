@@ -33,6 +33,7 @@ namespace Logic.Services
             Observable.EveryUpdate().Subscribe(CheckIsPlayerDead).AddTo(_disposables);
         }
 
+        //TODO: отписаться от проверки при смерти
         private void CheckIsPlayerDead(Unit _)
         {
             if (_player.IsDead)
