@@ -2,6 +2,6 @@ namespace Logic.Interfaces
 {
     public interface IDamageSystem 
     {
-        void TakeDamage(IDamageble attacker, IDamageble victim, float damage);
+        void DoDamage(IDamageble attacker, IDamageble target, float damage);
     }
 }

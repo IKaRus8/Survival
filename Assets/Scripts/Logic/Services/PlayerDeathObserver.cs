@@ -1,10 +1,11 @@
+using System;
 using Logic.Interfaces;
 using R3;
 using Logic.Interfaces.Presenters;
 
 namespace Logic.Services
 {
-    public class PlayerDeathObserver
+    public class PlayerDeathObserver : IDisposable
     {
         private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
         private readonly CompositeDisposable _disposables;
@@ -36,10 +37,19 @@ namespace Logic.Services
         //TODO: отписаться от проверки при смерти
         private void CheckIsPlayerDead(Unit _)
         {
-            if (_player.IsDead)
+            if (!_player.IsDead)
             {
-                _gameEndedPopupPresenter.ShowPopup();
+                return;
             }
+            
+            _gameEndedPopupPresenter.ShowPopup();
+            
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            _disposables?.Dispose();
         }
     }
 }

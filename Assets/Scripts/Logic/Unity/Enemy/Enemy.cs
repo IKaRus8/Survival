@@ -1,38 +1,35 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
+using Data.Interfaces.Models;
 using Logic.Interfaces;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Logic.Unity.Enemy
 {
     public class Enemy : MonoBehaviour, IEnemy
     {
-        private const float StartHealth = 100;
-        private const float Damage = 10f;
-
-        private readonly TimeSpan _attackDelay = TimeSpan.FromSeconds(0.5f);
+        private readonly TimeSpan _attackDelay;
 
         private bool _isCanAttack;
 
-        public float AttackDistance => 2.5f;
         public float CurrentHealth { get; private set; }
         public bool IsDead { get; private set; }
-        public float MoveSpeed { get; private set; }
-        public float Armor { get; }
-        public float DamageResistance { get; }
-        public float DamageReflection { get; }
-        public float Vampirism { get; }
         public Transform Transform => transform;
+
+        //TODO: прокинуть в спавнере
+        public IEnemyModel Model { get; private set; }
 
         private void OnEnable()
         {
-            CurrentHealth = StartHealth;
-        
+            CurrentHealth = Model.Health;
+
             IsDead = false;
             _isCanAttack = true;
-        
-            MoveSpeed = Random.Range(1, 3f);
+        }
+
+        public void Init(IEnemyModel model)
+        {
+            Model = model;
         }
 
         public void Die()
@@ -69,7 +66,7 @@ namespace Logic.Unity.Enemy
         private void AttackProcess(IPlayer player, IDamageSystem damageSystem)
         {
             //TODO: to damage system
-            damageSystem.TakeDamage(this, player, Damage);
+            damageSystem.DoDamage(this, player, Model.AttackDamage);
 
             PostAttack().Forget();
         }
@@ -90,11 +87,11 @@ namespace Logic.Unity.Enemy
         {
             CurrentHealth -= damage;
         }
-    
+
         public void Heal(float healAmount)
         {
             CurrentHealth += healAmount;
-            CurrentHealth= Math.Clamp(CurrentHealth, 0, StartHealth);
+            CurrentHealth = Math.Clamp(CurrentHealth, 0, Model.Health);
         }
     }
 }

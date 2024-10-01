@@ -39,6 +39,7 @@ namespace Logic.Providers
 
         private void FindNearestAliveTarget()
         {
+            //TODO: проверка на расстояние
             if (TargetRx.Value != null && !TargetRx.Value.IsDead)
             {
                 return;

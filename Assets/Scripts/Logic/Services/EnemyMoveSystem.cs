@@ -37,10 +37,10 @@ namespace Logic.Services
 
                 var distance = direction.sqrMagnitude;
             
-                if (distance > Math.Sqrt(enemy.AttackDistance))
+                if (distance > Math.Sqrt(enemy.Model.AttackDistance))
                 {
                     var newDirection = direction.normalized 
-                                       * enemy.MoveSpeed 
+                                       * enemy.Model.MoveSpeed 
                                        * UnityEngine.Random.Range(0.2f, 1.2f) 
                                        * Time.deltaTime;
                 

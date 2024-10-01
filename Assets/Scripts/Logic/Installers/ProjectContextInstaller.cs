@@ -11,6 +11,8 @@ namespace Logic.Installers
             // Services
             Container.Bind<IAssetService>().To<AssetService>().AsSingle();   
             Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
+            
+            //IGameEntities
         }
     }
 }

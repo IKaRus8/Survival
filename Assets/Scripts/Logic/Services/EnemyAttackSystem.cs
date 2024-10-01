@@ -39,7 +39,7 @@ namespace Logic.Services
 
                 var distance = direction.sqrMagnitude;
 
-                if (distance <= enemy.AttackDistance * enemy.AttackDistance)
+                if (distance <= Math.Sqrt(enemy.Model.AttackDistance))
                 {               
                     enemy.Attack(_player, _damageSystem);
                 }          

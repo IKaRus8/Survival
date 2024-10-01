@@ -1,14 +1,14 @@
+using Data.Interfaces.Models;
 using UnityEngine;
 
 namespace Logic.Interfaces
 {
     public interface IEnemy : IDamageble
     {
-        public Transform Transform { get; }
-        public float AttackDistance { get; }
-        public float MoveSpeed { get; }
-        public bool IsDead { get; }
-        public float CurrentHealth { get; }
+        Transform Transform { get; }
+        bool IsDead { get; }
+        float CurrentHealth { get; }
+        IEnemyModel Model { get; }
 
         void Die();
         void Reset();

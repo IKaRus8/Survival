@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Data.Interfaces.Constants;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
 using R3;
@@ -68,11 +69,11 @@ namespace Logic.Services
             }
 
             Observable.Interval(TimeSpan.FromSeconds(1f))
-                .Subscribe(_ => SpawnEnemy())
+                .Subscribe(_ => SpawnEnemy(Constants.EnemyConstants.Ids.SimpleEnemy))
                 .AddTo(_disposables);
         }
 
-        private void SpawnEnemy()
+        private void SpawnEnemy(string id)
         {
             if (_isGetPrefab == false)
             {

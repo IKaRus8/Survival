@@ -34,7 +34,7 @@ namespace Logic.Weapon
             _tween?.Kill();
             _tween = transform.DOMove(target.Transform.position, 0.15f).OnComplete(() => _pool.Despawn(this));
             
-            damageSystem.TakeDamage(player, target, Damage);
+            damageSystem.DoDamage(player, target, Damage);
         }
 
         public void Dispose()
