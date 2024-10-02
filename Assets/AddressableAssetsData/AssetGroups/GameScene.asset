@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: GameScene
+  m_EditorClassIdentifier: 
+  m_GroupName: GameScene
+  m_GUID: cb08bcd8d9f92b84fa9b0c0199931ea9
+  m_SerializeEntries:
+  - m_GUID: 13c5aa4ab74dc4585be39412bd41be72
+    m_Address: GameEndedPopup
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1fce62393c8074cc88d3f140e3c3f856
+    m_Address: EnemySpawnSettings
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bf4f996b4a2c9d47b21e3890d63d0d7
+    m_Address: Survivour
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4e5e6d250ccd6843a951ce1612e5d0d
+    m_Address: Player
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 34bf3b6ae3ac68d4292cfb90806639ec, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 59dd9f0df595e1f4191e711a47e369d0, type: 2}
+    - {fileID: 11400000, guid: ed57dcee9c0f4c04b8a849970e37e583, type: 2}
