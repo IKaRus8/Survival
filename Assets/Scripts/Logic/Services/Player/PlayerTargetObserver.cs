@@ -1,10 +1,11 @@
-using Logic.Interfaces.Providers;
-using R3;
 using System;
 using Logic.Interfaces;
+using Logic.Interfaces.Providers;
+using Logic.Interfaces.Services.Player;
+using R3;
 using UnityEngine;
 
-namespace Logic.Providers
+namespace Logic.Services.Player
 {
     public class PlayerTargetObserver : IPlayerTargetObserver, IDisposable
     {

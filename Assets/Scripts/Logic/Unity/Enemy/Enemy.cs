@@ -38,7 +38,6 @@ namespace Logic.Unity.Enemy
             IsDead = true;
         }
 
-        //TODO: to newPosition
         public void Move(Vector3 offset)
         {
             transform.position += offset;

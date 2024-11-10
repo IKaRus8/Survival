@@ -7,7 +7,7 @@ using R3;
 using UnityEngine;
 using Zenject;
 
-namespace Logic.Services
+namespace Logic.Services.Level
 {
     public class GridSystem : IDisposable, IGridController
     {

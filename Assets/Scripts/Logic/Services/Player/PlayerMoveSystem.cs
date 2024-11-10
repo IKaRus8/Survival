@@ -1,9 +1,10 @@
 using System;
 using Logic.Interfaces;
+using Logic.Interfaces.Services.Player;
 using R3;
 using UnityEngine;
 
-namespace Logic.Services
+namespace Logic.Services.Player
 {
     public class PlayerMoveSystem : IMovable, IDisposable
     {

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Data.Interfaces.Constants;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
+using Logic.Services.Level;
 using R3;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Logic.Services
+namespace Logic.Services.Enemy
 {
     public class EnemySpawner : IDisposable
     {

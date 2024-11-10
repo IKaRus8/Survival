@@ -3,7 +3,7 @@ using Logic.Interfaces;
 using UnityEngine;
 using Zenject;
 
-namespace Logic.Services
+namespace Logic.Services.Player
 {
      public class PlayerCreator : ICreator<IPlayer>
      {

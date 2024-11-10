@@ -1,23 +1,24 @@
+using System;
 using JetBrains.Annotations;
 using Logic.Interfaces.Providers;
 using R3;
 
-namespace Logic.Services
+namespace Logic.Services.Enemy
 {
     [UsedImplicitly]
-    public class EnemyDeathObserver
+    public class EnemyDeathObserver : IDisposable
     {
-        private readonly IAliveEnemyProvider _aliveEnemyProvider;       
+        private readonly IAliveEnemyProvider _aliveEnemyProvider;
+        private readonly IDisposable _updateDisposable;
 
         public EnemyDeathObserver(IAliveEnemyProvider aliveEnemyProvider)
         {
             _aliveEnemyProvider = aliveEnemyProvider;          
 
-            //TODO: добавить отписку на диспоз
-            Observable.EveryUpdate().Subscribe(_ => UpdateState());
+            _updateDisposable = Observable.EveryUpdate().Subscribe(UpdateState);
         }
 
-        private void UpdateState()
+        private void UpdateState(Unit unit)
         {
             CheckDeadEnemy();
         }
@@ -35,6 +36,11 @@ namespace Logic.Services
                 
                 enemy.Die();              
             }
+        }
+
+        public void Dispose()
+        {
+            _updateDisposable?.Dispose();
         }
     }
 }

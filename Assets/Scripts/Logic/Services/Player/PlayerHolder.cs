@@ -1,9 +1,10 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces;
+using Logic.Interfaces.Services.Player;
 using R3;
 
-namespace Logic.Services
+namespace Logic.Services.Player
 {
     public class PlayerHolder : IPlayerHolder, IDisposable
     {

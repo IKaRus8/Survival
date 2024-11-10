@@ -1,10 +1,12 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces;
+using Logic.Interfaces.Services.Player;
+using Logic.Weapon;
 using R3;
 using UnityEngine;
 
-namespace Logic.Weapon
+namespace Logic.Services.Player
 {
     public class PlayerShootService : IDisposable
     {

@@ -1,9 +1,10 @@
 using System;
 using Logic.Interfaces;
-using R3;
 using Logic.Interfaces.Presenters;
+using Logic.Interfaces.Services.Player;
+using R3;
 
-namespace Logic.Services
+namespace Logic.Services.Player
 {
     public class PlayerDeathObserver : IDisposable
     {

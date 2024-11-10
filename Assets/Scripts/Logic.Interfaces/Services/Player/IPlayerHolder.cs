@@ -1,6 +1,6 @@
 using R3;
 
-namespace Logic.Interfaces
+namespace Logic.Interfaces.Services.Player
 {
     public interface  IPlayerHolder 
     {
