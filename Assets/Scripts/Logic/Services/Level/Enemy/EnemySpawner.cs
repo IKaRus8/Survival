@@ -1,65 +1,57 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
-using Logic.Services.Level;
+using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Services;
+using Logic.Interfaces.Services.Level;
 using R3;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
 
-namespace Logic.Services.Enemy
+namespace Logic.Services.Level.Enemy
 {
     public class EnemySpawner : IDisposable
     {
-        private const string EnemyKey = "Enemy";
-
         private readonly IGridController _gridController;
         private readonly IEnemySpawnSettingsProvider _enemySpawnSettingsProvider;
         private readonly CompositeDisposable _disposables;
         private readonly IAssetService _assetService;
-        private readonly IInstantiator _container;
-        private readonly IAliveEnemyProvider _aliveEnemyProvider;
+        private readonly IInstantiator _instantiator;
+        private readonly IEnemyModelsProvider _enemyModelsProvider;
+        private readonly IEnemyProvider _enemyProvider;
+        private readonly Transform _enemiesContainer;
 
         private GameObject _enemyPrefab;
-        private bool _isGetPrefab;
 
         public EnemySpawner(
             IGridController gridController,
             IEnemySpawnSettingsProvider enemySpawnSettingsProvider,
             IAssetService assetService,
-            IInstantiator diContainer,
-            IAliveEnemyProvider aliveEnemyProvider)
+            ILevelSceneObjectContainer levelSceneObjectContainer,
+            IEnemyModelsProvider enemyModelsProvider,
+            IEnemyProvider enemyProvider)
         {
             _gridController = gridController;
             _enemySpawnSettingsProvider = enemySpawnSettingsProvider;
             _assetService = assetService;
-            _container = diContainer;
-            _aliveEnemyProvider = aliveEnemyProvider;
+            _enemyModelsProvider = enemyModelsProvider;
+            _enemyProvider = enemyProvider;
 
             _disposables = new CompositeDisposable();
-
-            Init();
+            _enemiesContainer = levelSceneObjectContainer.EnemiesContainer;
+            
+            GetPrefabAsync().Forget();
         }
 
-        private void Init()
+        private async UniTaskVoid GetPrefabAsync()
         {
+            
+
             _enemySpawnSettingsProvider.IsSettingLoadedRx.Subscribe(StartSpawn).AddTo(_disposables);
-
-            GetPrefabAsync();
-        }
-
-        private async void GetPrefabAsync()
-        {
-            _enemyPrefab = await _assetService.GetAssetAsync<GameObject>(EnemyKey);
-
-            _isGetPrefab = true;
-        }
-
-        private void AddEnemy(IEnemy enemy)
-        {
-            _aliveEnemyProvider.AddEnemy(enemy);
         }
 
         private void StartSpawn(bool value)
@@ -70,57 +62,54 @@ namespace Logic.Services.Enemy
             }
 
             Observable.Interval(TimeSpan.FromSeconds(1f))
-                .Subscribe(_ => SpawnEnemy(Constants.EnemyConstants.Ids.SimpleEnemy))
+                .Subscribe(SpawnProcess)
                 .AddTo(_disposables);
         }
 
-        private void SpawnEnemy(string id)
+        private void SpawnProcess(Unit _)
         {
-            if (_isGetPrefab == false)
-            {
-                return;
-            }
+            SpawnEnemy(Constants.EnemyConstants.Ids.SimpleEnemy).Forget();
+        }
 
+        private async UniTaskVoid SpawnEnemy(string id)
+        {
             var spawnProbability = _enemySpawnSettingsProvider.GetChanceForSpawn();
 
-            var random = Random.Range(0f, 1f);
+            var random = RandomHelper.GetRandomFloat();
 
             if (random > spawnProbability)
             {
                 return;
             }
+            
+            var enemy = _enemyProvider.DeadEnemies.FirstOrDefault(e => e.Model.Id == id);
 
-            if (_aliveEnemyProvider.DeadEnemies.Count == 0)
+            if (enemy == null)
             {
-                var enemy = _container.InstantiatePrefabForComponent<IEnemy>(_enemyPrefab);
-
-                PrepareEnemy(enemy);
+                enemy = await _assetService
+                    .LoadAndInstantiateAsync<IEnemy>(id, _enemiesContainer);
             }
-            else
-            {
-                var enemyList = (List<IEnemy>) _aliveEnemyProvider.DeadEnemies;
-                var enemy = enemyList[0];
 
-                PrepareEnemy(enemy);
-            }
+            PrepareEnemy(enemy);
         }
 
         private void PrepareEnemy(IEnemy enemy)
         {
             enemy.Reset();
 
-            enemy.Transform.position = GetEnemyPos();
+            enemy.MoveTo(GetEnemyPos());
 
             AddEnemy(enemy);
         }
 
+        private void AddEnemy(IEnemy enemy)
+        {
+            _enemyProvider.AddEnemy(enemy);
+        }
+
         private Vector3 GetEnemyPos()
         {
-            var pointForSpawn = _gridController.GetRoadsForSpawn();
-
-            Debug.Log(pointForSpawn.Count);
-
-            var gridElementCollider = pointForSpawn[Random.Range(0, pointForSpawn.Count)].Collider;
+            var gridElementCollider = _gridController.GetRandomGridPlaneWithOutPlayer().Collider;
 
             return GetRandomPositionWithinField(gridElementCollider);
         }

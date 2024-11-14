@@ -1,11 +1,12 @@
+using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using UnityEngine;
 
 namespace Logic.Interfaces
 {
-    public interface IEnemy : IDamageble
+    public interface IEnemy : IDamageable
     {
-        Transform Transform { get; }
+        Transform EnemyTransform { get; }
         bool IsDead { get; }
         float CurrentHealth { get; }
         IEnemyModel Model { get; }
@@ -13,6 +14,8 @@ namespace Logic.Interfaces
         void Die();
         void Reset();
         void Move(Vector3 offset);
-        void Attack(IPlayer player, IDamageSystem damageSystem);
+        void MoveTo(Vector3 newPosition);
+        UniTask Attack(IDamageable target);
+        void TakeDamage(float damage);
     }
 }

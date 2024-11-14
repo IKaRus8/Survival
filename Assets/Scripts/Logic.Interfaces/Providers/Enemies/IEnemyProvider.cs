@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using UnityEngine.Rendering;
 
-namespace Logic.Interfaces.Providers
+namespace Logic.Interfaces.Providers.Enemies
 {
-    public interface IAliveEnemyProvider
+    public interface IEnemyProvider
     {
         IReadOnlyCollection<IEnemy> AliveEnemies { get; }
         IReadOnlyCollection<IEnemy> DeadEnemies { get; }

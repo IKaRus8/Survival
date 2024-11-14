@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces;
+using Logic.Interfaces.Services;
 using UnityEngine;
 using Zenject;
 
@@ -22,7 +23,7 @@ namespace Logic.Services.Player
 
           public async UniTask<IPlayer> CreateAsync()
           {
-               var playerGameObject = await _assetService.GetAssetAsync<GameObject>(PlayerKey);
+               var playerGameObject = await _assetService.LoadAssetAsync<GameObject>(PlayerKey);
 
                var player = _container.InstantiatePrefabForComponent<IPlayer>(playerGameObject);
 

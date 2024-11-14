@@ -2,7 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces;
 using Logic.Interfaces.Services.Player;
-using Logic.Weapon;
+using Logic.Services.Pools;
 using R3;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ namespace Logic.Services.Player
         private readonly ReactiveProperty<IEnemy> _targetRx;
         private readonly CompositeDisposable _disposables;
         private readonly IDamageSystem _damageSystem;
-        private readonly Bullet.Factory _bulletFactory;
+        private BulletPool _bulletPool;
 
         private IPlayer _player;
         private Transform _shotPoint;
@@ -25,10 +25,9 @@ namespace Logic.Services.Player
         public PlayerShootService(
             IPlayerHolder playerHolder,
             IPlayerTargetObserver targetProvider,
-            Bullet.Factory bulletFactory,
+            
             IDamageSystem damageSystem)
         {
-            _bulletFactory = bulletFactory;
             _damageSystem = damageSystem;
             _disposables = new CompositeDisposable();
             
@@ -74,8 +73,8 @@ namespace Logic.Services.Player
             }
             
             ShotDelayTimer().Forget();
-            
-            _bulletFactory.Create(_player, _targetRx.Value, _shotPoint, _damageSystem);
+
+            _bulletPool.Spawn(_player.Transform.position, _player.Transform.forward);
         }
 
         private async UniTaskVoid ShotDelayTimer()

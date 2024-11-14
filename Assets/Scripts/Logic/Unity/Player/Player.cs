@@ -67,7 +67,7 @@ namespace Logic.Unity.Player
             _currentHealth = 0;
         }
 
-        public void TakeDamage(IDamageble attacker, float damage)
+        public void TakeDamage(IDamageable attacker, float damage)
         {
             _currentHealth -= damage;
         

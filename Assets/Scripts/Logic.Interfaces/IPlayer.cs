@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Logic.Interfaces
 {
-    public interface IPlayer: IDamageble 
+    public interface IPlayer: IDamageable 
     {   
         void Move(Vector3 direction, float speed, float time);
         void Rotate(Vector3 direction, float speed, float time);    

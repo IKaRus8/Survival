@@ -2,36 +2,75 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces;
+using Logic.Interfaces.Services;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using Object = UnityEngine.Object;
 
 namespace Logic.Services
 {
-    public class AssetService: IAssetService, IDisposable
+    public class AssetService : IAssetService, IDisposable
     {
-        private readonly List<object> _cache = new ();
+        private readonly List<AsyncOperationHandle> _cache = new ();
 
-        public async UniTask <TAsset> GetAssetAsync<TAsset>(string addressableKey) where TAsset : class
+        public async UniTask <T> LoadAssetAsync<T>(string addressableKey)
         {
-            var result = await LoadNewAssetAsync<TAsset>(addressableKey);
+            var result = await Load<T>(addressableKey);
         
             return result;
         }
         
-        private async UniTask <TAsset> LoadNewAssetAsync<TAsset>(string addressableKey) where TAsset : class
+        private async UniTask <T> Load<T>(string addressableKey)
         {
-            var asyncOperationHandle = Addressables.LoadAssetAsync<TAsset>(addressableKey);
+            var asyncOperationHandle = Addressables.LoadAssetAsync<T>(addressableKey);
         
             _cache.Add(asyncOperationHandle);
 
-            var result = await asyncOperationHandle;
+            return await asyncOperationHandle.ToUniTask();
+        }
+
+        public async UniTask<GameObject> LoadAndInstantiateAsync(string addressableKey, Transform parent)
+        {
+            var asyncOperationHandle = Addressables.InstantiateAsync(addressableKey, parent);
             
-            return result;
+            _cache.Add(asyncOperationHandle);
+
+            return await asyncOperationHandle.ToUniTask();
+        }
+
+        public async UniTask<T> LoadAndInstantiateAsync<T>(string addressableKey, Transform parent)
+        {
+            var go = await LoadAndInstantiateAsync(addressableKey, parent);
+
+            if (go == null)
+            {
+#if UNITY_EDITOR || DEBUG
+                Debug.LogError($"Failed to load asset {addressableKey}");
+#endif
+                return default;
+            }
+
+            if (go.TryGetComponent<T>(out var component))
+            {
+                return component;
+            }
+            
+#if UNITY_EDITOR || DEBUG
+            Debug.LogError($"Failed to get component {nameof(T)}");
+#endif
+            return default;
         }
 
         private void ReleaseAsset()
         {
             foreach (var handle in _cache)
             {
+                if (!handle.IsValid())
+                {
+                    continue;
+                }
+                
                 Addressables.Release(handle);
             }
             

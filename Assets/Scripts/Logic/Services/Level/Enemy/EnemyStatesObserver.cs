@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
-using Logic.Interfaces.Services.Enemy;
+using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Player;
 using Logic.RuntimeData;
 using R3;
 using UnityEngine;
 
-namespace Logic.Services.Enemy
+namespace Logic.Services.Level.Enemy
 {
     public class EnemyStatesObserver : IEnemyStatesObserver, IDisposable
     {
-        private readonly IAliveEnemyProvider _aliveEnemyProvider;
+        private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _playerDisposable;
   
         private IDisposable _updateDisposable;
@@ -22,10 +23,10 @@ namespace Logic.Services.Enemy
         public Subject<IReadOnlyCollection<EnemyStateModel>> EnemyStatesUpdated { get; }
 
         public EnemyStatesObserver(
-            IAliveEnemyProvider aliveEnemyProvider, 
+            IEnemyProvider enemyProvider, 
             IPlayerHolder playerHolder)
         {
-            _aliveEnemyProvider = aliveEnemyProvider;
+            _enemyProvider = enemyProvider;
             EnemyStatesUpdated = new Subject<IReadOnlyCollection<EnemyStateModel>>();
 
             _playerDisposable = playerHolder.PlayerRx.Subscribe(OnPlayerCreated);
@@ -47,9 +48,9 @@ namespace Logic.Services.Enemy
 
             _enemyStates.Clear();
 
-            foreach (var enemy in _aliveEnemyProvider.AliveEnemies)
+            foreach (var enemy in _enemyProvider.AliveEnemies)
             {
-                var enemyToPlayerVector = _playerTransform.position - enemy.Transform.position;
+                var enemyToPlayerVector = _playerTransform.position - enemy.EnemyTransform.position;
 
                 var distance = enemyToPlayerVector.sqrMagnitude;
 

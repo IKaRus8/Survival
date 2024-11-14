@@ -1,19 +1,20 @@
 using System;
 using JetBrains.Annotations;
 using Logic.Interfaces.Providers;
+using Logic.Interfaces.Providers.Enemies;
 using R3;
 
-namespace Logic.Services.Enemy
+namespace Logic.Services.Level.Enemy
 {
     [UsedImplicitly]
     public class EnemyDeathObserver : IDisposable
     {
-        private readonly IAliveEnemyProvider _aliveEnemyProvider;
+        private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _updateDisposable;
 
-        public EnemyDeathObserver(IAliveEnemyProvider aliveEnemyProvider)
+        public EnemyDeathObserver(IEnemyProvider enemyProvider)
         {
-            _aliveEnemyProvider = aliveEnemyProvider;          
+            _enemyProvider = enemyProvider;          
 
             _updateDisposable = Observable.EveryUpdate().Subscribe(UpdateState);
         }
@@ -25,7 +26,7 @@ namespace Logic.Services.Enemy
 
         private void CheckDeadEnemy()
         {
-            var enemies = _aliveEnemyProvider.AliveEnemies;
+            var enemies = _enemyProvider.AliveEnemies;
 
             foreach (var enemy in enemies)
             {

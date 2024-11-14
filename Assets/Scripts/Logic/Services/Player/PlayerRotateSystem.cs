@@ -47,7 +47,7 @@ namespace Logic.Services.Player
                 return;
             }
 
-            var direction = _target.Transform.position - _player.Transform.position;
+            var direction = _target.EnemyTransform.position - _player.Transform.position;
         
             if ((_player.Transform.forward - direction.normalized).sqrMagnitude > 0.1f)
             {

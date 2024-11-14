@@ -2,7 +2,7 @@ using System;
 using Logic.Interfaces;
 using UnityEngine;
 
-namespace Logic
+namespace Logic.Unity.Grid
 {
     public class GridElement : MonoBehaviour, IGridElement
     {

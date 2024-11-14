@@ -3,18 +3,19 @@ using System.Linq;
 using JetBrains.Annotations;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
+using Logic.Interfaces.Providers.Enemies;
 
-namespace Logic.Providers
+namespace Logic.Providers.Enemies
 {
     [UsedImplicitly]
-    public class AliveEnemyProvider : IAliveEnemyProvider
+    public class EnemyProvider : IEnemyProvider
     {
         private List<IEnemy> Enemies { get; }
         public IReadOnlyCollection<IEnemy> AliveEnemies => GetAliveEnemies();
         public IReadOnlyCollection<IEnemy> DeadEnemies => GetDeadEnemies();
         public int AliveEnemyCount => AliveEnemies.Count;
         
-        public AliveEnemyProvider()
+        public EnemyProvider()
         {
             Enemies = new List<IEnemy>();
         }

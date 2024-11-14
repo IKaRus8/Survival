@@ -1,50 +1,22 @@
-using System;
-using DG.Tweening;
-using Logic.Interfaces;
 using UnityEngine;
-using Zenject;
 
-namespace Logic.Weapon
+namespace Logic.Unity.Weapon
 {
-    public class Bullet : MonoBehaviour, IPoolable<IPlayer, IEnemy, Transform, IDamageSystem, IMemoryPool>, IDisposable
+    public class Bullet : MonoBehaviour
     {
-        private const float Damage = 50f;
+        private const float Speed = 10f;
         
-        private IMemoryPool _pool;
-        private Tween _tween;
-
-        public void OnDespawned()
+        public void Initialize(
+            Vector3 position,
+            Vector3 rotation)
         {
-            _tween?.Kill();
-            _pool = null;
+            transform.position = position;
+            transform.rotation = Quaternion.Euler(rotation);
         }
 
-        public void OnSpawned(
-            IPlayer player,
-            IEnemy target,
-            Transform spawnPoint,
-            IDamageSystem damageSystem,
-            IMemoryPool pool)
+        private void Update()
         {
-            transform.position = spawnPoint.position;
-            transform.rotation = spawnPoint.rotation;
-            
-            _pool = pool;
-            
-            _tween?.Kill();
-            _tween = transform.DOMove(target.Transform.position, 0.15f).OnComplete(() => _pool.Despawn(this));
-            
-            damageSystem.DoDamage(player, target, Damage);
+            transform.position += transform.forward * (Speed * Time.deltaTime);
         }
-
-        public void Dispose()
-        {
-            _tween?.Kill();
-            
-            _pool.Despawn(this);
-        }
-
-        public class Factory : PlaceholderFactory<IPlayer, IEnemy, Transform, IDamageSystem, Bullet>
-        { }
     }
 }

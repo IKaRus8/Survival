@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Logic.Interfaces;
-using Logic.Interfaces.Services.Enemy;
+using Logic.Interfaces.Services.Level.Enemy;
 using Logic.RuntimeData;
 using R3;
 using UnityEngine;
 
-namespace Logic.Services.Enemy
+namespace Logic.Services.Level.Enemy
 {
     public class EnemyMoveSystem : IMovable, IDisposable
     {

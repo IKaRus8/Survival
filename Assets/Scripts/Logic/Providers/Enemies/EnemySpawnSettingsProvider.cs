@@ -2,18 +2,18 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Data.ScriptableObjects;
 using Logic.Interfaces.Providers;
+using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Services;
 using R3;
-using System;
-using Logic.Interfaces;
 
-namespace Logic.Providers
+namespace Logic.Providers.Enemies
 {
-    public class EnemySpawnSettingsProvider : IEnemySpawnSettingsProvider, IDisposable
+    public class EnemySpawnSettingsProvider : IEnemySpawnSettingsProvider
     {
         private const string EnemySpawnSettingsKey = "EnemySpawnSettings";
 
         private readonly IAssetService _assetService;
-        private readonly IAliveEnemyProvider _enemyProvider;
+        private readonly IEnemyProvider _enemyProvider;
 
         private EnemySpawnSettings _settings;
 
@@ -21,7 +21,7 @@ namespace Logic.Providers
 
         public EnemySpawnSettingsProvider(
             IAssetService assetService,
-            IAliveEnemyProvider enemyProvider)
+            IEnemyProvider enemyProvider)
         {
             _assetService = assetService;
             _enemyProvider = enemyProvider;
@@ -34,11 +34,11 @@ namespace Logic.Providers
         {
             var enemyCount = _enemyProvider.AliveEnemyCount;
 
-            foreach (var enemyParameter in _settings.SpawnParameters.OrderBy(p => p.enemyQuantity))
+            foreach (var enemyParameter in _settings.SpawnParameters.OrderBy(p => p.Quantity))
             {
-                if (enemyCount < enemyParameter.enemyQuantity)
+                if (enemyCount < enemyParameter.Quantity)
                 {
-                    return enemyParameter.spawnChance;
+                    return enemyParameter.Chance;
                 }
             }
 
@@ -47,15 +47,9 @@ namespace Logic.Providers
 
         private async UniTaskVoid LoadSettings()
         {
-            _settings = await _assetService.GetAssetAsync<EnemySpawnSettings>(EnemySpawnSettingsKey);
+            _settings = await _assetService.LoadAssetAsync<EnemySpawnSettings>(EnemySpawnSettingsKey);
 
             IsSettingLoadedRx.Value = true;
-        }
-
-        public void Dispose()
-        {
-            IsSettingLoadedRx.Value = false;
-            IsSettingLoadedRx.Dispose();
         }
     }
 }

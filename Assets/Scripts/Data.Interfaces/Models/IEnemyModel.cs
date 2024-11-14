@@ -1,3 +1,5 @@
+using System;
+
 namespace Data.Interfaces.Models
 {
     public interface IEnemyModel
@@ -6,7 +8,7 @@ namespace Data.Interfaces.Models
         float Health { get; }
         float AttackDamage { get;}
         float MoveSpeed { get; }
-        float AttackDelay { get; }
+        TimeSpan AttackDelay { get; }
         float AttackDistance { get; }
     }
 }

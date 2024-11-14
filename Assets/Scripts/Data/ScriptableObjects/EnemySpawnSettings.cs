@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Data.Models.Enemy;
 using UnityEngine;
 
 namespace Data.ScriptableObjects
@@ -8,15 +9,8 @@ namespace Data.ScriptableObjects
     public class EnemySpawnSettings : ScriptableObject
     {
         [SerializeField]
-        private List<SpawnParameter> _spawnParameters;
+        private List<EnemySpawnParameter> _spawnParameters;
         
-        public List<SpawnParameter> SpawnParameters => _spawnParameters;
-        
-        [Serializable]
-        public class SpawnParameter
-        {
-            public int enemyQuantity;
-            public float spawnChance;
-        }
+        public List<EnemySpawnParameter> SpawnParameters => _spawnParameters;
     }
 }

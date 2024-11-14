@@ -1,6 +1,6 @@
 using R3;
 
-namespace Logic.Interfaces.Providers
+namespace Logic.Interfaces.Providers.Enemies
 {
     public interface IEnemySpawnSettingsProvider
     {

@@ -3,6 +3,7 @@ using Data.Interfaces;
 using Data.Interfaces.Constants;
 using Data.Interfaces.Models;
 using Data.Models;
+using Data.Models.Enemy;
 
 namespace Data
 {

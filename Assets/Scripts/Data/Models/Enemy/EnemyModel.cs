@@ -1,6 +1,7 @@
+using System;
 using Data.Interfaces.Models;
 
-namespace Data.Models
+namespace Data.Models.Enemy
 {
     public class EnemyModel : IEnemyModel
     {
@@ -8,7 +9,7 @@ namespace Data.Models
         public float Health { get; }
         public float AttackDamage { get;}
         public float MoveSpeed { get; }
-        public float AttackDelay { get; }
+        public TimeSpan AttackDelay { get; }
         public float AttackDistance { get; }
         
         public EnemyModel(
@@ -20,7 +21,7 @@ namespace Data.Models
             float health)
         {
             AttackDistance = attackDistance;
-            AttackDelay = attackDelay;
+            AttackDelay = TimeSpan.FromSeconds(attackDelay);
             MoveSpeed = moveSpeed;
             AttackDamage = attackDamage;
             Health = health;

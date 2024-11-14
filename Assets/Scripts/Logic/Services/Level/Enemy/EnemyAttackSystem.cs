@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Logic.Interfaces;
-using Logic.Interfaces.Services.Enemy;
+using Logic.Interfaces.Services.Level.Enemy;
 using Logic.RuntimeData;
 using R3;
 
-namespace Logic.Services.Enemy
+namespace Logic.Services.Level.Enemy
 {
     public class EnemyAttackSystem : IDisposable
     {
@@ -23,21 +23,21 @@ namespace Logic.Services.Enemy
             _updateDisposable = enemyStatesObserver.EnemyStatesUpdated.Subscribe(OnStatesUpdated);
         }
 
+        private void OnStatesUpdated(IReadOnlyCollection<EnemyStateModel> states)
+        {
+            foreach (var stateModel in states)
+            {
+                TryAttack(stateModel);
+            }
+        }
+
         private void TryAttack(EnemyStateModel stateModel)
         {
             var enemy = stateModel.Enemy;
             
             if (stateModel.Distance <= Math.Sqrt(enemy.Model.AttackDistance))
             {
-                enemy.Attack(_player, _damageSystem);
-            }
-        }
-
-        private void OnStatesUpdated(IReadOnlyCollection<EnemyStateModel> states)
-        {
-            foreach (var stateModel in states)
-            {
-                TryAttack(stateModel);
+                enemy.Attack(_player);
             }
         }
 

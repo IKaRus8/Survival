@@ -1,4 +1,5 @@
-using Logic.Interfaces;
+using Data;
+using Data.Interfaces;
 using Logic.Services;
 using Zenject;
 
@@ -9,8 +10,9 @@ namespace Logic.Installers
         public override void InstallBindings()
         {
             // Services
-            Container.Bind<IAssetService>().To<AssetService>().AsSingle();   
+            Container.BindInterfacesTo<AssetService>().AsSingle();   
             Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
+            Container.Bind<IGameEntities>().To<GameEntities>().AsSingle();
         }
     }
 }

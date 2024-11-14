@@ -3,26 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces;
+using Logic.Interfaces.Services;
+using Logic.Interfaces.Services.Level;
+using Logic.Unity.Grid;
 using R3;
 using UnityEngine;
-using Zenject;
+using Utilities.Extensions;
+using Object = UnityEngine.Object;
 
 namespace Logic.Services.Level
 {
-    public class GridSystem : IDisposable, IGridController
+    public class GridSystem : IGridController, IDisposable
     {
+        private const string GridPlaneKey = "grid_plane";
         private const float Offset = 10;
         private const int CountInMap = 9;
 
-        private readonly List<IGridElement> _roads;
-        private readonly List<IGridElement> _roadsInRightPos;
-        private readonly IInstantiator _container;
+        private readonly List<IGridElement> _grid;
         private readonly IAssetService _assetService;
-        private readonly ISceneObjectContainer _objectContainer;
-        private readonly ReactiveProperty<IGridElement> _currentElementRx;
         private readonly CompositeDisposable _disposables;
+        private readonly Transform _gridParent;
 
-        private readonly List<Vector3> _positions = new()
+        private readonly List<Vector3> _offsetList = new()
         {
             new Vector3(0, 0, 0),
             new Vector3(-Offset, 0, 0),
@@ -38,67 +40,29 @@ namespace Logic.Services.Level
         private Transform _playerTransform;
 
         public GridSystem(
-            IInstantiator installer,
             IAssetService assetService,
-            ISceneObjectContainer objectContainer)
+            ILevelSceneObjectContainer objectContainer)
         {
-            _container = installer;
-            _assetService = assetService;
-            _objectContainer = objectContainer;
-
             _disposables = new CompositeDisposable();
-            _roads = new List<IGridElement>();
-            _roadsInRightPos = new List<IGridElement>();
-            _currentElementRx = new ReactiveProperty<IGridElement>();
+            _grid = new List<IGridElement>();
+            
+            _assetService = assetService;
+            _gridParent = objectContainer.GridParent;
 
             CreateStartField().Forget();
         }
 
-        public List<IGridElement> GetRoadsForSpawn()
+        public IGridElement GetRandomGridPlaneWithOutPlayer()
         {
-            return _roadsInRightPos.Where(x => x.IsPlayerInside == false).ToList();
+            var result = _grid.Shake().FirstOrDefault(g => !g.IsPlayerInside);
+
+            return result;
         }
 
-        private async UniTaskVoid CreateStartField()
+        public void ReplaceGrid(Vector3 centerPosition)
         {
-            var roadParent = _objectContainer.RoadParent;
-            roadParent.transform.position = Vector3.zero;
-
-            //TODO: ключ должен быть просто по имени: Plane
-            var roadPrefab = await _assetService.GetAssetAsync<GameObject>("Assets/Prefabs/Game/Plane.prefab");
-
-            CreateLevelGrid(roadPrefab, roadParent.transform);
-        }
-
-        private void CreateLevelGrid(GameObject roadPrefab, Transform roadParent)
-        {
-            for (var i = 0; i < CountInMap; i++)
-            {
-                var currentRoadGrid =
-                    _container.InstantiatePrefabForComponent<IGridElement>(roadPrefab, roadParent.transform);
-
-                currentRoadGrid.SetPosition(_positions[i]);
-                currentRoadGrid.OnPlayerEnter += RebuildRoad;
-
-                if (i == 0)
-                {
-                    _currentElementRx.Value = currentRoadGrid;
-                }
-
-                _roadsInRightPos.Add(currentRoadGrid);
-                _roads.Add(currentRoadGrid);
-            }
-        }
-
-        private void RebuildRoad(IGridElement grid)
-        {
-            _roadsInRightPos.Clear();
-            _currentElementRx.Value.Reset();
-            _currentElementRx.Value = grid;
-
-            var emptyPos = CheckEmptyPos();
-
-            var roadsInWrongPos = _roads.Except(_roadsInRightPos).ToList();
+            var emptyPos = GetEmptyPos(centerPosition);
+            var roadsInWrongPos = GetWrongPositionGridPlane(centerPosition);
 
             for (var i = 0; i < emptyPos.Count; i++)
             {
@@ -106,33 +70,58 @@ namespace Logic.Services.Level
             }
         }
 
-        private List<Vector3> CheckEmptyPos()
+        private async UniTaskVoid CreateStartField()
+        {
+            _gridParent.transform.position = Vector3.zero;
+            
+            var roadPrefab = await _assetService.LoadAssetAsync<GridElement>(GridPlaneKey);
+
+            CreateLevelGrid(roadPrefab, _gridParent.transform).Forget();
+        }
+
+        private async UniTask CreateLevelGrid(GridElement gridPlanePrefab, Transform gridParent)
+        {
+            for (var i = 0; i < CountInMap; i++)
+            {
+                var elements = await Object.InstantiateAsync(gridPlanePrefab, gridParent.transform);
+
+                if (elements.IsNullOrEmpty())
+                {
+                    Debug.LogError("Could not instantiate grid element");
+                    
+                    return;
+                }
+
+                var currentGrid = elements[0];
+
+                currentGrid.SetPosition(_offsetList[i]);
+
+                _grid.Add(currentGrid);
+            }
+        }
+
+        private List<Vector3> GetEmptyPos(Vector3 centerPosition)
         {
             var emptyPosList = new List<Vector3>();
-            var centerPosition = _currentElementRx.Value.Transform.position;
 
-            foreach (var pos in _positions)
+            foreach (var pos in _offsetList)
             {
-                if (IsEmptyPos(centerPosition, pos))
+                if (IsEmptyPosition(centerPosition, pos))
                 {
                     emptyPosList.Add(pos + centerPosition);
-                }
-                else
-                {
-                    _roadsInRightPos.Add(_roads.FirstOrDefault(x => x.Transform.position == pos + centerPosition));
                 }
             }
 
             return emptyPosList;
         }
 
-        private bool IsEmptyPos(Vector3 centerPos, Vector3 offsetPos)
+        private bool IsEmptyPosition(Vector3 centerPos, Vector3 offsetPos)
         {
             var targetPos = centerPos + offsetPos;
 
-            foreach (var road in _roads)
+            foreach (var gridElement in _grid)
             {
-                if (road.Transform.position == targetPos)
+                if (gridElement.Transform.position == targetPos)
                 {
                     return false;
                 }
@@ -141,20 +130,28 @@ namespace Logic.Services.Level
             return true;
         }
 
+        private List<IGridElement> GetWrongPositionGridPlane(Vector3 centerPosition)
+        {
+            var wrongGridPlane = new List<IGridElement>();
+            
+            foreach (var gridElement in _grid)
+            {
+                var distance = Vector3.Distance(centerPosition, gridElement.Transform.position);
+
+                if (distance < Offset * 1.5f)
+                {
+                    continue;
+                }
+                
+                wrongGridPlane.Add(gridElement);
+            }
+
+            return wrongGridPlane;
+        }
+        
         public void Dispose()
         {
             _disposables?.Dispose();
-
-            foreach (var road in _roads)
-            {
-                road.OnPlayerEnter -= RebuildRoad;
-            }
         }
-    }
-
-//TODO: отдельный файл
-    public interface IGridController
-    {
-        List<IGridElement> GetRoadsForSpawn();
     }
 }

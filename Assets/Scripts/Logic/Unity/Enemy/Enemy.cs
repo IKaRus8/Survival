@@ -3,47 +3,50 @@ using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using Logic.Interfaces;
 using UnityEngine;
+using Zenject;
 
 namespace Logic.Unity.Enemy
 {
-    public class Enemy : MonoBehaviour, IEnemy
+    public abstract class Enemy : MonoBehaviour, IEnemy
     {
-        private readonly TimeSpan _attackDelay;
-
         private bool _isCanAttack;
+        private IDamageSystem _damageSystem;
 
         public float CurrentHealth { get; private set; }
         public bool IsDead { get; private set; }
-        public Transform Transform => transform;
+        public abstract IEnemyModel Model { get; protected set; }
+        public Transform EnemyTransform { get; private set; }
 
-        //TODO: прокинуть в спавнере
-        public IEnemyModel Model { get; private set; }
-
-        private void OnEnable()
+        [Inject]
+        private void Construct(IDamageSystem damageSystem)
         {
-            CurrentHealth = Model.Health;
-
-            IsDead = false;
-            _isCanAttack = true;
+            _damageSystem = damageSystem;
         }
 
-        public void Init(IEnemyModel model)
+        protected virtual void Awake()
         {
-            Model = model;
+            EnemyTransform = transform;
         }
 
-        public void Die()
+        public virtual void Die()
         {
-            gameObject.SetActive(false);
             IsDead = true;
+            CurrentHealth = 0f;
+            
+            gameObject.SetActive(false);
         }
 
-        public void Move(Vector3 offset)
+        public virtual void Move(Vector3 offset)
         {
-            transform.position += offset;
+            MoveTo(EnemyTransform.position + offset);
         }
 
-        public virtual void Attack(IPlayer player, IDamageSystem damageSystem)
+        public void MoveTo(Vector3 newPosition)
+        {
+            transform.position = newPosition;
+        }
+
+        public virtual async UniTask Attack(IDamageable target)
         {
             if (!_isCanAttack)
             {
@@ -52,45 +55,48 @@ namespace Logic.Unity.Enemy
 
             _isCanAttack = false;
 
-            AttackPrepare(player, damageSystem).Forget();
-        }
-
-        private async UniTaskVoid AttackPrepare(IPlayer player, IDamageSystem damageSystem)
-        {
-            await UniTask.Delay(_attackDelay);
-
-            AttackProcess(player, damageSystem);
-        }
-
-        private void AttackProcess(IPlayer player, IDamageSystem damageSystem)
-        {
-            //TODO: to damage system
-            damageSystem.DoDamage(this, player, Model.AttackDamage);
-
-            PostAttack().Forget();
-        }
-
-        private async UniTask PostAttack()
-        {
-            await UniTask.Delay(_attackDelay);
+            await AttackPrepare();
+            AttackProcess(target);
+            await PostAttack();
 
             _isCanAttack = true;
         }
 
-        public void Reset()
-        {
-            gameObject.SetActive(true);
-        }
-
-        public void TakeDamage(IDamageble attacker, float damage)
+        public void TakeDamage(float damage)
         {
             CurrentHealth -= damage;
         }
 
         public void Heal(float healAmount)
         {
-            CurrentHealth += healAmount;
-            CurrentHealth = Math.Clamp(CurrentHealth, 0, Model.Health);
+            var health = Math.Min(CurrentHealth + healAmount, Model.Health);
+            
+            CurrentHealth = health;
+        }
+
+        public virtual void Reset()
+        {
+            CurrentHealth = Model.Health;
+
+            IsDead = false;
+            _isCanAttack = true;
+            
+            gameObject.SetActive(true);
+        }
+
+        private async UniTask AttackPrepare()
+        {
+            await UniTask.Delay(Model.AttackDelay);
+        }
+
+        private void AttackProcess(IDamageable target)
+        {
+            _damageSystem.FromEnemy().ToPlayer();
+        }
+
+        private async UniTask PostAttack()
+        {
+            await UniTask.Delay(Model.AttackDelay);
         }
     }
 }

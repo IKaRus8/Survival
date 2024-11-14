@@ -1,32 +1,41 @@
 using Logic.Interfaces;
 using Logic.Interfaces.Presenters;
-using Logic.Interfaces.Providers;
+using Logic.Interfaces.Providers.Enemies;
 using Logic.Presenters;
-using Logic.Providers;
-using Logic.Services;
-using Logic.Services.Enemy;
+using Logic.Providers.Enemies;
 using Logic.Services.Input;
 using Logic.Services.Level;
+using Logic.Services.Level.Enemy;
 using Logic.Services.Player;
-using Logic.Weapon;
+using Logic.Services.Pools;
+using Logic.Unity;
+using Logic.Unity.Weapon;
 using UnityEngine;
 using Zenject;
 
 namespace Logic.Installers
 {
-    public class SurvivalSceneInstaller : MonoInstaller<SurvivalSceneInstaller>
+    public class LevelSceneInstaller : MonoInstaller<LevelSceneInstaller>
     {
         [SerializeField]
         private Joystick _joystick;
+
         [SerializeField]
         private Camera _camera;
+
         [SerializeField]
-        private SceneObjectContainer _sceneObjectContainer;  
-        [SerializeField] 
+        private LevelSceneObjectsContainer _levelSceneObjectsContainer;
+
+        [SerializeField]
         GameObject _bulletPrefab;
 
         public override void InstallBindings()
         {
+            // Scene objects 
+            Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
+            Container.Bind<Camera>().FromInstance(_camera).AsSingle();
+            Container.Bind<ILevelSceneObjectContainer>().FromInstance(_levelSceneObjectsContainer).AsSingle();
+
             // Services
             Container.Bind<IInput>().To<MobileInput>().AsSingle();
             Container.Bind<ICreator<IPlayer>>().To<PlayerCreator>().AsSingle();
@@ -41,20 +50,21 @@ namespace Logic.Installers
             Container.BindInterfacesTo<EnemyAttackSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<DamageSystem>().AsSingle().NonLazy();
             Container.Bind<PlayerDeathObserver>().AsSingle().NonLazy();
-            // Scene objects 
-            Container.Bind<Joystick>().FromInstance(_joystick).AsSingle();
-            Container.Bind<Camera>().FromInstance(_camera).AsSingle();
-            Container.Bind<ISceneObjectContainer>().FromInstance(_sceneObjectContainer).AsSingle();
-        
+            Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
+
             // Providers
             Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
-            Container.BindInterfacesTo<AliveEnemyProvider>().AsSingle();
+            Container.BindInterfacesTo<EnemyProvider>().AsSingle();
             Container.BindInterfacesTo<PlayerTargetObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<PlayerShootService>().AsSingle().NonLazy();
+            Container.Bind<IEnemyModelsProvider>().To<EnemyModelsProvider>().AsSingle();
 
-            Container.BindFactory<IPlayer, IEnemy, Transform, IDamageSystem, Bullet, Bullet.Factory>().FromMonoPoolableMemoryPool(
-                x => x.WithInitialSize(30).FromComponentInNewPrefab(_bulletPrefab).UnderTransformGroup("BulletPool"));
-        
+            // Pools
+            Container.BindMemoryPool<Bullet, BulletPool>()
+                .WithInitialSize(10) // Начальный размер пула
+                .FromComponentInNewPrefab(_bulletPrefab) // Префаб пули
+                .UnderTransformGroup("Bullets");
+
             //Presenters
             Container.Bind<IGameEndedPopupPresenter>().To<GameEndedPopupPresenter>().AsSingle();
         }

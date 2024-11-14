@@ -1,26 +1,30 @@
 using System;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
+using Logic.Interfaces.Providers.Enemies;
 using Logic.Interfaces.Services.Player;
 using R3;
 using UnityEngine;
+using Utilities.Extensions;
 
 namespace Logic.Services.Player
 {
     public class PlayerTargetObserver : IPlayerTargetObserver, IDisposable
     {
-        private readonly IAliveEnemyProvider _aliveEnemyProvider;
-        private readonly IPlayerHolder _playerHolder;
+        private const float MaxTargetDistance = 100f;
+        
+        private readonly IEnemyProvider _enemyProvider;
         private readonly CompositeDisposable _disposables;
+        
+        private Transform _playerTransform;
 
         public ReactiveProperty<IEnemy> TargetRx { get; }
 
         public PlayerTargetObserver(
-            IAliveEnemyProvider aliveEnemyProvider,
+            IEnemyProvider enemyProvider,
             IPlayerHolder playerHolder)
         {
-            _aliveEnemyProvider = aliveEnemyProvider;
-            _playerHolder = playerHolder;
+            _enemyProvider = enemyProvider;
             
             TargetRx = new ReactiveProperty<IEnemy>();
             _disposables = new CompositeDisposable();
@@ -35,36 +39,49 @@ namespace Logic.Services.Player
                 return;
             }
 
-            Observable.EveryUpdate().Subscribe(_ => FindNearestAliveTarget()).AddTo(_disposables);
+            _playerTransform = player.Transform;
+
+            Observable.Interval(TimeSpan.FromSeconds(1f))
+                .Subscribe(_ => FindNearestAliveTarget())
+                .AddTo(_disposables);
         }
 
         private void FindNearestAliveTarget()
         {
-            //TODO: проверка на расстояние
+            var playerPosition = _playerTransform.position;
+            
             if (TargetRx.Value != null && !TargetRx.Value.IsDead)
             {
-                return;
+                var distance = Vector3.SqrMagnitude(playerPosition - TargetRx.Value.EnemyTransform.position);
+                
+                if (distance < MaxTargetDistance)
+                {
+                    return;
+                }
             }
 
-            var enemies = _aliveEnemyProvider.AliveEnemies;
+            var enemies = _enemyProvider.AliveEnemies;
 
-            if (enemies == null || enemies.Count == 0)
+            if (enemies.IsNullOrEmpty())
             {
                 return;
             }
             
-            var minDistance = float.MaxValue;
-            var nearestEnemy = default(IEnemy);
+            var minDistance = MaxTargetDistance;
+            IEnemy nearestEnemy = null;
 
             foreach (var enemy in enemies)
             {
-                var distance = Vector3.SqrMagnitude(_playerHolder.PlayerRx.Value.Transform.position - enemy.Transform.position);
-                
-                if (distance < minDistance)
+                var distance = Vector3.SqrMagnitude(playerPosition - enemy.EnemyTransform.position);
+
+                if (distance > minDistance)
                 {
-                    minDistance = distance;
-                    nearestEnemy = enemy;
+                    continue;
                 }
+                
+                minDistance = distance;
+                    
+                nearestEnemy = enemy;
             }
 
             TargetRx.Value = nearestEnemy;

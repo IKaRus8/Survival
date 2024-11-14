@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces;
 using Logic.Interfaces.Presenters;
+using Logic.Interfaces.Services;
 using Logic.Popups;
 using UnityEngine;
 using Zenject;
@@ -11,18 +12,18 @@ namespace Logic.Presenters
     {
         private const string GameEndedPopupKey = "GameEndedPopup";
         
-        private readonly ISceneObjectContainer _sceneObjectContainer;
+        private readonly ILevelSceneObjectContainer _levelSceneObjectContainer;
         private readonly IAssetService _assetService;
         private readonly IInstantiator _instantiator;
 
         private GameEndedPopup _popup;
 
         public GameEndedPopupPresenter(
-            ISceneObjectContainer sceneObjectContainer,
+            ILevelSceneObjectContainer levelSceneObjectContainer,
             IAssetService assetService,
             IInstantiator instantiator)
         {
-            _sceneObjectContainer = sceneObjectContainer;
+            _levelSceneObjectContainer = levelSceneObjectContainer;
             _assetService = assetService;
             _instantiator = instantiator;
         }
@@ -35,9 +36,9 @@ namespace Logic.Presenters
                 return;
             }
             
-            var popupPrefab = await _assetService.GetAssetAsync<GameObject>(GameEndedPopupKey);
+            var popupPrefab = await _assetService.LoadAssetAsync<GameObject>(GameEndedPopupKey);
 
-            _popup = _instantiator.InstantiatePrefabForComponent<GameEndedPopup>(popupPrefab, _sceneObjectContainer.PopupContainer);
+            _popup = _instantiator.InstantiatePrefabForComponent<GameEndedPopup>(popupPrefab, _levelSceneObjectContainer.PopupContainer);
         }
     }
 }
