@@ -36,6 +36,7 @@ namespace Logic.Unity.Enemy
         public void Initialize(IEnemyModel model)
         {
             Model = model;
+            
             _attackModule = new AttackModule(Model.AttackDamage, Model.AttackDelay);
         }
 

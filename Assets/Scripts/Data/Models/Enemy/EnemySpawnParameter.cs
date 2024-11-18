@@ -6,6 +6,6 @@ namespace Data.Models.Enemy
     public class EnemySpawnParameter
     {
         public int Quantity;
-        public float Chance;
+        public int Chance;
     }
 }

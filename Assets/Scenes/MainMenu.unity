@@ -222,7 +222,7 @@ Camera:
   m_GameObject: {fileID: 672746503}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -518,8 +518,8 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -720,7 +720,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 027d06851f43d564785e990bc3dd5c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiWindowPrefab: {fileID: 1713329295}
 --- !u!114 &1559114295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,24 +773,12 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 889838359}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1713329295 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6703996748316349951, guid: 040b8869c552bcf4c9b21a51737445fe,
-    type: 3}
-  m_PrefabInstance: {fileID: 889838359}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c8a8ac96ffaaee4685574fba73753ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 672746506}
   - {fileID: 1275703909}
+  - {fileID: 1182299479}
   - {fileID: 236888462}
   - {fileID: 1559114296}
-  - {fileID: 1182299479}

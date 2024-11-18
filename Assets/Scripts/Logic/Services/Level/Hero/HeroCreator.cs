@@ -10,7 +10,7 @@ namespace Logic.Services.Level.Hero
 {
      public class HeroCreator : IHeroSpawner
      {
-          private const string PlayerKey = "Player";
+          private const string PlayerKey = "player";
 
           private readonly IAssetService _assetService;
           private readonly IInstantiator _container;

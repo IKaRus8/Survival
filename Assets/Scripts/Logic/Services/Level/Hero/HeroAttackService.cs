@@ -81,7 +81,7 @@ namespace Logic.Services.Level.Hero
 
         private bool CanAttack()
         {
-            return _targetRx.Value == null || _targetRx.Value.IsDead;
+            return _targetRx.Value != null && !_targetRx.Value.IsDead;
         }
         
         public void Dispose()

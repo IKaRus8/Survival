@@ -16,10 +16,10 @@ namespace Logic.Services.Level.Enemy
     {
         private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _playerDisposable;
+        private readonly List<EnemyStateModel> _enemyStates;
   
         private IDisposable _updateDisposable;
         private Transform _playerTransform;
-        private List<EnemyStateModel> _enemyStates;
 
         public Subject<IReadOnlyCollection<EnemyStateModel>> EnemyStatesUpdated { get; }
 
@@ -29,12 +29,18 @@ namespace Logic.Services.Level.Enemy
         {
             _enemyProvider = enemyProvider;
             EnemyStatesUpdated = new Subject<IReadOnlyCollection<EnemyStateModel>>();
+            _enemyStates = new List<EnemyStateModel>();
 
             _playerDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
         private void OnPlayerCreated(IHero hero)
         {
+            if (hero == null)
+            {
+                return;
+            }
+            
             _playerTransform = hero.Transform;
             
             _updateDisposable = Observable.EveryUpdate().Subscribe(EnemyUpdate);

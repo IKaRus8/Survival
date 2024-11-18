@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: EnemySpawnSettings
   m_EditorClassIdentifier: 
   _spawnParameters:
-  - enemyQuantity: 10
-    spawnChance: 1
-  - enemyQuantity: 20
-    spawnChance: 0.7
-  - enemyQuantity: 30
-    spawnChance: 0.3
+  - Quantity: 10
+    Chance: 100
+  - Quantity: 20
+    Chance: 30
+  - Quantity: 30
+    Chance: 0

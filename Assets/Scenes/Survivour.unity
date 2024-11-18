@@ -336,7 +336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _joystick: {fileID: 1414365011}
   _camera: {fileID: 2019116382}
-  _sceneObjectContainer: {fileID: 708748483}
+  _levelSceneObjectsContainer: {fileID: 708748483}
   _bulletPrefab: {fileID: 6756244108611802762, guid: dccc47b88b43928468ec7a445319f743,
     type: 3}
 --- !u!1 &708748482
@@ -368,8 +368,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a882e06bb07c4d49998d847281f3cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _roadParent: {fileID: 1179395467}
+  _gridParent: {fileID: 1179395467}
   _popupContainer: {fileID: 262529512}
+  _enemiesContainer: {fileID: 1320262754}
 --- !u!4 &708748484
 Transform:
   m_ObjectHideFlags: 0

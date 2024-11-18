@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces;
 using Logic.Interfaces.Services;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -20,8 +19,20 @@ namespace Logic.Services
         
             return result;
         }
+
+        public async UniTask<T> LoadWithComponent<T>(string key) where T : Component
+        {
+            var go = await Load<GameObject>(key);
+            
+            if (!go.TryGetComponent<T>(out var component))
+            {
+                throw new NullReferenceException($"Can't get {typeof(T).Name} from {go.name}");
+            }
+
+            return component;
+        }
         
-        private async UniTask <T> Load<T>(string addressableKey)
+        private async UniTask<T> Load<T>(string addressableKey)
         {
             var asyncOperationHandle = Addressables.LoadAssetAsync<T>(addressableKey);
         

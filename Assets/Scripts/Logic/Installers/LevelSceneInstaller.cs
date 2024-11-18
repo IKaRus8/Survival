@@ -3,6 +3,7 @@ using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Providers.Enemies;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
+using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Unity;
 using Logic.Presenters;
 using Logic.Providers.Enemies;
@@ -12,6 +13,7 @@ using Logic.Services.Level.Enemy;
 using Logic.Services.Level.Grid;
 using Logic.Services.Level.Hero;
 using Logic.Services.Level.Pools;
+using Logic.Services.Level.Projectiles;
 using Logic.Services.Player;
 using Logic.Unity;
 using Logic.Unity.Weapon;
@@ -55,6 +57,7 @@ namespace Logic.Installers
             Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<PlayerDetectedService>().AsSingle().NonLazy();
             Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsTransient();
+            Container.Bind<IProjectileFabric>().To<ProjectileFabric>().AsTransient();
 
             // Providers
             Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();

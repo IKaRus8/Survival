@@ -17,6 +17,7 @@ namespace Logic.Services.Level.Enemy
         private readonly IGridSystem _gridSystem;
         private readonly IEnemySpawnSettingsProvider _enemySpawnSettingsProvider;
         private readonly IEnemyFactory _factory;
+        private readonly IEnemyModelsProvider _enemyModelsProvider;
         private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _settingDisposable;
 
@@ -27,11 +28,13 @@ namespace Logic.Services.Level.Enemy
             IGridSystem gridSystem,
             IEnemySpawnSettingsProvider enemySpawnSettingsProvider,
             IEnemyFactory factory,
+            IEnemyModelsProvider enemyModelsProvider,
             IEnemyProvider enemyProvider)
         {
             _gridSystem = gridSystem;
             _enemySpawnSettingsProvider = enemySpawnSettingsProvider;
             _factory = factory;
+            _enemyModelsProvider = enemyModelsProvider;
             _enemyProvider = enemyProvider;
             
             _settingDisposable = _enemySpawnSettingsProvider.IsSettingLoadedRx.Subscribe(StartSpawn);
@@ -73,6 +76,10 @@ namespace Logic.Services.Level.Enemy
             if (enemy == null)
             {
                 enemy = await _factory.CreateAsync(id);
+
+                var model = _enemyModelsProvider.GetEnemyModel(id);
+                
+                enemy.Initialize(model);
             }
 
             PrepareEnemy(enemy);

@@ -38,7 +38,7 @@ namespace Logic.Providers.Enemies
             {
                 if (enemyCount < enemyParameter.Quantity)
                 {
-                    return enemyParameter.Chance;
+                    return enemyParameter.Chance / 100f;
                 }
             }
 

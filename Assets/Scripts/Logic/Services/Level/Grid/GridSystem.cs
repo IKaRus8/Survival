@@ -91,7 +91,7 @@ namespace Logic.Services.Level.Grid
         {
             _gridParent.transform.position = Vector3.zero;
             
-            var roadPrefab = await _assetService.LoadAssetAsync<GridElement>(GridPlaneKey);
+            var roadPrefab = await _assetService.LoadWithComponent<GridElement>(GridPlaneKey);
 
             CreateLevelGrid(roadPrefab, _gridParent.transform).Forget();
         }
