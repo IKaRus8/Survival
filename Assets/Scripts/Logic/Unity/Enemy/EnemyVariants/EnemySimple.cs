@@ -1,9 +1,9 @@
-using Data.Interfaces.Models;
+using Data.Interfaces.Constants;
 
 namespace Logic.Unity.Enemy.EnemyVariants
 {
     public class EnemySimple : Enemy
     {
-        public override IEnemyModel Model { get; protected set; }
+        public override string Id => Constants.Enemy.Id.SimpleEnemy;
     }
 }

@@ -1,15 +1,26 @@
+using System;
 using Logic.Interfaces;
+using Logic.Interfaces.Services;
+using Logic.Interfaces.Services.Level;
+using Logic.Interfaces.Services.Player;
+using Logic.Interfaces.Unity;
+using R3;
 
 namespace Logic.Services.Level
 {
     public class DamageSystem : IDamageSystem
     {
-        public void DoDamage(IDamageable attacker, IDamageable target, float damage)
-        {
-            
-        }
+        private readonly IDisposable _playerDisposable;
+        
+        private IHero _hero;
+        private IDamageable _target;
 
-        public IDamageSystem FromPlayer()
+        public DamageSystem(IHeroHolder heroHolder)
+        {
+            _playerDisposable = heroHolder.HeroRx.Subscribe(OnHeroExist);
+        }
+        
+        public IDamageSystem FromHero()
         {
 
 
@@ -23,18 +34,33 @@ namespace Logic.Services.Level
             return this;
         }
 
-        public IDamageSystem ToEnemy()
+        public IDamageSystem ToEnemy(IEnemy enemy)
         {
-            
+            _target = enemy;
             
             return this;
         }
 
-        public IDamageSystem ToPlayer()
+        public IDamageSystem ToHero()
         {
-            
+            _target = _hero;
             
             return this;
+        }
+
+        public void Do(float damage)
+        {
+            if (_target == null)
+            {
+                return;
+            }
+            
+            _target.TakeDamage(damage);
+        }
+
+        private void OnHeroExist(IHero hero)
+        {
+            _hero = hero;
         }
     }
 }

@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
 using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Unity;
 
 namespace Logic.Providers.Enemies
 {

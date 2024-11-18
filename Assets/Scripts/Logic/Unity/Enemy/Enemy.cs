@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using Logic.Interfaces;
+using Logic.Interfaces.Unity;
+using Logic.Services.Level;
 using UnityEngine;
 using Zenject;
 
@@ -9,18 +12,20 @@ namespace Logic.Unity.Enemy
 {
     public abstract class Enemy : MonoBehaviour, IEnemy
     {
-        private bool _isCanAttack;
-        private IDamageSystem _damageSystem;
+        private CancellationTokenSource _attackCancellationTokenSource;
+        private UniTaskCompletionSource _currentAttackCompletionSource;
+        private AttackModule _attackModule;
 
-        public float CurrentHealth { get; private set; }
-        public bool IsDead { get; private set; }
-        public abstract IEnemyModel Model { get; protected set; }
+        public abstract string Id { get; }
+        public float Health { get; private set; }
+        public bool IsDead => Health <= 0;
+        public IEnemyModel Model { get; private set; }
         public Transform EnemyTransform { get; private set; }
 
         [Inject]
-        private void Construct(IDamageSystem damageSystem)
+        private void Construct()
         {
-            _damageSystem = damageSystem;
+            
         }
 
         protected virtual void Awake()
@@ -28,12 +33,10 @@ namespace Logic.Unity.Enemy
             EnemyTransform = transform;
         }
 
-        public virtual void Die()
+        public void Initialize(IEnemyModel model)
         {
-            IsDead = true;
-            CurrentHealth = 0f;
-            
-            gameObject.SetActive(false);
+            Model = model;
+            _attackModule = new AttackModule(Model.AttackDamage, Model.AttackDelay);
         }
 
         public virtual void Move(Vector3 offset)
@@ -46,57 +49,46 @@ namespace Logic.Unity.Enemy
             transform.position = newPosition;
         }
 
-        public virtual async UniTask Attack(IDamageable target)
+        public virtual async UniTask<float> Attack()
         {
-            if (!_isCanAttack)
-            {
-                return;
-            }
-
-            _isCanAttack = false;
-
-            await AttackPrepare();
-            AttackProcess(target);
-            await PostAttack();
-
-            _isCanAttack = true;
+            return await _attackModule.Attack();
         }
 
         public void TakeDamage(float damage)
         {
-            CurrentHealth -= damage;
+            Health -= damage;
         }
 
         public void Heal(float healAmount)
         {
-            var health = Math.Min(CurrentHealth + healAmount, Model.Health);
+            var health = Math.Min(Health + healAmount, Model.Health);
             
-            CurrentHealth = health;
+            Health = health;
         }
 
         public virtual void Reset()
         {
-            CurrentHealth = Model.Health;
-
-            IsDead = false;
-            _isCanAttack = true;
+            Health = Model.Health;
             
             gameObject.SetActive(true);
         }
 
-        private async UniTask AttackPrepare()
+        public virtual void Die()
         {
-            await UniTask.Delay(Model.AttackDelay);
+            Health = 0f;
+            
+            gameObject.SetActive(false);
         }
 
-        private void AttackProcess(IDamageable target)
+        public void CancelAttack()
         {
-            _damageSystem.FromEnemy().ToPlayer();
+            _attackModule.CancelAttack();
         }
 
-        private async UniTask PostAttack()
+        private void OnDestroy()
         {
-            await UniTask.Delay(Model.AttackDelay);
+            _attackCancellationTokenSource?.Cancel();
+            _attackCancellationTokenSource?.Dispose();
         }
     }
 }

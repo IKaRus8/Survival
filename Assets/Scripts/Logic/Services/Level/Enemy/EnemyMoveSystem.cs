@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using Logic.Interfaces;
 using Logic.Interfaces.Services.Level.Enemy;
+using Logic.Interfaces.Unity;
 using Logic.RuntimeData;
 using R3;
 using UnityEngine;
 
 namespace Logic.Services.Level.Enemy
 {
-    public class EnemyMoveSystem : IMovable, IDisposable
+    public class EnemyMoveSystem : IDisposable
     {
         private readonly IDisposable _updateDisposable;
   
-        private IPlayer _player;
+        private IHero _hero;
 
         public EnemyMoveSystem(IEnemyStatesObserver enemyStatesObserver)
         {

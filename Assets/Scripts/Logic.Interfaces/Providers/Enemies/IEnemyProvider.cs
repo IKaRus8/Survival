@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Logic.Interfaces.Unity;
 
 namespace Logic.Interfaces.Providers.Enemies
 {

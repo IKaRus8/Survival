@@ -1,4 +1,5 @@
 using Logic.Interfaces;
+using Logic.Interfaces.Services.Level;
 using UnityEngine;
 using UnityEngine.Serialization;
 

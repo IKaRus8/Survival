@@ -1,6 +1,5 @@
 using System;
 using JetBrains.Annotations;
-using Logic.Interfaces.Providers;
 using Logic.Interfaces.Providers.Enemies;
 using R3;
 
@@ -30,7 +29,7 @@ namespace Logic.Services.Level.Enemy
 
             foreach (var enemy in enemies)
             {
-                if (enemy.CurrentHealth > 0)
+                if (enemy.Health > 0)
                 {
                     continue;
                 }

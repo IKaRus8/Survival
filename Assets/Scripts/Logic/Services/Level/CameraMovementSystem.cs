@@ -1,6 +1,7 @@
 using System;
 using Logic.Interfaces;
 using Logic.Interfaces.Services.Player;
+using Logic.Interfaces.Unity;
 using R3;
 using UnityEngine;
 
@@ -15,13 +16,13 @@ namespace Logic.Services.Level
         private Transform _playerTransform;
 
         public CameraMovementSystem(
-            IPlayerHolder playerHolder,
+            IHeroHolder heroHolder,
             Camera camera)
         {
             _transform = camera.transform;
             _disposables = new CompositeDisposable();
 
-            playerHolder.PlayerRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
+            heroHolder.HeroRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
         }
 
         private void UpdateCameraPosition(Unit _)
@@ -34,14 +35,14 @@ namespace Logic.Services.Level
             _transform.position = _playerTransform.position + offset;
         }
 
-        private void OnPlayerCreated(IPlayer player)
+        private void OnPlayerCreated(IHero hero)
         {
-            if (player == null)
+            if (hero == null)
             {
                 return;
             }
 
-            _playerTransform = player.Transform;
+            _playerTransform = hero.Transform;
 
             Observable.EveryUpdate().Subscribe(UpdateCameraPosition).AddTo(_disposables);
         }

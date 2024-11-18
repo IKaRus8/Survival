@@ -1,10 +1,10 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Data.ScriptableObjects;
 using Logic.Interfaces.Providers;
 using Logic.Interfaces.Providers.Enemies;
 using Logic.Interfaces.Services;
 using R3;
+using Settings;
 
 namespace Logic.Providers.Enemies
 {

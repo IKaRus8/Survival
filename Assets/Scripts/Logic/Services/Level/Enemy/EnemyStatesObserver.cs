@@ -5,6 +5,7 @@ using Logic.Interfaces.Providers;
 using Logic.Interfaces.Providers.Enemies;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Player;
+using Logic.Interfaces.Unity;
 using Logic.RuntimeData;
 using R3;
 using UnityEngine;
@@ -24,17 +25,17 @@ namespace Logic.Services.Level.Enemy
 
         public EnemyStatesObserver(
             IEnemyProvider enemyProvider, 
-            IPlayerHolder playerHolder)
+            IHeroHolder heroHolder)
         {
             _enemyProvider = enemyProvider;
             EnemyStatesUpdated = new Subject<IReadOnlyCollection<EnemyStateModel>>();
 
-            _playerDisposable = playerHolder.PlayerRx.Subscribe(OnPlayerCreated);
+            _playerDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
-        private void OnPlayerCreated(IPlayer player)
+        private void OnPlayerCreated(IHero hero)
         {
-            _playerTransform = player.Transform;
+            _playerTransform = hero.Transform;
             
             _updateDisposable = Observable.EveryUpdate().Subscribe(EnemyUpdate);
         }

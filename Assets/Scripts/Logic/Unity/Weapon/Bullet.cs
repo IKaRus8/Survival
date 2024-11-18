@@ -6,15 +6,12 @@ namespace Logic.Unity.Weapon
     {
         private const float Speed = 10f;
         
-        public void Initialize(
-            Vector3 position,
-            Vector3 rotation)
+        public void Initialize(Vector3 position)
         {
             transform.position = position;
-            transform.rotation = Quaternion.Euler(rotation);
         }
 
-        private void Update()
+        private void Update1()
         {
             transform.position += transform.forward * (Speed * Time.deltaTime);
         }

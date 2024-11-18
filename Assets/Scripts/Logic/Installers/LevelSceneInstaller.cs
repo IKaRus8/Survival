@@ -1,13 +1,18 @@
 using Logic.Interfaces;
 using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Services.Level;
+using Logic.Interfaces.Services.Level.Enemy;
+using Logic.Interfaces.Unity;
 using Logic.Presenters;
 using Logic.Providers.Enemies;
 using Logic.Services.Input;
 using Logic.Services.Level;
 using Logic.Services.Level.Enemy;
+using Logic.Services.Level.Grid;
+using Logic.Services.Level.Hero;
+using Logic.Services.Level.Pools;
 using Logic.Services.Player;
-using Logic.Services.Pools;
 using Logic.Unity;
 using Logic.Unity.Weapon;
 using UnityEngine;
@@ -19,13 +24,10 @@ namespace Logic.Installers
     {
         [SerializeField]
         private Joystick _joystick;
-
         [SerializeField]
         private Camera _camera;
-
         [SerializeField]
         private LevelSceneObjectsContainer _levelSceneObjectsContainer;
-
         [SerializeField]
         GameObject _bulletPrefab;
 
@@ -38,10 +40,10 @@ namespace Logic.Installers
 
             // Services
             Container.Bind<IInput>().To<MobileInput>().AsSingle();
-            Container.Bind<ICreator<IPlayer>>().To<PlayerCreator>().AsSingle();
-            Container.BindInterfacesTo<PlayerHolder>().AsSingle();
-            Container.BindInterfacesTo<PlayerMoveSystem>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<PlayerRotateSystem>().AsSingle().NonLazy();
+            Container.Bind<IHeroSpawner>().To<HeroCreator>().AsSingle();
+            Container.BindInterfacesTo<HeroHolder>().AsSingle();
+            Container.BindInterfacesTo<HeroMoveSystem>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<HeroRotateSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<CameraMovementSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<GridSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemySpawner>().AsSingle().NonLazy();
@@ -49,14 +51,16 @@ namespace Logic.Installers
             Container.BindInterfacesTo<EnemyMoveSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyAttackSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<DamageSystem>().AsSingle().NonLazy();
-            Container.Bind<PlayerDeathObserver>().AsSingle().NonLazy();
+            Container.Bind<HeroDeathObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<PlayerDetectedService>().AsSingle().NonLazy();
+            Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsTransient();
 
             // Providers
             Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
             Container.BindInterfacesTo<EnemyProvider>().AsSingle();
             Container.BindInterfacesTo<PlayerTargetObserver>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<PlayerShootService>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<HeroAttackService>().AsSingle().NonLazy();
             Container.Bind<IEnemyModelsProvider>().To<EnemyModelsProvider>().AsSingle();
 
             // Pools

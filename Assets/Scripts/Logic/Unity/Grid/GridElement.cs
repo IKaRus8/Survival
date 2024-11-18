@@ -1,5 +1,6 @@
-using System;
 using Logic.Interfaces;
+using Logic.Interfaces.Unity;
+using Logic.RuntimeData;
 using UnityEngine;
 
 namespace Logic.Unity.Grid
@@ -8,37 +9,31 @@ namespace Logic.Unity.Grid
     {
         [SerializeField]
         private Transform _transform;
-        [SerializeField]
-        private BoxCollider _collider;
+
+        private Vector3 _size;
 
         public Transform Transform => _transform;
-        public BoxCollider Collider => _collider;
-        public Action<IGridElement> OnPlayerEnter { get; set; }
-        public bool IsPlayerInside { get; private set; }
+        public Rectangle ElementRectangle { get; private set; }
+        public int Index { get; set; }
+
+        private void Awake()
+        {
+            var render = GetComponent<Renderer>();
+            // Определяем размеры объекта через его границы
+            _size = render.bounds.size;
+            Debug.LogError($"Размер плитки: {_size}");
+        }
 
         public void SetPosition(Vector3 position)
         {
             transform.position = position;
-        }
-
-        public void Reset()
-        {
-            IsPlayerInside = false;
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                PlayerEnter();
-            }
-        }
-
-        private void PlayerEnter()
-        {
-            OnPlayerEnter?.Invoke(this);
             
-            IsPlayerInside = true;
+            GetRectangle(position);
+        }
+
+        private void GetRectangle(Vector3 position)
+        {
+            ElementRectangle = new Rectangle(position, _size.x);
         }
     }
 }

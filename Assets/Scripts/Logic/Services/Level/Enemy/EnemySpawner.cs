@@ -3,72 +3,58 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
 using Logic.Interfaces;
-using Logic.Interfaces.Providers;
 using Logic.Interfaces.Providers.Enemies;
-using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
+using Logic.Interfaces.Services.Level.Enemy;
+using Logic.Interfaces.Unity;
 using R3;
 using UnityEngine;
-using Zenject;
-using Random = UnityEngine.Random;
 
 namespace Logic.Services.Level.Enemy
 {
     public class EnemySpawner : IDisposable
     {
-        private readonly IGridController _gridController;
+        private readonly IGridSystem _gridSystem;
         private readonly IEnemySpawnSettingsProvider _enemySpawnSettingsProvider;
-        private readonly CompositeDisposable _disposables;
-        private readonly IAssetService _assetService;
-        private readonly IInstantiator _instantiator;
-        private readonly IEnemyModelsProvider _enemyModelsProvider;
+        private readonly IEnemyFactory _factory;
         private readonly IEnemyProvider _enemyProvider;
-        private readonly Transform _enemiesContainer;
+        private readonly IDisposable _settingDisposable;
 
         private GameObject _enemyPrefab;
+        private IDisposable _spawnDisposable;
 
         public EnemySpawner(
-            IGridController gridController,
+            IGridSystem gridSystem,
             IEnemySpawnSettingsProvider enemySpawnSettingsProvider,
-            IAssetService assetService,
-            ILevelSceneObjectContainer levelSceneObjectContainer,
-            IEnemyModelsProvider enemyModelsProvider,
+            IEnemyFactory factory,
             IEnemyProvider enemyProvider)
         {
-            _gridController = gridController;
+            _gridSystem = gridSystem;
             _enemySpawnSettingsProvider = enemySpawnSettingsProvider;
-            _assetService = assetService;
-            _enemyModelsProvider = enemyModelsProvider;
+            _factory = factory;
             _enemyProvider = enemyProvider;
-
-            _disposables = new CompositeDisposable();
-            _enemiesContainer = levelSceneObjectContainer.EnemiesContainer;
             
-            GetPrefabAsync().Forget();
-        }
-
-        private async UniTaskVoid GetPrefabAsync()
-        {
-            
-
-            _enemySpawnSettingsProvider.IsSettingLoadedRx.Subscribe(StartSpawn).AddTo(_disposables);
+            _settingDisposable = _enemySpawnSettingsProvider.IsSettingLoadedRx.Subscribe(StartSpawn);
         }
 
         private void StartSpawn(bool value)
         {
+            _spawnDisposable?.Dispose();
+            
             if (!value)
             {
                 return;
             }
+            
+            _settingDisposable?.Dispose();
 
-            Observable.Interval(TimeSpan.FromSeconds(1f))
-                .Subscribe(SpawnProcess)
-                .AddTo(_disposables);
+            _spawnDisposable = Observable.Interval(TimeSpan.FromSeconds(1f))
+                .Subscribe(SpawnProcess);
         }
 
         private void SpawnProcess(Unit _)
         {
-            SpawnEnemy(Constants.EnemyConstants.Ids.SimpleEnemy).Forget();
+            SpawnEnemy(Constants.Enemy.Id.SimpleEnemy).Forget();
         }
 
         private async UniTaskVoid SpawnEnemy(string id)
@@ -82,12 +68,11 @@ namespace Logic.Services.Level.Enemy
                 return;
             }
             
-            var enemy = _enemyProvider.DeadEnemies.FirstOrDefault(e => e.Model.Id == id);
+            var enemy = _enemyProvider.DeadEnemies.FirstOrDefault(e => e.Id == id);
 
             if (enemy == null)
             {
-                enemy = await _assetService
-                    .LoadAndInstantiateAsync<IEnemy>(id, _enemiesContainer);
+                enemy = await _factory.CreateAsync(id);
             }
 
             PrepareEnemy(enemy);
@@ -109,25 +94,15 @@ namespace Logic.Services.Level.Enemy
 
         private Vector3 GetEnemyPos()
         {
-            var gridElementCollider = _gridController.GetRandomGridPlaneWithOutPlayer().Collider;
+            var gridElementRectangle = _gridSystem.GetRandomGridPlaneWithOutPlayer().ElementRectangle;
 
-            return GetRandomPositionWithinField(gridElementCollider);
-        }
-
-        private Vector3 GetRandomPositionWithinField(Collider gameField)
-        {
-            var minBounds = gameField.bounds.min;
-            var maxBounds = gameField.bounds.max;
-
-            var randomX = Random.Range(minBounds.x, maxBounds.x);
-            var randomZ = Random.Range(minBounds.z, maxBounds.z);
-
-            return new Vector3(randomX, 0, randomZ);
+            return gridElementRectangle.RandomPosition;
         }
 
         public void Dispose()
         {
-            _disposables?.Dispose();
+            _spawnDisposable?.Dispose();
+            _settingDisposable?.Dispose();
         }
     }
 }

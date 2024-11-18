@@ -6,5 +6,6 @@ namespace Data.Interfaces
     public interface IGameEntities
     {
         IReadOnlyCollection<IEnemyModel> EnemyModels { get; }
+        IReadOnlyCollection<IHeroModel> HeroModels { get; }
     }
 }
