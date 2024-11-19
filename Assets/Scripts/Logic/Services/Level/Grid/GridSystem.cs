@@ -23,7 +23,7 @@ namespace Logic.Services.Level.Grid
         private readonly List<IGridElement> _grid;
         private readonly IAssetService _assetService;
         private readonly CompositeDisposable _disposables;
-        private readonly Transform _gridParent;
+        private readonly Transform _parentTransform;
 
         private readonly List<Vector3> _offsetList = new()
         {
@@ -48,10 +48,11 @@ namespace Logic.Services.Level.Grid
             ILevelSceneObjectContainer objectContainer)
         {
             _assetService = assetService;
-            _gridParent = objectContainer.GridParent;
+            _parentTransform = objectContainer.GridParent.transform;
             
             _disposables = new CompositeDisposable();
             _grid = new List<IGridElement>();
+            _centeredIndex = 0;
             
             CreateStartField().Forget();
         }
@@ -65,6 +66,11 @@ namespace Logic.Services.Level.Grid
 
         public void ReplaceGridAround(int index)
         {
+            if (_centeredIndex == index)
+            {
+                return;
+            }
+            
             var centerGridElement = _grid.FirstOrDefault(g => g.Index == index);
 
             if (centerGridElement == null)
@@ -89,11 +95,11 @@ namespace Logic.Services.Level.Grid
 
         private async UniTaskVoid CreateStartField()
         {
-            _gridParent.transform.position = Vector3.zero;
+            _parentTransform.position = Vector3.zero;
             
             var roadPrefab = await _assetService.LoadWithComponent<GridElement>(GridPlaneKey);
 
-            CreateLevelGrid(roadPrefab, _gridParent.transform).Forget();
+            CreateLevelGrid(roadPrefab, _parentTransform).Forget();
         }
 
         private async UniTask CreateLevelGrid(GridElement gridPlanePrefab, Transform gridParent)

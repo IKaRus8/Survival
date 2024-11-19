@@ -26,7 +26,7 @@ namespace Data
                     Constants.Enemy.Id.SimpleEnemy,
                     3f,
                     1f,
-                    5f,
+                    3f,
                     10f,
                     100f),
                 new EnemyModel(
@@ -45,10 +45,10 @@ namespace Data
             {
                 new HeroModel(
                     Constants.Hero.Id.SimpleHero,
-                    100,
+                    200,
                     10f,
-                    5f,
-                    2f,
+                    3f,
+                    1f,
                     1f)
             };
         }

@@ -9,22 +9,16 @@ namespace Utilities.Extensions
         /// </summary>
         public static bool IsIntersection(this Rectangle rectangle, Rectangle another)
         {
-            if (another.MaxPoint.x < rectangle.MinPoint.x)
+            // Проверка по оси X
+            if (another.MaxPoint.x < rectangle.MinPoint.x 
+                || another.MinPoint.x > rectangle.MaxPoint.x)
             {
                 return false;
             }
 
-            if (another.MaxPoint.y < rectangle.MinPoint.y)
-            {
-                return false;
-            }
-
-            if (another.MinPoint.x > rectangle.MaxPoint.x)
-            {
-                return false;
-            }
-
-            if (another.MinPoint.y > rectangle.MaxPoint.y)
+            // Проверка по оси Z
+            if (another.MaxPoint.z < rectangle.MinPoint.z 
+                || another.MinPoint.z > rectangle.MaxPoint.z)
             {
                 return false;
             }

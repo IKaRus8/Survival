@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Data.Interfaces;
 using Data.Interfaces.Models;
-using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Providers.Level.Enemies;
 
-namespace Logic.Providers.Enemies
+namespace Logic.Providers.Level.Enemies
 {
     public class EnemyModelsProvider : IEnemyModelsProvider
     {

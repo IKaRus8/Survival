@@ -1,12 +1,11 @@
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces.Providers;
-using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services;
 using R3;
 using Settings;
 
-namespace Logic.Providers.Enemies
+namespace Logic.Providers.Level.Enemies
 {
     public class EnemySpawnSettingsProvider : IEnemySpawnSettingsProvider
     {

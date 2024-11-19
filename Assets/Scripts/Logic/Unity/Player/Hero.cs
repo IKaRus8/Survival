@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
 using Data.Interfaces.Models;
-using Logic.Interfaces;
+using DG.Tweening;
 using Logic.Interfaces.Unity;
 using Logic.Services.Level;
 using UnityEngine;
@@ -16,6 +16,7 @@ namespace Logic.Unity.Player
         private float _currentHealth;
         private Transform _transform;
         private AttackModule _attackModule;
+        private Tween _currentRotationTween;
 
         public string Id => Constants.Hero.Id.SimpleHero;
         public float Speed => Model.Speed;
@@ -23,7 +24,7 @@ namespace Logic.Unity.Player
         public Transform Transform => _transform;
         public Transform WeaponShootPoint => _weaponShootPoint;
         public IHeroModel Model { get; private set; }
-        public bool IsDead => _currentHealth <= 0;
+        public bool IsDead => _currentHealth <= 0f;
 
         private void Awake()
         {
@@ -41,16 +42,24 @@ namespace Logic.Unity.Player
 
         public void Move(Vector3 direction)
         {
-            MoveTo(direction * Speed * Time.deltaTime);
+            var newPosition = transform.position + (direction * Speed * Time.deltaTime);
+            
+            MoveTo(newPosition);
         }
 
         public void Rotate(Vector3 direction)
         {
-            var rotationAngle = Vector3.SignedAngle(Vector3.up, direction, Vector3.forward);
+            // Останавливаем текущую анимацию вращения, если она есть
+            _currentRotationTween?.Kill();
 
-            var rotation = Quaternion.Euler(0, rotationAngle * Model.RotateSpeed, 0);
-
-            _transform.rotation *= rotation;
+            // Вычисляем целевой угол поворота
+            var rotationAngle = 180f + Vector3.SignedAngle(Vector3.up, direction, Vector3.forward);
+            var targetRotation = Quaternion.Euler(0f, rotationAngle, 0f);
+            
+            // Запускаем плавный поворот
+            _currentRotationTween = _transform.DORotateQuaternion(targetRotation, Model.RotateSpeed)
+                .SetEase(Ease.Linear)
+                .OnComplete(() => _currentRotationTween = null); // Очищаем ссылку после завершения
         }
         
         public virtual async UniTask<float> Attack()
@@ -67,7 +76,7 @@ namespace Logic.Unity.Player
         {
             _currentHealth -= damage;
 
-            if (_currentHealth <= 0)
+            if (_currentHealth <= 0f)
             {
                 Die();
             }

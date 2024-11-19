@@ -33,10 +33,10 @@ namespace Logic.Services.Level.Hero
             
             _hero = hero;
             
-            Observable.EveryUpdate().Subscribe(_ => MoveUpdate()).AddTo(_disposables);
+            Observable.EveryUpdate().Subscribe(MoveUpdate).AddTo(_disposables);
         }
 
-        public void MoveUpdate()
+        private void MoveUpdate(Unit _)
         {
             var direction = new Vector3(_input.Dir.x, 0, _input.Dir.y);
 

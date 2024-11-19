@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using Logic.Interfaces;
-using Logic.Interfaces.Providers;
-using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Unity;
 
-namespace Logic.Providers.Enemies
+namespace Logic.Providers.Level.Enemies
 {
     [UsedImplicitly]
     public class EnemyProvider : IEnemyProvider

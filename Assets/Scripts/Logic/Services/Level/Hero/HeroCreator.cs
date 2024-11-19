@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
+using Data.Interfaces.Constants;
 using Logic.Interfaces;
+using Logic.Interfaces.Providers.Level.Hero;
 using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Unity;
@@ -11,25 +13,33 @@ namespace Logic.Services.Level.Hero
      public class HeroCreator : IHeroSpawner
      {
           private const string PlayerKey = "player";
+          private const string HeroId = Constants.Hero.Id.SimpleHero;
 
           private readonly IAssetService _assetService;
+          private readonly IHeroModelsProvider _heroModelsProvider;
           private readonly IInstantiator _container;
 
           public HeroCreator(
                IAssetService assetService,
+               IHeroModelsProvider heroModelsProvider,
                IInstantiator diContainer)
           {
                _assetService = assetService;
+               _heroModelsProvider = heroModelsProvider;
                _container = diContainer;
           }
 
           public async UniTask<IHero> CreateAsync()
           {
-               var playerGameObject = await _assetService.LoadAssetAsync<GameObject>(PlayerKey);
+               var heroGameObject = await _assetService.LoadAssetAsync<GameObject>(PlayerKey);
 
-               var player = _container.InstantiatePrefabForComponent<IHero>(playerGameObject);
+               var hero = _container.InstantiatePrefabForComponent<IHero>(heroGameObject);
+               
+               var heroModel = _heroModelsProvider.GetHeroModel(HeroId);
+               
+               hero.Initialize(heroModel);
 
-               return player;
+               return hero;
           }
      }
 }

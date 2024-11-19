@@ -1,6 +1,6 @@
 using Data.Interfaces.Models;
 
-namespace Logic.Interfaces.Providers.Enemies
+namespace Logic.Interfaces.Providers.Level.Enemies
 {
     public interface IEnemyModelsProvider
     {

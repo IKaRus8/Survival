@@ -1,6 +1,6 @@
 using System;
 using JetBrains.Annotations;
-using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Providers.Level.Enemies;
 using R3;
 
 namespace Logic.Services.Level.Enemy

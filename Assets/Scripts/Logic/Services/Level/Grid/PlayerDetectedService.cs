@@ -1,5 +1,4 @@
 using System;
-using Logic.Interfaces;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
@@ -10,11 +9,14 @@ using Utilities.Extensions;
 
 namespace Logic.Services.Level.Grid
 {
-    public class PlayerDetectedService
+    public class PlayerDetectedService : IDisposable
     {
         private readonly IGridSystem _gridSystem;
+        private readonly IDisposable _heroDisposable;
+
         private Transform _playerTransform;
-        
+        private IDisposable _updateDisposable;
+
         public ReactiveProperty<IGridElement> PlayerGridElementRx { get; }
 
         public PlayerDetectedService(
@@ -24,20 +26,28 @@ namespace Logic.Services.Level.Grid
             _gridSystem = gridSystem;
             PlayerGridElementRx = new ReactiveProperty<IGridElement>();
             
-            heroHolder.HeroRx.Subscribe(OnPlayerCreated);
+            _heroDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
         private void OnPlayerCreated(IHero hero)
         {
+            if (hero == null)
+            {
+                return;
+            }
+            
             _playerTransform = hero.Transform;
 
-            Observable.Interval(TimeSpan.FromSeconds(1f)).Subscribe(UpdateGrid);
+            _updateDisposable = Observable.Interval(TimeSpan.FromSeconds(1f)).Subscribe(UpdateGrid);
         }
 
         private void UpdateGrid(Unit _)
         {
-            var playerRectangle = new Rectangle(_playerTransform.position, 5f);
-
+            var playerRectangle = new Rectangle(_playerTransform.position, 1f);
+            
+            DebugRectangleDrawer.Clear();
+            DebugRectangleDrawer.AddRectangle(playerRectangle);
+            
             foreach (var gridElement in _gridSystem.Grid)
             {
                 var isPlayerInside = gridElement.ElementRectangle.IsIntersection(playerRectangle);
@@ -51,6 +61,13 @@ namespace Logic.Services.Level.Grid
                 
                 break;
             }
+        }
+
+        public void Dispose()
+        {
+            _heroDisposable?.Dispose();
+            _updateDisposable?.Dispose();
+            PlayerGridElementRx?.Dispose();
         }
     }
 }

@@ -1,12 +1,14 @@
 using Logic.Interfaces;
 using Logic.Interfaces.Presenters;
-using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Providers.Level.Enemies;
+using Logic.Interfaces.Providers.Level.Hero;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Unity;
 using Logic.Presenters;
-using Logic.Providers.Enemies;
+using Logic.Providers.Level.Enemies;
+using Logic.Providers.Level.Hero;
 using Logic.Services.Input;
 using Logic.Services.Level;
 using Logic.Services.Level.Enemy;
@@ -65,6 +67,7 @@ namespace Logic.Installers
             Container.BindInterfacesTo<PlayerTargetObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HeroAttackService>().AsSingle().NonLazy();
             Container.Bind<IEnemyModelsProvider>().To<EnemyModelsProvider>().AsSingle();
+            Container.Bind<IHeroModelsProvider>().To<HeroModelsProvider>().AsSingle();
 
             // Pools
             Container.BindMemoryPool<Bullet, BulletPool>()

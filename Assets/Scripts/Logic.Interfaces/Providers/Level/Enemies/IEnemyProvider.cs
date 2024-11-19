@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Logic.Interfaces.Unity;
 
-namespace Logic.Interfaces.Providers.Enemies
+namespace Logic.Interfaces.Providers.Level.Enemies
 {
     public interface IEnemyProvider
     {

@@ -5,7 +5,7 @@ namespace Data.Interfaces.Models
     public interface IHeroModel
     {
         string Id { get; }
-        int Health { get; }
+        float Health { get; }
         float Speed { get; }
         float RotateSpeed { get; }
         float AttackDamage { get; }

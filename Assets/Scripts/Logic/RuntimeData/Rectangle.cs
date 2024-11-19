@@ -24,14 +24,14 @@ namespace Logic.RuntimeData
             
             var minX = positions.Min(p => p.x);
             var maxX = positions.Max(p => p.x);
-            var minY = positions.Min(p => p.y);
-            var maxY = positions.Max(p => p.y);
+            var minZ = positions.Min(p => p.z);
+            var maxZ = positions.Max(p => p.z);
 
-            MinPoint = new Vector3(minX, minY);
-            MaxPoint = new Vector3(maxX, maxY);
+            MinPoint = new Vector3(minX, 0f, minZ);
+            MaxPoint = new Vector3(maxX, 0f, maxZ);
 
             _weight = maxX - minX;
-            _height = maxY - minY;
+            _height = maxZ - minZ;
         }
 
         public Rectangle(Vector3 point, float radius)
@@ -50,9 +50,9 @@ namespace Logic.RuntimeData
             }
             
             var minX = point.x - radius;
-            var minY = point.y - radius;
+            var minZ = point.z - radius;
             
-            return new Vector3(minX, minY);
+            return new Vector3(minX, 0f, minZ);
         }
 
         private static Vector3 GetMaxPointByRadius(Vector3 point, float radius)
@@ -63,9 +63,9 @@ namespace Logic.RuntimeData
             }
             
             var maxX = point.x + radius;
-            var maxY = point.y + radius;
+            var maxZ = point.z + radius;
             
-            return new Vector3(maxX, maxY);
+            return new Vector3(maxX, 0f, maxZ);
         }
 
         private Vector3 GetRandomPosition()
@@ -73,7 +73,7 @@ namespace Logic.RuntimeData
             var randomX = Random.Range(MinPoint.x, MaxPoint.x);
             var randomZ = Random.Range(MinPoint.z, MaxPoint.z);
             
-            return new Vector3(randomX, 0, randomZ);
+            return new Vector3(randomX, 0f, randomZ);
         }
     }
 }
