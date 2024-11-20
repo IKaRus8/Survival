@@ -31,7 +31,12 @@ namespace Logic.Services
 
             return component;
         }
-        
+
+        public async UniTask<GameObject> LoadGameObjectAsync(string addressableKey)
+        {
+            return await Load<GameObject>(addressableKey);
+        }
+
         private async UniTask<T> Load<T>(string addressableKey)
         {
             var asyncOperationHandle = Addressables.LoadAssetAsync<T>(addressableKey);

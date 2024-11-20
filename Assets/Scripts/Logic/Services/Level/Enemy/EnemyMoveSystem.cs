@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Logic.Interfaces;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Unity;
 using Logic.RuntimeData;

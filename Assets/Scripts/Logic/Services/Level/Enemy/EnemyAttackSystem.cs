@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces;
-using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Unity;

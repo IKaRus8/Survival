@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Logic.Interfaces;
 using Logic.Interfaces.Providers;
-using Logic.Interfaces.Providers.Enemies;
+using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
@@ -31,7 +31,7 @@ namespace Logic.Services.Level.Enemy
             EnemyStatesUpdated = new Subject<IReadOnlyCollection<EnemyStateModel>>();
             _enemyStates = new List<EnemyStateModel>();
 
-            _playerDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
+            //_playerDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
         private void OnPlayerCreated(IHero hero)
@@ -57,7 +57,7 @@ namespace Logic.Services.Level.Enemy
 
             foreach (var enemy in _enemyProvider.AliveEnemies)
             {
-                var enemyToPlayerVector = _playerTransform.position - enemy.EnemyTransform.position;
+                var enemyToPlayerVector = _playerTransform.position - enemy.Position;
 
                 var distance = enemyToPlayerVector.sqrMagnitude;
 

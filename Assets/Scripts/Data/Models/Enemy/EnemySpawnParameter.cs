@@ -1,11 +1,15 @@
-using System;
 
 namespace Data.Models.Enemy
 {
-    [Serializable]
     public class EnemySpawnParameter
     {
-        public int Quantity;
-        public int Chance;
+        public int Quantity { get; }
+        public float Chance { get; }
+        
+        public EnemySpawnParameter(int quantity, int chance)
+        {
+            Quantity = quantity;
+            Chance = chance / 100f;
+        }
     }
 }

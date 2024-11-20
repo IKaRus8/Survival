@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
-using Logic.Interfaces;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
@@ -37,22 +36,24 @@ namespace Logic.Services.Level.Enemy
             _enemyModelsProvider = enemyModelsProvider;
             _enemyProvider = enemyProvider;
             
-            _settingDisposable = _enemySpawnSettingsProvider.IsSettingLoadedRx.Subscribe(StartSpawn);
+            StartSpawn(true);
         }
 
         private void StartSpawn(bool value)
         {
-            _spawnDisposable?.Dispose();
-            
-            if (!value)
+            if (value)
             {
-                return;
+                if (_spawnDisposable == null)
+                {
+                    _spawnDisposable = Observable.Interval(TimeSpan.FromSeconds(1f))
+                        .Subscribe(SpawnProcess);
+                }
             }
-            
-            _settingDisposable?.Dispose();
-
-            _spawnDisposable = Observable.Interval(TimeSpan.FromSeconds(1f))
-                .Subscribe(SpawnProcess);
+            else
+            {
+                _spawnDisposable?.Dispose();
+                _spawnDisposable = null;
+            }
         }
 
         private void SpawnProcess(Unit _)

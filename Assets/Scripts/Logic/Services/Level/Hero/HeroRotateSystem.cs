@@ -1,5 +1,4 @@
 using System;
-using Logic.Interfaces;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using R3;
@@ -49,7 +48,7 @@ namespace Logic.Services.Level.Hero
                 return;
             }
 
-            var direction = _target.EnemyTransform.position - _hero.Transform.position;
+            var direction = _target.Position - _hero.Transform.position;
         
             if ((_hero.Transform.forward - direction.normalized).sqrMagnitude > 0.1f)
             {

@@ -7,7 +7,7 @@ namespace Logic.Interfaces.Unity
     public interface IEnemy : IDamageable
     {
         string Id { get; }
-        Transform EnemyTransform { get; }
+        Vector3 Position { get; }
         IEnemyModel Model { get; }
 
         void Initialize(IEnemyModel model);

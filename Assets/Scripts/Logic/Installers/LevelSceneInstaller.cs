@@ -16,8 +16,8 @@ using Logic.Services.Level.Grid;
 using Logic.Services.Level.Hero;
 using Logic.Services.Level.Pools;
 using Logic.Services.Level.Projectiles;
-using Logic.Services.Player;
 using Logic.Unity;
+using Logic.Unity.SceneObjects;
 using Logic.Unity.Weapon;
 using UnityEngine;
 using Zenject;
@@ -43,7 +43,7 @@ namespace Logic.Installers
             Container.Bind<ILevelSceneObjectContainer>().FromInstance(_levelSceneObjectsContainer).AsSingle();
 
             // Services
-            Container.Bind<IInput>().To<MobileInput>().AsSingle();
+            Container.BindInterfacesTo<MobileInput>().AsSingle();
             Container.Bind<IHeroSpawner>().To<HeroCreator>().AsSingle();
             Container.BindInterfacesTo<HeroHolder>().AsSingle();
             Container.BindInterfacesTo<HeroMoveSystem>().AsSingle().NonLazy();
@@ -55,7 +55,7 @@ namespace Logic.Installers
             Container.BindInterfacesTo<EnemyMoveSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyAttackSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<DamageSystem>().AsSingle().NonLazy();
-            Container.Bind<HeroDeathObserver>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<HeroDeathObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<PlayerDetectedService>().AsSingle().NonLazy();
             Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsTransient();

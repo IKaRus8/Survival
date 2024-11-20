@@ -1,6 +1,4 @@
 using System;
-using Logic.Interfaces;
-using Logic.Interfaces.Providers;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
@@ -8,7 +6,7 @@ using R3;
 using UnityEngine;
 using Utilities.Extensions;
 
-namespace Logic.Services.Player
+namespace Logic.Services.Level.Hero
 {
     public class PlayerTargetObserver : IPlayerTargetObserver, IDisposable
     {
@@ -17,7 +15,7 @@ namespace Logic.Services.Player
         private readonly IEnemyProvider _enemyProvider;
         private readonly CompositeDisposable _disposables;
         
-        private Transform _playerTransform;
+        private Transform _heroTransform;
 
         public ReactiveProperty<IEnemy> TargetRx { get; }
 
@@ -30,17 +28,17 @@ namespace Logic.Services.Player
             TargetRx = new ReactiveProperty<IEnemy>();
             _disposables = new CompositeDisposable();
             
-            heroHolder.HeroRx.Subscribe(InitTargetsObserve).AddTo(_disposables);
+            heroHolder.HeroRx.Subscribe(OnHeroCreated).AddTo(_disposables);
         }
 
-        private void InitTargetsObserve(IHero hero)
+        private void OnHeroCreated(IHero hero)
         {
             if (hero == null)
             {
                 return;
             }
 
-            _playerTransform = hero.Transform;
+            _heroTransform = hero.Transform;
 
             Observable.Interval(TimeSpan.FromSeconds(1f))
                 .Subscribe(_ => FindNearestAliveTarget())
@@ -49,11 +47,11 @@ namespace Logic.Services.Player
 
         private void FindNearestAliveTarget()
         {
-            var playerPosition = _playerTransform.position;
+            var playerPosition = _heroTransform.position;
             
             if (TargetRx.Value != null && !TargetRx.Value.IsDead)
             {
-                var distance = Vector3.SqrMagnitude(playerPosition - TargetRx.Value.EnemyTransform.position);
+                var distance = Vector3.SqrMagnitude(playerPosition - TargetRx.Value.Position);
                 
                 if (distance < MaxTargetDistance)
                 {
@@ -73,7 +71,7 @@ namespace Logic.Services.Player
 
             foreach (var enemy in enemies)
             {
-                var distance = Vector3.SqrMagnitude(playerPosition - enemy.EnemyTransform.position);
+                var distance = Vector3.SqrMagnitude(playerPosition - enemy.Position);
 
                 if (distance > minDistance)
                 {

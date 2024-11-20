@@ -2,7 +2,6 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
-using Logic.Interfaces;
 using Logic.Interfaces.Unity;
 using Logic.Services.Level;
 using UnityEngine;
@@ -15,12 +14,13 @@ namespace Logic.Unity.Enemy
         private CancellationTokenSource _attackCancellationTokenSource;
         private UniTaskCompletionSource _currentAttackCompletionSource;
         private AttackModule _attackModule;
+        private Transform _transform;
 
         public abstract string Id { get; }
         public float Health { get; private set; }
         public bool IsDead => Health <= 0;
         public IEnemyModel Model { get; private set; }
-        public Transform EnemyTransform { get; private set; }
+        public Vector3 Position => _transform.position;
 
         [Inject]
         private void Construct()
@@ -30,7 +30,7 @@ namespace Logic.Unity.Enemy
 
         protected virtual void Awake()
         {
-            EnemyTransform = transform;
+            _transform = transform;
         }
 
         public void Initialize(IEnemyModel model)
@@ -42,7 +42,7 @@ namespace Logic.Unity.Enemy
 
         public virtual void Move(Vector3 offset)
         {
-            MoveTo(EnemyTransform.position + offset);
+            MoveTo(Position + offset);
         }
 
         public void MoveTo(Vector3 newPosition)

@@ -45,9 +45,6 @@ namespace Logic.Services.Level.Grid
         {
             var playerRectangle = new Rectangle(_playerTransform.position, 1f);
             
-            DebugRectangleDrawer.Clear();
-            DebugRectangleDrawer.AddRectangle(playerRectangle);
-            
             foreach (var gridElement in _gridSystem.Grid)
             {
                 var isPlayerInside = gridElement.ElementRectangle.IsIntersection(playerRectangle);

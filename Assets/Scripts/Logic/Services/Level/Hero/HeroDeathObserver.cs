@@ -1,5 +1,5 @@
 using System;
-using Logic.Interfaces;
+using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
@@ -36,7 +36,6 @@ namespace Logic.Services.Level.Hero
             Observable.EveryUpdate().Subscribe(CheckIsPlayerDead).AddTo(_disposables);
         }
 
-        //TODO: отписаться от проверки при смерти
         private void CheckIsPlayerDead(Unit _)
         {
             if (!_hero.IsDead)
@@ -44,7 +43,7 @@ namespace Logic.Services.Level.Hero
                 return;
             }
             
-            _gameEndedPopupPresenter.ShowPopup();
+            _gameEndedPopupPresenter.ShowPopup().Forget();
             
             Dispose();
         }

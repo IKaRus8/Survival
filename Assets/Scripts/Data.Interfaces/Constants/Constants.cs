@@ -2,6 +2,12 @@ namespace Data.Interfaces.Constants
 {
     public static class Constants
     {
+        public static class Scenes
+        {
+            public const string MenuScene = "MenuScene";
+            public const string LevelScene = "LevelScene";
+        }
+        
         public static class Enemy
         {
             public static class Id

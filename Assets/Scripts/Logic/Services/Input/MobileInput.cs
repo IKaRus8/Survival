@@ -1,34 +1,34 @@
-using Logic.Interfaces;
+using System;
 using Logic.Interfaces.Unity;
 using R3;
 using UnityEngine;
 
 namespace Logic.Services.Input
 {
-    public class MobileInput : IInput
+    public class MobileInput : IInput, IDisposable
     {
         private readonly Joystick _joystick;
-        private Vector2 _dir;
-    
-        public Vector2 Dir
-        {
-            get => _dir;
-            set => _dir = value;
-        }
+        private readonly IDisposable _updateDisposable;
+        
+        public Vector3 Direction { get; private set; }
 
         public MobileInput(Joystick joystick)
         {
             _joystick = joystick; 
         
-            Observable.EveryUpdate().Subscribe(_ => TickUpdate());
+            _updateDisposable = Observable.EveryUpdate().Subscribe(TickUpdate);
         }
 
-        public void TickUpdate()
+        private void TickUpdate(Unit _)
         {
-            _dir.x = _joystick.Horizontal;
-            _dir.y = _joystick.Vertical;
+            Direction = new Vector3(_joystick.Horizontal, 0f, _joystick.Vertical);
         
-            _dir.Normalize();
+            Direction.Normalize();
+        }
+
+        public void Dispose()
+        {
+            _updateDisposable?.Dispose();
         }
     }
 }

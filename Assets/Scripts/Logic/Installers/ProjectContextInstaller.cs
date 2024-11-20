@@ -1,5 +1,6 @@
 using Data;
 using Data.Interfaces;
+using Logic.Interfaces.Services;
 using Logic.Services;
 using Zenject;
 
@@ -13,6 +14,8 @@ namespace Logic.Installers
             Container.BindInterfacesTo<AssetService>().AsSingle();   
             Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
             Container.Bind<IGameEntities>().To<GameEntities>().AsSingle();
+            Container.Bind<IGameSettings>().To<GameSettings>().AsSingle();
+            Container.Bind<IPopupSystem>().To<PopupSystem>().AsSingle();
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using Logic.Interfaces;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using R3;
@@ -25,16 +24,6 @@ namespace Logic.Services.Level
             heroHolder.HeroRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
         }
 
-        private void UpdateCameraPosition(Unit _)
-        {
-            if (_playerTransform == null)
-            {
-                return;
-            }
-
-            _transform.position = _playerTransform.position + offset;
-        }
-
         private void OnPlayerCreated(IHero hero)
         {
             if (hero == null)
@@ -45,6 +34,11 @@ namespace Logic.Services.Level
             _playerTransform = hero.Transform;
 
             Observable.EveryUpdate().Subscribe(UpdateCameraPosition).AddTo(_disposables);
+        }
+
+        private void UpdateCameraPosition(Unit _)
+        {
+            _transform.position = _playerTransform.position + offset;
         }
 
         public void Dispose()

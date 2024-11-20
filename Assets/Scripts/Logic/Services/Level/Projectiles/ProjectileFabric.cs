@@ -57,9 +57,9 @@ namespace Logic.Services.Level.Projectiles
 
         public void Spawn()
         {
-            var bullet = _bulletPool.Spawn(_startPosition);
+            var bullet = _bulletPool.Spawn();
 
-            bullet.transform.DOMove(_endPosition, _duration);
+            bullet.transform.DOMove(_endPosition, _duration).From(_startPosition);
         }
 
         public UniTask SpawnAsync()

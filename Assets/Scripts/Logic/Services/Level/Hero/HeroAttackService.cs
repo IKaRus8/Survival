@@ -65,7 +65,7 @@ namespace Logic.Services.Level.Hero
         {
             _projectileFabric
                 .From(_shotPoint.position)
-                .To(_targetRx.Value.EnemyTransform.position)
+                .To(_targetRx.Value.Position)
                 .BySeconds((float)_hero.Model.AttackDelay.TotalSeconds)
                 .Spawn();
             
