@@ -1,12 +1,11 @@
-using Logic.Interfaces;
 using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Providers.Level.Hero;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Level.Projectiles;
-using Logic.Interfaces.Unity;
 using Logic.Presenters;
+using Logic.Providers.Level;
 using Logic.Providers.Level.Enemies;
 using Logic.Providers.Level.Hero;
 using Logic.Services.Input;
@@ -16,7 +15,6 @@ using Logic.Services.Level.Grid;
 using Logic.Services.Level.Hero;
 using Logic.Services.Level.Pools;
 using Logic.Services.Level.Projectiles;
-using Logic.Unity;
 using Logic.Unity.SceneObjects;
 using Logic.Unity.Weapon;
 using UnityEngine;
@@ -33,7 +31,9 @@ namespace Logic.Installers
         [SerializeField]
         private LevelSceneObjectsContainer _levelSceneObjectsContainer;
         [SerializeField]
-        GameObject _bulletPrefab;
+        private GameObject _bulletPrefab;
+        [SerializeField]
+        private Transform _bulletsParent;
 
         public override void InstallBindings()
         {
@@ -44,7 +44,7 @@ namespace Logic.Installers
 
             // Services
             Container.BindInterfacesTo<MobileInput>().AsSingle();
-            Container.Bind<IHeroSpawner>().To<HeroCreator>().AsSingle();
+            Container.Bind<IHeroSpawner>().To<HeroCreator>().AsTransient();
             Container.BindInterfacesTo<HeroHolder>().AsSingle();
             Container.BindInterfacesTo<HeroMoveSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HeroRotateSystem>().AsSingle().NonLazy();
@@ -57,7 +57,7 @@ namespace Logic.Installers
             Container.BindInterfacesTo<DamageSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HeroDeathObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<PlayerDetectedService>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<HeroDetectedService>().AsSingle().NonLazy();
             Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsTransient();
             Container.Bind<IProjectileFabric>().To<ProjectileFabric>().AsTransient();
 
@@ -68,12 +68,13 @@ namespace Logic.Installers
             Container.BindInterfacesTo<HeroAttackService>().AsSingle().NonLazy();
             Container.Bind<IEnemyModelsProvider>().To<EnemyModelsProvider>().AsSingle();
             Container.Bind<IHeroModelsProvider>().To<HeroModelsProvider>().AsSingle();
+            Container.BindInterfacesTo<RectanglesProvider>().AsSingle();
 
             // Pools
             Container.BindMemoryPool<Bullet, BulletPool>()
                 .WithInitialSize(10) // Начальный размер пула
                 .FromComponentInNewPrefab(_bulletPrefab) // Префаб пули
-                .UnderTransformGroup("Bullets");
+                .UnderTransform(_bulletsParent);
 
             //Presenters
             Container.Bind<IGameEndedPopupPresenter>().To<GameEndedPopupPresenter>().AsSingle();

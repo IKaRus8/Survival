@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -57,7 +58,7 @@ namespace Logic.Services.Level.Grid
             CreateStartField().Forget();
         }
 
-        public IGridElement GetRandomGridPlaneWithOutPlayer()
+        public IGridElement GetRandomGridPlaneWithOutHero()
         {
             var result = _grid.Shake().FirstOrDefault(g => g.Index != _centeredIndex);
 
@@ -82,7 +83,7 @@ namespace Logic.Services.Level.Grid
             }
             
             _centeredIndex = index;
-            var centerPosition = centerGridElement.Transform.position;
+            var centerPosition = centerGridElement.Position;
             
             var emptyPos = GetEmptyPos(centerPosition);
             var gridElementInWrongPos = GetWrongGridElements(centerPosition);
@@ -90,6 +91,17 @@ namespace Logic.Services.Level.Grid
             for (var i = 0; i < emptyPos.Count; i++)
             {
                 gridElementInWrongPos[i].SetPosition(emptyPos[i]);
+            }
+        }
+
+        // Реализация индексатора
+        public IGridElement this[int index] => Grid.FirstOrDefault(g => g.Index == index);
+        
+        public IEnumerator<IGridElement> GetEnumerator()
+        {
+            foreach (var element in Grid)
+            {
+                yield return element;
             }
         }
 
@@ -145,7 +157,7 @@ namespace Logic.Services.Level.Grid
 
             foreach (var gridElement in _grid)
             {
-                if (gridElement.Transform.position == targetPos)
+                if (gridElement.Position == targetPos)
                 {
                     return false;
                 }
@@ -160,7 +172,7 @@ namespace Logic.Services.Level.Grid
             
             foreach (var gridElement in _grid.Where(g => g.Index != _centeredIndex))
             {
-                var distance = Vector3.Distance(centerPosition, gridElement.Transform.position);
+                var distance = Vector3.Distance(centerPosition, gridElement.Position);
 
                 if (distance > Offset * 1.5f
                     || distance < Offset)
@@ -170,6 +182,11 @@ namespace Logic.Services.Level.Grid
             }
 
             return wrongGridPlane;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
         
         public void Dispose()

@@ -16,8 +16,6 @@ namespace Logic.Interfaces.Services.Level.Projectiles
 
         IProjectileFabric BySeconds(float seconds);
 
-        void Spawn();
-
         UniTask SpawnAsync();
     }
 }

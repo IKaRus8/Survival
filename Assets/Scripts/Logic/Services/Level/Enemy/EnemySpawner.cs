@@ -90,7 +90,7 @@ namespace Logic.Services.Level.Enemy
         {
             enemy.Reset();
 
-            enemy.MoveTo(GetEnemyPos());
+            enemy.MoveTo(GetEnemyPosition());
 
             AddEnemy(enemy);
         }
@@ -100,9 +100,9 @@ namespace Logic.Services.Level.Enemy
             _enemyProvider.AddEnemy(enemy);
         }
 
-        private Vector3 GetEnemyPos()
+        private Vector3 GetEnemyPosition()
         {
-            var gridElementRectangle = _gridSystem.GetRandomGridPlaneWithOutPlayer().ElementRectangle;
+            var gridElementRectangle = _gridSystem.GetRandomGridPlaneWithOutHero().ElementRectangle;
 
             return gridElementRectangle.RandomPosition;
         }

@@ -1,53 +1,52 @@
 using System;
+using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
-using Logic.RuntimeData;
 using R3;
-using UnityEngine;
 using Utilities.Extensions;
 
 namespace Logic.Services.Level.Grid
 {
-    public class PlayerDetectedService : IDisposable
+    public class HeroDetectedService : IDisposable
     {
+        private readonly IRectanglesProvider _rectanglesProvider;
         private readonly IGridSystem _gridSystem;
         private readonly IDisposable _heroDisposable;
 
-        private Transform _playerTransform;
         private IDisposable _updateDisposable;
 
-        public ReactiveProperty<IGridElement> PlayerGridElementRx { get; }
+        public ReactiveProperty<IGridElement> HeroGridElementRx { get; }
 
-        public PlayerDetectedService(
+        public HeroDetectedService(
             IHeroHolder heroHolder,
+            IRectanglesProvider rectanglesProvider,
             IGridSystem gridSystem)
         {
+            _rectanglesProvider = rectanglesProvider;
             _gridSystem = gridSystem;
-            PlayerGridElementRx = new ReactiveProperty<IGridElement>();
+            HeroGridElementRx = new ReactiveProperty<IGridElement>();
             
-            _heroDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
+            _heroDisposable = heroHolder.HeroRx.Subscribe(OnHeroCreated);
         }
 
-        private void OnPlayerCreated(IHero hero)
+        private void OnHeroCreated(IHero hero)
         {
             if (hero == null)
             {
                 return;
             }
             
-            _playerTransform = hero.Transform;
-
             _updateDisposable = Observable.Interval(TimeSpan.FromSeconds(1f)).Subscribe(UpdateGrid);
         }
 
         private void UpdateGrid(Unit _)
         {
-            var playerRectangle = new Rectangle(_playerTransform.position, 1f);
+            var playerRectangle = _rectanglesProvider.GetHeroRectangle();
             
-            foreach (var gridElement in _gridSystem.Grid)
+            foreach (var gridElement in _rectanglesProvider.GetGridRectangles())
             {
-                var isPlayerInside = gridElement.ElementRectangle.IsIntersection(playerRectangle);
+                var isPlayerInside = gridElement.IsIntersection(playerRectangle);
 
                 if (!isPlayerInside)
                 {
@@ -64,7 +63,7 @@ namespace Logic.Services.Level.Grid
         {
             _heroDisposable?.Dispose();
             _updateDisposable?.Dispose();
-            PlayerGridElementRx?.Dispose();
+            HeroGridElementRx?.Dispose();
         }
     }
 }

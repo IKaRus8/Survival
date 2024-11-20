@@ -55,16 +55,14 @@ namespace Logic.Services.Level.Projectiles
             return this;
         }
 
-        public void Spawn()
+        public async UniTask SpawnAsync()
         {
             var bullet = _bulletPool.Spawn();
+            bullet.transform.position = _startPosition;
 
-            bullet.transform.DOMove(_endPosition, _duration).From(_startPosition);
-        }
-
-        public UniTask SpawnAsync()
-        {
-            return UniTask.CompletedTask;
+            await bullet.transform.DOMove(_endPosition, _duration).AsyncWaitForCompletion();
+            
+            _bulletPool.Despawn(bullet);
         }
     }
 }

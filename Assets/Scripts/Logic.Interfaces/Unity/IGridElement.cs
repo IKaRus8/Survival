@@ -6,8 +6,8 @@ namespace Logic.Interfaces.Unity
     public interface IGridElement
     {
         int Index { get; set; }
-        Transform Transform { get; }
-        Rectangle ElementRectangle { get; }
+        Vector3 Position { get; }
+        GridRectangle ElementRectangle { get; }
         
         void SetPosition(Vector3 position);
     }

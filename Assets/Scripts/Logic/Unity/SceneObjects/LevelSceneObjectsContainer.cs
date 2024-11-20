@@ -14,9 +14,12 @@ namespace Logic.Unity.SceneObjects
     
         public Transform GridParent => _gridParent;
         public Transform EnemiesContainer => _enemiesContainer;
+        public Transform LevelContainer { get; private set; }
 
         private void Awake()
         {
+            LevelContainer = transform;
+            
             PopupContainer = _popupContainer;
         }
     }

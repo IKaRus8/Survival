@@ -6,27 +6,25 @@ namespace Logic.Unity.Grid
 {
     public class GridElement : MonoBehaviour, IGridElement
     {
-        [SerializeField]
         private Transform _transform;
+        private float _radius;
 
-        private Vector3 _size;
-
-        public Transform Transform => _transform;
-        public Rectangle ElementRectangle { get; private set; }
+        public Vector3 Position => _transform.position;
         public int Index { get; set; }
+        public GridRectangle ElementRectangle => new(Index, Position, _radius);
 
         private void Awake()
         {
+            _transform = transform;
+            
             var render = GetComponent<Renderer>();
             // Определяем размеры объекта через его границы
-            _size = render.bounds.size;
+            _radius = render.bounds.size.x * 0.5f;
         }
 
         public void SetPosition(Vector3 position)
         {
-            transform.position = position;
-            
-            ElementRectangle = new Rectangle(position, _size.x * 0.5f);
+            _transform.position = position;
         }
     }
 }

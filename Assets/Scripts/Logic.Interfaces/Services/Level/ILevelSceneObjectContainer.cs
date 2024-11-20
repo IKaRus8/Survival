@@ -6,5 +6,6 @@ namespace Logic.Interfaces.Services.Level
     {
         Transform GridParent { get; }
         Transform EnemiesContainer { get; }
+        Transform LevelContainer { get; }
     }
 }

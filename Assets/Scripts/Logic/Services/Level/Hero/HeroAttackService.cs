@@ -67,7 +67,7 @@ namespace Logic.Services.Level.Hero
                 .From(_shotPoint.position)
                 .To(_targetRx.Value.Position)
                 .BySeconds((float)_hero.Model.AttackDelay.TotalSeconds)
-                .Spawn();
+                .SpawnAsync().Forget();
             
             var damage = await _hero.Attack();
 

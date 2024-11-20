@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 6925363387200027907}
   - component: {fileID: 8028229545185693833}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Hero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b644771316ba1d8478b8f73b9282957b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movingSettings: {fileID: 11400000, guid: 35ede12597550114b8301170bfc55c7a, type: 2}
   _weaponShootPoint: {fileID: 6971181688134193432}
 --- !u!1 &3601882471387622504
 GameObject:
