@@ -1,7 +1,5 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces;
-using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Services.Player;

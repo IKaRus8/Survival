@@ -10,7 +10,7 @@ namespace Logic.Services.Level.Hero
 {
     public class PlayerTargetObserver : IPlayerTargetObserver, IDisposable
     {
-        private const float MaxTargetDistance = 100f;
+        private const float MaxTargetDistance = 60f;
         
         private readonly IEnemyProvider _enemyProvider;
         private readonly CompositeDisposable _disposables;
@@ -40,7 +40,7 @@ namespace Logic.Services.Level.Hero
 
             _heroTransform = hero.Transform;
 
-            Observable.Interval(TimeSpan.FromSeconds(1f))
+            Observable.Interval(TimeSpan.FromSeconds(0.5f))
                 .Subscribe(_ => FindNearestAliveTarget())
                 .AddTo(_disposables);
         }

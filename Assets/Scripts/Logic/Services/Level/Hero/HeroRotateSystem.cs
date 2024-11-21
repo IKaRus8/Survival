@@ -10,7 +10,7 @@ namespace Logic.Services.Level.Hero
         private readonly IPlayerTargetObserver _targetProvider;
         private readonly CompositeDisposable _disposables;
         
-        private IHero _hero;   
+        private IHero _hero;
         private IEnemy _target;
 
         public HeroRotateSystem(

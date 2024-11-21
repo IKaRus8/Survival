@@ -33,9 +33,9 @@ namespace Logic.Providers.Level
             _heroDisposable = heroHolder.HeroRx.Subscribe(OnHeroCreated);
         }
         
-        public IReadOnlyCollection<Rectangle> GetEnemyRectangles()
+        public IReadOnlyCollection<EnemyRectangle> GetEnemyRectangles()
         {
-            return _enemyProvider.AliveEnemies.Select(e => new Rectangle(e.Position, MobSize)).ToArray();
+            return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position, MobSize)).ToArray();
         }
 
         public IReadOnlyCollection<GridRectangle> GetGridRectangles()

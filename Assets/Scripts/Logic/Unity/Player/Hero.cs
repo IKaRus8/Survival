@@ -52,10 +52,14 @@ namespace Logic.Unity.Player
             // Останавливаем текущую анимацию вращения, если она есть
             _currentRotationTween?.Kill();
 
+            // Нормализуем направление, чтобы избежать проблем с масштабами вектора
+            direction.y = 0; // Игнорируем вертикальный компонент
+            direction.Normalize();
+
             // Вычисляем целевой угол поворота
-            var rotationAngle = 180f + Vector3.SignedAngle(Vector3.up, direction, Vector3.forward);
+            var rotationAngle = Vector3.SignedAngle(Vector3.forward, direction, Vector3.up);
             var targetRotation = Quaternion.Euler(0f, rotationAngle, 0f);
-            
+    
             // Запускаем плавный поворот
             _currentRotationTween = _transform.DORotateQuaternion(targetRotation, Model.RotateSpeed)
                 .SetEase(Ease.Linear)

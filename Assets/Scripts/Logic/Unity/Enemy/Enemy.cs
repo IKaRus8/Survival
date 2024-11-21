@@ -18,7 +18,7 @@ namespace Logic.Unity.Enemy
 
         public abstract string Id { get; }
         public float Health { get; private set; }
-        public bool IsDead => Health <= 0;
+        public bool IsDead => Health <= 0f;
         public IEnemyModel Model { get; private set; }
         public Vector3 Position => _transform.position;
 

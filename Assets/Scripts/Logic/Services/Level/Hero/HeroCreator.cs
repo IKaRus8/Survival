@@ -11,7 +11,6 @@ namespace Logic.Services.Level.Hero
 {
      public class HeroCreator : IHeroSpawner
      {
-          private const string PlayerKey = "player";
           private const string HeroId = Constants.Hero.Id.SimpleHero;
 
           private readonly IAssetService _assetService;
@@ -34,7 +33,7 @@ namespace Logic.Services.Level.Hero
 
           public async UniTask<IHero> CreateAsync()
           {
-               var heroGameObject = await _assetService.LoadAssetAsync<GameObject>(PlayerKey);
+               var heroGameObject = await _assetService.LoadAssetAsync<GameObject>(HeroId);
 
                var hero = _container.InstantiatePrefabForComponent<IHero>(heroGameObject, _levelContainer);
                

@@ -48,7 +48,7 @@ namespace Data
                     200,
                     10f,
                     3f,
-                    2f,
+                    4f,
                     1f)
             };
         }

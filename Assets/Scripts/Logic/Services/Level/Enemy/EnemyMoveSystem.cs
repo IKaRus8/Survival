@@ -27,12 +27,11 @@ namespace Logic.Services.Level.Enemy
             
             if (needMove)
             {
-                var moveOffset = stateModel.Direction.normalized 
+                var moveOffset = stateModel.Direction 
                                  * enemy.Model.MoveSpeed 
-                                 * UnityEngine.Random.Range(0.2f, 1.2f) 
                                  * Time.deltaTime;
                 
-                enemy.Move(moveOffset);
+                enemy.Move(RandomHelper.GetRandomizedVector(moveOffset, 0.2f));
             }
         }
 

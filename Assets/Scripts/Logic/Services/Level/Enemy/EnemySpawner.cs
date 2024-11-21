@@ -65,7 +65,7 @@ namespace Logic.Services.Level.Enemy
         {
             var spawnProbability = _enemySpawnSettingsProvider.GetChanceForSpawn();
 
-            var random = RandomHelper.GetRandomFloat();
+            var random = RandomHelper.GetChance();
 
             if (random > spawnProbability)
             {

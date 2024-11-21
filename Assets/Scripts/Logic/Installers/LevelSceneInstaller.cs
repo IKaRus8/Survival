@@ -60,6 +60,7 @@ namespace Logic.Installers
             Container.BindInterfacesTo<HeroDetectedService>().AsSingle().NonLazy();
             Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsTransient();
             Container.Bind<IProjectileFabric>().To<ProjectileFabric>().AsTransient();
+            Container.BindInterfacesTo<EnemyCollisionSystem>().AsSingle().NonLazy();
 
             // Providers
             Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
