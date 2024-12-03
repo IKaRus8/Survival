@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Logic.RuntimeData
+namespace Logic.RuntimeData.Rectangles
 {
     public class GridRectangle : Rectangle
     {

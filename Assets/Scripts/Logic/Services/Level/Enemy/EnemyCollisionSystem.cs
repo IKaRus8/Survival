@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level;
-using Logic.RuntimeData;
-using R3;
 using Utilities.Extensions;
 
 namespace Logic.Services.Level.Enemy
@@ -11,60 +9,61 @@ namespace Logic.Services.Level.Enemy
     public class EnemyCollisionSystem : IDisposable
     {
         private const float Offset = 0.05f;
-        
+
         private readonly IRectanglesProvider _rectanglesProvider;
         private readonly IDisposable _updateDisposable;
+        private CancellationTokenSource _cancellationTokenSource;
 
-        public EnemyCollisionSystem(
-            IRectanglesProvider rectanglesProvider)
+        public EnemyCollisionSystem(IRectanglesProvider rectanglesProvider)
         {
             _rectanglesProvider = rectanglesProvider;
+            _cancellationTokenSource = new CancellationTokenSource();
 
-            _updateDisposable = Observable.EveryUpdate().Subscribe(Check);
+            Update().Forget();
         }
 
-        private void Check(Unit _)
+        private async UniTaskVoid Update()
         {
-            var grid = _rectanglesProvider.GetGridRectangles();
-            var enemies = _rectanglesProvider.GetEnemyRectangles().ToList();
+            var token = _cancellationTokenSource.Token;
 
-            foreach (var gridRectangle in grid)
+            while (!token.IsCancellationRequested)
             {
-                var enemiesInRectangle = new List<EnemyRectangle>();
-                
-                foreach (var enemy in enemies.ToList())
-                {
-                    if (gridRectangle.IsIntersection(enemy))
-                    {
-                        enemies.Remove(enemy);
-                        
-                        enemiesInRectangle.Add(enemy);
-                    }
-                }
+                await CheckCollisions();
+            }
+        }
 
-                foreach (var enemy in enemiesInRectangle.ToList())
+        private async UniTask CheckCollisions()
+        {
+            await foreach (var enemiesInGrid in _rectanglesProvider.GetEnemiesByGridElements())
+            {
+                // Проверяем пересечения между врагами внутри текущей зоны
+                for (var i = 0; i < enemiesInGrid.Length; i++)
                 {
-                    enemiesInRectangle.Remove(enemy);
-
-                    foreach (var anotherEnemy in enemiesInRectangle)
+                    var enemy = enemiesInGrid[i];
+                    for (var j = i + 1; j < enemiesInGrid.Length; j++)
                     {
+                        var anotherEnemy = enemiesInGrid[j];
+
                         if (enemy.IsIntersection(anotherEnemy))
                         {
                             var reverseVector = enemy.EnemyLink.Position - anotherEnemy.EnemyLink.Position;
-                            
                             var direction = reverseVector.normalized * Offset;
-                            
-                            enemy.EnemyLink.Move( RandomHelper.GetRandomizedVector(direction, 0.3f));
-                            
-                            break;
+
+                            // Двигаем врага, избегая пересечения
+                            enemy.EnemyLink.Move(RandomHelper.GetRandomizedVector(direction, 0.3f));
+
+                            break; // Прерываем, чтобы не обрабатывать одного врага несколько раз
                         }
                     }
                 }
             }
+
+            await UniTask.Yield();
         }
 
         public void Dispose()
         {
+            _cancellationTokenSource?.Cancel();
             _updateDisposable?.Dispose();
         }
     }

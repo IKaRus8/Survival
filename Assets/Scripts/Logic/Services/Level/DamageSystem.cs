@@ -32,9 +32,9 @@ namespace Logic.Services.Level
             return this;
         }
 
-        public IDamageSystem ToEnemy(IEnemy enemy)
+        public IDamageSystem ToTarget(IDamageable target)
         {
-            _target = enemy;
+            _target = target;
             
             return this;
         }

@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using Logic.RuntimeData;
+using Logic.RuntimeData.Rectangles;
 using R3;
 using UnityEngine;
+using Utilities.Extensions;
 
 namespace Logic.Providers.Level
 {
@@ -33,17 +36,17 @@ namespace Logic.Providers.Level
             _heroDisposable = heroHolder.HeroRx.Subscribe(OnHeroCreated);
         }
         
-        public IReadOnlyCollection<EnemyRectangle> GetEnemyRectangles()
+        public HashSet<EnemyRectangle> GetEnemyRectangles()
         {
-            return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position, MobSize)).ToArray();
+            return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position, MobSize)).ToHashSet();
         }
 
-        public IReadOnlyCollection<GridRectangle> GetGridRectangles()
+        public HashSet<GridRectangle> GetGridRectangles()
         {
-            return _gridSystem.Grid.Select(g => g.ElementRectangle).ToArray();
+            return _gridSystem.Grid.Select(g => g.ElementRectangle).ToHashSet();
         }
 
-        public GridRectangle GetGridRectangle(int index)
+        public GridRectangle GetGridRectangleBy(int index)
         {
             return _gridSystem[index].ElementRectangle;
         }
@@ -56,6 +59,66 @@ namespace Logic.Providers.Level
             }
             
             return new Rectangle(_heroTransform.position, MobSize);
+        }
+
+        public HashSet<EnemyRectangle> GetEnemyInRectangle(Rectangle rectangle)
+        {
+            var enemiesInGrid = new HashSet<EnemyRectangle>();
+
+            // Проверяем врагов на пересечение с текущим прямоугольником
+            foreach (var enemy in GetEnemyRectangles())
+            {
+                if (rectangle.IsIntersection(enemy))
+                {
+                    enemiesInGrid.Add(enemy);
+                }
+            }
+            
+            return enemiesInGrid;
+        }
+
+        public async IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements()
+        {
+            var grid = GetGridRectangles();
+
+            if (grid.IsNullOrEmpty())
+            {
+                yield return Array.Empty<EnemyRectangle>();
+            }
+            
+            foreach (var gridRectangle in grid)
+            {
+                yield return GetEnemyInRectangle(gridRectangle).ToArray();
+
+                await UniTask.Yield();
+            }
+        }
+
+        public HashSet<EnemyRectangle> GetNearestEnemyRectangles(Rectangle rectangle)
+        {
+            var result = new HashSet<EnemyRectangle>();
+            
+            var gridRectangles = GetGridRectangleBy(rectangle);
+
+            foreach (var enemyRectangle in GetEnemyInRectangle(gridRectangles))
+            {
+                result.Add(enemyRectangle);
+            }
+
+            return result;
+        }
+
+        public GridRectangle GetGridRectangleBy(Rectangle rectangle)
+        {
+            foreach (var gridRectangle in GetGridRectangles())
+            {
+                if (rectangle.IsIntersection(gridRectangle))
+                {
+                    return gridRectangle;
+                }
+            }
+
+            return new GridRectangle(-1, Vector3.zero, 0f);
         }
 
         private void OnHeroCreated(IHero hero)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 using Logic.RuntimeData;
 using R3;
 using UnityEngine;

@@ -1,7 +1,8 @@
 using System;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
+using Logic.Interfaces.Providers.Level.Projectiles;
 using Logic.Interfaces.Services.Level.Projectiles;
+using Logic.RuntimeData;
 using Logic.Services.Level.Pools;
 using UnityEngine;
 
@@ -9,15 +10,19 @@ namespace Logic.Services.Level.Projectiles
 {
     public class ProjectileFabric : IProjectileFabric
     {
-        private readonly BulletPool _bulletPool;
-        
+        private readonly ProjectilesPool _projectilesPool;
+        private readonly IProjectilesProvider _projectilesProvider;
+
         private Vector3 _startPosition;
         private Vector3 _endPosition;
-        private float _duration;
+        private float _speed;
 
-        public ProjectileFabric(BulletPool bulletPool)
+        public ProjectileFabric(
+            ProjectilesPool projectilesPool,
+            IProjectilesProvider projectilesProvider)
         {
-            _bulletPool = bulletPool;
+            _projectilesPool = projectilesPool;
+            _projectilesProvider = projectilesProvider;
         }
 
         public IProjectileFabric From(Vector3 startPosition)
@@ -43,26 +48,21 @@ namespace Logic.Services.Level.Projectiles
 
         public IProjectileFabric WithSpeed(float speed)
         {
-            
-            
-            return this;
-        }
-
-        public IProjectileFabric BySeconds(float seconds)
-        {
-            _duration = seconds;
+            _speed = speed;
             
             return this;
         }
 
         public async UniTask SpawnAsync()
         {
-            var bullet = _bulletPool.Spawn();
-            bullet.transform.position = _startPosition;
-
-            await bullet.transform.DOMove(_endPosition, _duration).AsyncWaitForCompletion();
+            var projectile = _projectilesPool.Spawn();
+            _projectilesProvider.AddProjectile(projectile);
             
-            _bulletPool.Despawn(bullet);
+            var direction = (_endPosition - _startPosition).normalized;
+
+            projectile.ProjectileDamage = new DamageModel(10f);
+            projectile.Speed = _speed;
+            projectile.Move(_startPosition, direction);
         }
     }
 }

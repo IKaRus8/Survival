@@ -49,7 +49,7 @@ namespace Data
                     10f,
                     3f,
                     4f,
-                    1f)
+                    0.3f)
             };
         }
     }

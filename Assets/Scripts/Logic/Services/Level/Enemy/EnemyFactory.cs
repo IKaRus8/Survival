@@ -3,6 +3,7 @@ using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 using UnityEngine;
 using Zenject;
 

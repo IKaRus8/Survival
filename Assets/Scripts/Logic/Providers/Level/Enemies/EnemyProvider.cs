@@ -2,17 +2,17 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using Logic.Interfaces.Providers.Level.Enemies;
-using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 
 namespace Logic.Providers.Level.Enemies
 {
     [UsedImplicitly]
     public class EnemyProvider : IEnemyProvider
     {
-        private List<IEnemy> _enemies;
+        private readonly List<IEnemy> _enemies;
         
-        public IReadOnlyCollection<IEnemy> AliveEnemies => GetAliveEnemies();
-        public IReadOnlyCollection<IEnemy> DeadEnemies => GetDeadEnemies();
+        public IReadOnlyCollection<IEnemy> AliveEnemies => GetAliveEnemies().ToArray();
+        public IReadOnlyCollection<IEnemy> DeadEnemies => GetDeadEnemies().ToArray();
         public int AliveEnemyCount => AliveEnemies.Count;
         
         public EnemyProvider()
@@ -30,16 +30,16 @@ namespace Logic.Providers.Level.Enemies
             _enemies.Remove(enemy);
         }
         
-        private List<IEnemy> GetAliveEnemies()
+        private IEnumerable<IEnemy> GetAliveEnemies()
         {
-            var aliveEnemies = _enemies.Where(e => e.IsDead == false).ToList();
+            var aliveEnemies = _enemies.Where(e => e.IsDead == false);
 
             return aliveEnemies;
         }
 
-        private List<IEnemy> GetDeadEnemies()
+        private IEnumerable<IEnemy> GetDeadEnemies()
         {
-            var deadEnemies = _enemies.Where(e => e.IsDead).ToList();
+            var deadEnemies = _enemies.Where(e => e.IsDead);
 
             return deadEnemies;
         }

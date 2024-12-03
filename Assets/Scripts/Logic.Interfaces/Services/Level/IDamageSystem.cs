@@ -1,4 +1,5 @@
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 
 namespace Logic.Interfaces.Services.Level
 {
@@ -8,7 +9,7 @@ namespace Logic.Interfaces.Services.Level
 
         IDamageSystem FromEnemy();
 
-        IDamageSystem ToEnemy(IEnemy enemy);
+        IDamageSystem ToTarget(IDamageable target);
 
         IDamageSystem ToHero();
 

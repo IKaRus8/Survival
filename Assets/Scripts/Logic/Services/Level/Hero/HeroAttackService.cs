@@ -4,6 +4,7 @@ using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 using R3;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ namespace Logic.Services.Level.Hero
 {
     public class HeroAttackService : IDisposable
     {
-        private readonly TimeSpan _shotDelay = TimeSpan.FromSeconds(0.5f);
+        private readonly TimeSpan _shotDelay = TimeSpan.FromSeconds(1f);
         
         private readonly ReactiveProperty<IEnemy> _targetRx;
         private readonly IProjectileFabric _projectileFabric;
@@ -21,6 +22,8 @@ namespace Logic.Services.Level.Hero
         private Transform _shotPoint;
         private IDisposable _attackDisposable;
         private IHero _hero;
+        private UniTask<float> _attackTask;
+        private bool _isAttacking; // Флаг, чтобы отслеживать статус атаки
 
         public HeroAttackService(
             IHeroHolder heroHolder,
@@ -61,25 +64,33 @@ namespace Logic.Services.Level.Hero
 
         private async UniTask Attack()
         {
-            _projectileFabric
-                .From(_shotPoint.position)
-                .To(_targetRx.Value.Position)
-                .BySeconds((float)_hero.Model.AttackDelay.TotalSeconds)
-                .SpawnAsync().Forget();
-            
-            var damage = await _hero.Attack();
+            _isAttacking = true; // Устанавливаем флаг начала атаки
 
-            if (damage <= 0)
+            try
             {
-                return;
+                // Запуск анимации выстрела или снаряда
+                _projectileFabric
+                    .From(_shotPoint.position)
+                    .To(_targetRx.Value.Position)
+                    .WithSpeed(6f)
+                    //.BySeconds((float)_hero.Model.AttackDelay.TotalSeconds)
+                    .SpawnAsync()
+                    .Forget();
+
+                // Выполнение атаки
+                await _hero.Attack();
             }
-            
-            _damageSystem.ToEnemy(_targetRx.Value).Do(damage);
+            finally
+            {
+                _isAttacking = false; // Сбрасываем флаг после завершения
+            }
         }
 
         private bool CanAttack()
         {
-            return _targetRx.Value != null && !_targetRx.Value.IsDead;
+            return _targetRx.Value != null 
+                   && !_targetRx.Value.IsDead
+                   && !_isAttacking;
         }
         
         public void Dispose()

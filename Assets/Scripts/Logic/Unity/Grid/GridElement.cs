@@ -1,5 +1,6 @@
 using Logic.Interfaces.Unity;
 using Logic.RuntimeData;
+using Logic.RuntimeData.Rectangles;
 using UnityEngine;
 
 namespace Logic.Unity.Grid

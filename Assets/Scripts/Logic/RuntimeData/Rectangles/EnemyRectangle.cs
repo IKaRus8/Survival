@@ -1,7 +1,7 @@
-using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 using UnityEngine;
 
-namespace Logic.RuntimeData
+namespace Logic.RuntimeData.Rectangles
 {
     public class EnemyRectangle : Rectangle
     {

@@ -1,13 +1,16 @@
 using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Providers.Level.Hero;
+using Logic.Interfaces.Providers.Level.Projectiles;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Level.Projectiles;
+using Logic.Interfaces.Services.Projectiles;
 using Logic.Presenters;
 using Logic.Providers.Level;
 using Logic.Providers.Level.Enemies;
 using Logic.Providers.Level.Hero;
+using Logic.Providers.Level.Projectiles;
 using Logic.Services.Input;
 using Logic.Services.Level;
 using Logic.Services.Level.Enemy;
@@ -15,8 +18,8 @@ using Logic.Services.Level.Grid;
 using Logic.Services.Level.Hero;
 using Logic.Services.Level.Pools;
 using Logic.Services.Level.Projectiles;
+using Logic.Unity.Projectiles;
 using Logic.Unity.SceneObjects;
-using Logic.Unity.Weapon;
 using UnityEngine;
 using Zenject;
 
@@ -61,6 +64,8 @@ namespace Logic.Installers
             Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsTransient();
             Container.Bind<IProjectileFabric>().To<ProjectileFabric>().AsTransient();
             Container.BindInterfacesTo<EnemyCollisionSystem>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<ProjectilesCollisionSystem>().AsSingle().NonLazy();
+            Container.Bind<IProjectileDamageSystem>().To<ProjectileDamageSystem>().AsTransient();
 
             // Providers
             Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
@@ -70,9 +75,10 @@ namespace Logic.Installers
             Container.Bind<IEnemyModelsProvider>().To<EnemyModelsProvider>().AsSingle();
             Container.Bind<IHeroModelsProvider>().To<HeroModelsProvider>().AsSingle();
             Container.BindInterfacesTo<RectanglesProvider>().AsSingle();
+            Container.Bind<IProjectilesProvider>().To<ProjectilesProvider>().AsSingle();
 
             // Pools
-            Container.BindMemoryPool<Bullet, BulletPool>()
+            Container.BindMemoryPool<Projectile, ProjectilesPool>()
                 .WithInitialSize(10) // Начальный размер пула
                 .FromComponentInNewPrefab(_bulletPrefab) // Префаб пули
                 .UnderTransform(_bulletsParent);

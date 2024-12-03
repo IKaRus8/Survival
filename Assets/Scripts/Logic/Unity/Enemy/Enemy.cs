@@ -3,14 +3,21 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 using Logic.Services.Level;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace Logic.Unity.Enemy
 {
     public abstract class Enemy : MonoBehaviour, IEnemy
     {
+        [FormerlySerializedAs("_enemyViewController")]
+        [SerializeField, Required]
+        private EnemyViewController _viewController;
+        
         private CancellationTokenSource _attackCancellationTokenSource;
         private UniTaskCompletionSource _currentAttackCompletionSource;
         private AttackModule _attackModule;
@@ -58,6 +65,8 @@ namespace Logic.Unity.Enemy
         public void TakeDamage(float damage)
         {
             Health -= damage;
+            
+            Blink(Color.red);
         }
 
         public void Heal(float healAmount)
@@ -65,6 +74,8 @@ namespace Logic.Unity.Enemy
             var health = Math.Min(Health + healAmount, Model.Health);
             
             Health = health;
+            
+            Blink(Color.green);
         }
 
         public virtual void Reset()
@@ -84,6 +95,11 @@ namespace Logic.Unity.Enemy
         public void CancelAttack()
         {
             _attackModule.CancelAttack();
+        }
+
+        private void Blink(Color blinkColor)
+        {
+            _viewController.Blink(blinkColor);
         }
 
         private void OnDestroy()

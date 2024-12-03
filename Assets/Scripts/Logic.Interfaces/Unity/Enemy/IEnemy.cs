@@ -2,7 +2,7 @@ using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using UnityEngine;
 
-namespace Logic.Interfaces.Unity
+namespace Logic.Interfaces.Unity.Enemy
 {
     public interface IEnemy : IDamageable
     {

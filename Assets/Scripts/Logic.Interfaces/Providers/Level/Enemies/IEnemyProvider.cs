@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Enemy;
 
 namespace Logic.Interfaces.Providers.Level.Enemies
 {

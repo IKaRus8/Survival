@@ -2,12 +2,14 @@ using System.Linq;
 using UnityEngine;
 using Utilities.Extensions;
 
-namespace Logic.RuntimeData
+namespace Logic.RuntimeData.Rectangles
 {
     public class Rectangle
     {
         private float _weight;
         private float _height;
+        
+        public static Rectangle BaseRectangle => new(Vector3.zero, 0f);
 
         public Vector3 MinPoint { get; }
         public Vector3 MaxPoint { get; }
