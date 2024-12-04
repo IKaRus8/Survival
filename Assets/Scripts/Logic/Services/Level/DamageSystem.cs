@@ -6,7 +6,7 @@ using R3;
 
 namespace Logic.Services.Level
 {
-    public class DamageSystem : IDamageSystem
+    public class DamageSystem : IDamageSystem, IDisposable
     {
         private readonly IDisposable _playerDisposable;
         
@@ -59,6 +59,11 @@ namespace Logic.Services.Level
         private void OnHeroExist(IHero hero)
         {
             _hero = hero;
+        }
+
+        public void Dispose()
+        {
+            _playerDisposable?.Dispose();
         }
     }
 }

@@ -1,5 +1,4 @@
 using Logic.Interfaces.Unity;
-using Logic.RuntimeData;
 using Logic.RuntimeData.Rectangles;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace Logic.Unity.Grid
 
         public Vector3 Position => _transform.position;
         public int Index { get; set; }
-        public GridRectangle ElementRectangle => new(Index, Position, _radius);
+        public Rectangle ElementRectangle { get; private set; }
 
         private void Awake()
         {
@@ -26,6 +25,8 @@ namespace Logic.Unity.Grid
         public void SetPosition(Vector3 position)
         {
             _transform.position = position;
+            
+            ElementRectangle = new Rectangle(position, _radius);
         }
     }
 }

@@ -7,7 +7,6 @@ using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
-using Logic.RuntimeData;
 using Logic.RuntimeData.Rectangles;
 using R3;
 using UnityEngine;
@@ -41,14 +40,9 @@ namespace Logic.Providers.Level
             return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position, MobSize)).ToHashSet();
         }
 
-        public HashSet<GridRectangle> GetGridRectangles()
+        public HashSet<Rectangle> GetGridRectangles()
         {
             return _gridSystem.Grid.Select(g => g.ElementRectangle).ToHashSet();
-        }
-
-        public GridRectangle GetGridRectangleBy(int index)
-        {
-            return _gridSystem[index].ElementRectangle;
         }
 
         public Rectangle GetHeroRectangle()
@@ -108,7 +102,7 @@ namespace Logic.Providers.Level
             return result;
         }
 
-        public GridRectangle GetGridRectangleBy(Rectangle rectangle)
+        public Rectangle GetGridRectangleBy(Rectangle rectangle)
         {
             foreach (var gridRectangle in GetGridRectangles())
             {
@@ -118,7 +112,7 @@ namespace Logic.Providers.Level
                 }
             }
 
-            return new GridRectangle(-1, Vector3.zero, 0f);
+            return new Rectangle(Vector3.zero, 0f);
         }
 
         private void OnHeroCreated(IHero hero)

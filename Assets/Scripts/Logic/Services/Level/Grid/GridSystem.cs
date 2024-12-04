@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces;
 using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Unity;
@@ -18,29 +17,17 @@ namespace Logic.Services.Level.Grid
     public class GridSystem : IGridSystem, IDisposable
     {
         private const string GridPlaneKey = "grid_plane";
-        private const float Offset = 10;
-        private const int CountInMap = 9;
+        private const float Offset = 5;
+        private const int GridSize = 7;
 
         private readonly List<IGridElement> _grid;
         private readonly IAssetService _assetService;
         private readonly CompositeDisposable _disposables;
         private readonly Transform _parentTransform;
 
-        private readonly List<Vector3> _offsetList = new()
-        {
-            new Vector3(0, 0, 0),
-            new Vector3(-Offset, 0, 0),
-            new Vector3(Offset, 0, 0),
-            new Vector3(0, 0, Offset),
-            new Vector3(0, 0, -Offset),
-            new Vector3(Offset, 0, Offset),
-            new Vector3(-Offset, 0, -Offset),
-            new Vector3(Offset, 0, -Offset),
-            new Vector3(-Offset, 0, Offset)
-        };
-
         private Transform _playerTransform;
-        private int _centeredIndex;
+        private GridElement _gridElementPrefab;
+        private Vector3 _centerPosition;
 
         public IReadOnlyCollection<IGridElement> Grid => _grid;
 
@@ -50,53 +37,30 @@ namespace Logic.Services.Level.Grid
         {
             _assetService = assetService;
             _parentTransform = objectContainer.GridParent.transform;
-            
+
             _disposables = new CompositeDisposable();
             _grid = new List<IGridElement>();
-            _centeredIndex = 0;
-            
+
             CreateStartField().Forget();
         }
 
         public IGridElement GetRandomGridPlaneWithOutHero()
         {
-            var result = _grid.Shake().FirstOrDefault(g => g.Index != _centeredIndex);
-
-            return result;
+            return _grid.Shake().FirstOrDefault(g => g.Position != _centerPosition);
         }
 
-        public void ReplaceGridAround(int index)
+        public void ReplaceGridAround(Vector3 position)
         {
-            if (_centeredIndex == index)
+            if (_centerPosition == position)
             {
                 return;
             }
             
-            var centerGridElement = _grid.FirstOrDefault(g => g.Index == index);
+            Debug.LogError($"new center position: {position}");
 
-            if (centerGridElement == null)
-            {
-#if UNITY_EDITOR || DEBUG
-                Debug.LogWarning($"Grid {index} does not exist");
-#endif
-                return;
-            }
-            
-            _centeredIndex = index;
-            var centerPosition = centerGridElement.Position;
-            
-            var emptyPos = GetEmptyPos(centerPosition);
-            var gridElementInWrongPos = GetWrongGridElements(centerPosition);
-
-            for (var i = 0; i < emptyPos.Count; i++)
-            {
-                gridElementInWrongPos[i].SetPosition(emptyPos[i]);
-            }
+            CreateLevelGrid(position).Forget();
         }
 
-        // Реализация индексатора
-        public IGridElement this[int index] => Grid.FirstOrDefault(g => g.Index == index);
-        
         public IEnumerator<IGridElement> GetEnumerator()
         {
             foreach (var element in Grid)
@@ -107,57 +71,69 @@ namespace Logic.Services.Level.Grid
 
         private async UniTaskVoid CreateStartField()
         {
-            _parentTransform.position = Vector3.zero;
-            
-            var roadPrefab = await _assetService.LoadWithComponent<GridElement>(GridPlaneKey);
+            _gridElementPrefab = await _assetService.LoadWithComponent<GridElement>(GridPlaneKey);
 
-            CreateLevelGrid(roadPrefab, _parentTransform).Forget();
+            CreateLevelGrid(Vector3.zero).Forget();
         }
 
-        private async UniTask CreateLevelGrid(GridElement gridPlanePrefab, Transform gridParent)
+        private async UniTask CreateLevelGrid(Vector3 startPosition)
         {
-            for (var i = 0; i < CountInMap; i++)
-            {
-                var elements = await Object.InstantiateAsync(gridPlanePrefab, gridParent.transform);
+            _centerPosition = startPosition;
 
-                if (elements.IsNullOrEmpty())
+            var offsetList = GenerateGridOffsets();
+
+            foreach (var offset in offsetList)
+            {
+                var isEmpty = IsEmptyPosition(offset);
+
+                if (!isEmpty)
                 {
-                    Debug.LogError("Could not instantiate grid element");
-                    
-                    return;
+                    continue;
                 }
 
-                var currentGrid = elements[0];
+                var newGrid = await GetGridElement();
 
-                currentGrid.Index = i;
-                currentGrid.SetPosition(_offsetList[i]);
+                newGrid.SetPosition(offset);
 
-                _grid.Add(currentGrid);
+                _grid.Add(newGrid);
             }
         }
 
-        private List<Vector3> GetEmptyPos(Vector3 centerPosition)
+        private async UniTask<IGridElement> GetGridElement()
         {
-            var emptyPosList = new List<Vector3>();
+            var newGridElement = GetWrongGridElement();
 
-            foreach (var pos in _offsetList)
+            if (newGridElement != null)
             {
-                if (IsEmptyPosition(centerPosition, pos))
-                {
-                    emptyPosList.Add(pos + centerPosition);
-                }
+                return newGridElement;
             }
 
-            return emptyPosList;
+            newGridElement = await CreateGridElement();
+
+            return newGridElement;
         }
 
-        private bool IsEmptyPosition(Vector3 centerPos, Vector3 offsetPos)
+        private async UniTask<IGridElement> CreateGridElement()
         {
-            var targetPos = centerPos + offsetPos;
+            var elements = await Object.InstantiateAsync(_gridElementPrefab, _parentTransform);
 
-            foreach (var gridElement in _grid)
+            if (elements.IsNullOrEmpty())
             {
-                if (gridElement.Position == targetPos)
+                Debug.LogError("Could not instantiate grid element");
+
+                return null;
+            }
+
+            var newGrid = elements[0];
+
+            return newGrid;
+        }
+
+        private bool IsEmptyPosition(Vector3 targetPosition)
+        {
+            foreach (var gridElement in this)
+            {
+                if (gridElement.Position == targetPosition)
                 {
                     return false;
                 }
@@ -166,29 +142,48 @@ namespace Logic.Services.Level.Grid
             return true;
         }
 
-        private List<IGridElement> GetWrongGridElements(Vector3 centerPosition)
+        private IGridElement GetWrongGridElement()
         {
-            var wrongGridPlane = new List<IGridElement>();
-            
-            foreach (var gridElement in _grid.Where(g => g.Index != _centeredIndex))
+            foreach (var gridElement in this)
             {
-                var distance = Vector3.Distance(centerPosition, gridElement.Position);
+                var distance = Vector3.Distance(_centerPosition, gridElement.Position);
 
-                if (distance > Offset * 1.5f
-                    || distance < Offset)
+                if (distance > Offset * 4f)
                 {
-                    wrongGridPlane.Add(gridElement);
+                    return gridElement;
                 }
             }
 
-            return wrongGridPlane;
+            return null;
+        }
+
+        private List<Vector3> GenerateGridOffsets()
+        {
+            const int halfGridSize = GridSize / 2;
+
+            var offsetList = new List<Vector3>();
+
+            for (var x = 0; x < GridSize; x++)
+            {
+                for (var z = 0; z < GridSize; z++)
+                {
+                    var xOffset = (x - halfGridSize) * Offset;
+                    var zOffset = (z - halfGridSize) * Offset;
+                    
+                    var offset = _centerPosition + new Vector3(xOffset, 0, zOffset);
+
+                    offsetList.Add(offset);
+                }
+            }
+
+            return offsetList;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
-        
+
         public void Dispose()
         {
             _disposables?.Dispose();

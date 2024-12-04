@@ -46,10 +46,10 @@ namespace Data
                 new HeroModel(
                     Constants.Hero.Id.SimpleHero,
                     200,
-                    10f,
+                    30f,
                     3f,
                     4f,
-                    0.3f)
+                    0.5f)
             };
         }
     }

@@ -53,7 +53,7 @@ namespace Logic.Services.Level.Grid
                     continue;
                 }
                 
-                _gridSystem.ReplaceGridAround(gridElement.Index);
+                _gridSystem.ReplaceGridAround(gridElement.CenterPoint);
                 
                 break;
             }
