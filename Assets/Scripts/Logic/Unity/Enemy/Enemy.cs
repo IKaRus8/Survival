@@ -2,49 +2,46 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
-using Logic.Interfaces.Unity;
+using Data.Interfaces.Models.Attack;
 using Logic.Interfaces.Unity.Enemy;
-using Logic.Services.Level;
+using Logic.Services.Level.Attack;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Zenject;
 
 namespace Logic.Unity.Enemy
 {
     public abstract class Enemy : MonoBehaviour, IEnemy
     {
-        [FormerlySerializedAs("_enemyViewController")]
         [SerializeField, Required]
         private EnemyViewController _viewController;
         
         private CancellationTokenSource _attackCancellationTokenSource;
         private UniTaskCompletionSource _currentAttackCompletionSource;
-        private AttackModule _attackModule;
+        private EnemyAttackProcessView _attackProcessView;
         private Transform _transform;
+        private bool _isAttackProcess;
 
         public abstract string Id { get; }
         public float Health { get; private set; }
-        public bool IsDead => Health <= 0f;
-        public IEnemyModel Model { get; private set; }
-        public Vector3 Position => _transform.position;
+        public bool IsDead { get; private set; }
 
-        [Inject]
-        private void Construct()
-        {
-            
-        }
+        public bool CanAttack => !_isAttackProcess;
+        public IEnemyModel Model { get; private set; }
+
+        public IAttackModel EnemyAttackModel { get; private set; }
+        public Vector3 Position => _transform.position;
 
         protected virtual void Awake()
         {
             _transform = transform;
         }
 
-        public void Initialize(IEnemyModel model)
+        public void Initialize(IEnemyModel model, IAttackModel attackModel)
         {
             Model = model;
+            EnemyAttackModel = attackModel;
             
-            _attackModule = new AttackModule(Model.AttackDamage, Model.AttackDelay);
+            _attackProcessView = new EnemyAttackProcessView(attackModel.AttackDelay, _viewController);
         }
 
         public virtual void Move(Vector3 offset)
@@ -57,9 +54,13 @@ namespace Logic.Unity.Enemy
             transform.position = newPosition;
         }
 
-        public virtual async UniTask<float> Attack()
+        public virtual async UniTask Attack()
         {
-            return await _attackModule.Attack();
+            _isAttackProcess = true;
+            
+            await _attackProcessView.Attack();
+            
+            _isAttackProcess = false;
         }
 
         public void TakeDamage(float damage)
@@ -81,6 +82,7 @@ namespace Logic.Unity.Enemy
         public virtual void Reset()
         {
             Health = Model.Health;
+            IsDead = false;
             
             gameObject.SetActive(true);
         }
@@ -88,13 +90,14 @@ namespace Logic.Unity.Enemy
         public virtual void Die()
         {
             Health = 0f;
+            IsDead = true;
             
             gameObject.SetActive(false);
         }
 
         public void CancelAttack()
         {
-            _attackModule.CancelAttack();
+            _attackProcessView.CancelAttack();
         }
 
         private void Blink(Color blinkColor)

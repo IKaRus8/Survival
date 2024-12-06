@@ -1,4 +1,3 @@
-using System;
 
 namespace Data.Interfaces.Models
 {
@@ -7,8 +6,6 @@ namespace Data.Interfaces.Models
         string Id { get; }
         float Health { get; }
         float Speed { get; }
-        float RotateSpeed { get; }
-        float AttackDamage { get; }
-        TimeSpan AttackDelay { get; }
+        string AttackModelId { get; }
     }
 }

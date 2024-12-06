@@ -1,16 +1,18 @@
-using Data.Models;
-using Logic.RuntimeData;
+using Data.Models.Attack;
 using UnityEngine;
 
 namespace Logic.Interfaces.Unity.Projectiles
 {
     public interface IProjectile
     {
-        DamageModel ProjectileDamage { get; set; }
-        float Speed { get; set; }
+        float Damage { get; }
+        float Speed { get; }
         Vector3 Position { get; }
         bool IsActive { get; }
 
-        void Move(Vector3 startPosition, Vector3 direction);
+        void Initialization(
+            RangeAttackModel attackModel,
+            Vector3 startPosition,
+            Vector3 direction);
     }
 }

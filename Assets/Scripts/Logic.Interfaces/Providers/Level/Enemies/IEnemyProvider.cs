@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
 
 namespace Logic.Interfaces.Providers.Level.Enemies
@@ -10,6 +9,5 @@ namespace Logic.Interfaces.Providers.Level.Enemies
         IReadOnlyCollection<IEnemy> DeadEnemies { get; }
         int AliveEnemyCount { get; }
         void AddEnemy(IEnemy enemy);
-        void RemoveEnemy(IEnemy enemy);
     }
 }

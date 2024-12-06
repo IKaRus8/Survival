@@ -4,7 +4,7 @@ using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using R3;
 
-namespace Logic.Services.Level
+namespace Logic.Services.Level.Attack
 {
     public class DamageSystem : IDamageSystem, IDisposable
     {

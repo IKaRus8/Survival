@@ -1,5 +1,5 @@
 
-namespace Logic.Interfaces.Services.Projectiles
+namespace Logic.Interfaces.Services.Level.Projectiles
 {
     public interface IProjectilesCollisionSystem
     {

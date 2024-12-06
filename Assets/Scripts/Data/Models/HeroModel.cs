@@ -1,4 +1,3 @@
-using System;
 using Data.Interfaces.Models;
 
 namespace Data.Models
@@ -8,25 +7,18 @@ namespace Data.Models
         public string Id { get; }
         public float Health { get; }
         public float Speed { get; }
-        public float RotateSpeed { get; }
-        public TimeSpan AttackDelay { get; }
-        public float AttackDamage { get; }
+        public string AttackModelId { get; }
         
         public HeroModel(
             string id,
             float health,
-            float attackDamage, 
             float speed, 
-            float rotateSpeed,
-            float attackSpeed)
+            string attackModelId)
         {
-            AttackDamage = attackDamage;
-            RotateSpeed = 1f / rotateSpeed;
             Speed = speed;
+            AttackModelId = attackModelId;
             Health = health;
             Id = id;
-            
-            AttackDelay = TimeSpan.FromSeconds(1f / attackSpeed);
         }
     }
 }

@@ -1,11 +1,11 @@
 using Logic.Interfaces.Presenters;
+using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Providers.Level.Hero;
 using Logic.Interfaces.Providers.Level.Projectiles;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Level.Projectiles;
-using Logic.Interfaces.Services.Projectiles;
 using Logic.Presenters;
 using Logic.Providers.Level;
 using Logic.Providers.Level.Enemies;
@@ -13,6 +13,7 @@ using Logic.Providers.Level.Hero;
 using Logic.Providers.Level.Projectiles;
 using Logic.Services.Input;
 using Logic.Services.Level;
+using Logic.Services.Level.Attack;
 using Logic.Services.Level.Enemy;
 using Logic.Services.Level.Grid;
 using Logic.Services.Level.Hero;
@@ -54,9 +55,7 @@ namespace Logic.Installers
             Container.BindInterfacesTo<CameraMovementSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<GridSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemySpawner>().AsSingle().NonLazy();
-            Container.Bind<EnemyDeathObserver>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<EnemyMoveSystem>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<EnemyAttackSystem>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<EnemyDeathObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<DamageSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HeroDeathObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
@@ -76,6 +75,7 @@ namespace Logic.Installers
             Container.Bind<IHeroModelsProvider>().To<HeroModelsProvider>().AsSingle();
             Container.BindInterfacesTo<RectanglesProvider>().AsSingle();
             Container.Bind<IProjectilesProvider>().To<ProjectilesProvider>().AsSingle();
+            Container.Bind<IAttackModelsProvider>().To<AttackModelsProvider>().AsSingle();
 
             // Pools
             Container.BindMemoryPool<Projectile, ProjectilesPool>()

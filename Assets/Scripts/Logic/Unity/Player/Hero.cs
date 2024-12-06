@@ -1,21 +1,24 @@
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
 using Data.Interfaces.Models;
+using Data.Interfaces.Models.Attack;
 using DG.Tweening;
 using Logic.Interfaces.Unity;
-using Logic.Services.Level;
+using Logic.Services.Level.Attack;
 using UnityEngine;
 
 namespace Logic.Unity.Player
 {
     public class Hero : MonoBehaviour, IHero
     {
+        private const float RotateDuration = 0.1f;
+        
         [SerializeField]
         private Transform _weaponShootPoint;
         
         private float _currentHealth;
         private Transform _transform;
-        private AttackModule _attackModule;
+        private AttackProcessView _attackProcessView;
         private Tween _currentRotationTween;
 
         public string Id => Constants.Hero.Id.SimpleHero;
@@ -24,6 +27,7 @@ namespace Logic.Unity.Player
         public Transform Transform => _transform;
         public Transform WeaponShootPoint => _weaponShootPoint;
         public IHeroModel Model { get; private set; }
+        public IAttackModel HeroAttackModel { get; private set; }
         public bool IsDead => _currentHealth <= 0f;
 
         private void Awake()
@@ -31,13 +35,14 @@ namespace Logic.Unity.Player
             _transform = transform;
         }
 
-        public void Initialize(IHeroModel model)
+        public void Initialize(IHeroModel model, IAttackModel attackModel)
         {
             Model = model;
+            HeroAttackModel = attackModel;
 
             _currentHealth = Model.Health;
             
-            _attackModule = new AttackModule(Model.AttackDamage, Model.AttackDelay);
+            _attackProcessView = new AttackProcessView(attackModel.AttackDelay);
         }
 
         public void Move(Vector3 direction)
@@ -53,7 +58,7 @@ namespace Logic.Unity.Player
             _currentRotationTween?.Kill();
 
             // Нормализуем направление, чтобы избежать проблем с масштабами вектора
-            direction.y = 0; // Игнорируем вертикальный компонент
+            //direction.y = 0; // Игнорируем вертикальный компонент
             direction.Normalize();
 
             // Вычисляем целевой угол поворота
@@ -61,14 +66,12 @@ namespace Logic.Unity.Player
             var targetRotation = Quaternion.Euler(0f, rotationAngle, 0f);
     
             // Запускаем плавный поворот
-            _currentRotationTween = _transform.DORotateQuaternion(targetRotation, Model.RotateSpeed)
-                .SetEase(Ease.Linear)
-                .OnComplete(() => _currentRotationTween = null); // Очищаем ссылку после завершения
+            _currentRotationTween = _transform.DORotateQuaternion(targetRotation, RotateDuration);
         }
-        
-        public virtual async UniTask<float> Attack()
+
+        public virtual async UniTask Attack()
         {
-            return await _attackModule.Attack();
+            await _attackProcessView.Attack();
         }
 
         public void Die()
@@ -95,7 +98,7 @@ namespace Logic.Unity.Player
 
         public void CancelAttack()
         {
-            _attackModule.CancelAttack();
+            _attackProcessView.CancelAttack();
         }
 
         private void MoveTo(Vector3 newPosition)

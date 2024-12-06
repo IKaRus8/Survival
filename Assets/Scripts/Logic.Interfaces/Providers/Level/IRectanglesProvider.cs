@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using Logic.RuntimeData.Rectangles;
 
 namespace Logic.Interfaces.Providers.Level
@@ -7,7 +8,7 @@ namespace Logic.Interfaces.Providers.Level
     {
         HashSet<EnemyRectangle> GetEnemyRectangles();
         HashSet<EnemyRectangle> GetEnemyInRectangle(Rectangle rectangle);
-        IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements();
+        IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements(CancellationToken cancellationToken);
         HashSet<EnemyRectangle> GetNearestEnemyRectangles(Rectangle rectangle);
         
         HashSet<Rectangle> GetGridRectangles();

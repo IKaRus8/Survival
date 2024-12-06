@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
+using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
 using R3;
 using UnityEngine;
@@ -14,10 +14,13 @@ namespace Logic.Services.Level.Enemy
 {
     public class EnemySpawner : IDisposable
     {
+        private readonly TimeSpan _cooldown = TimeSpan.FromSeconds(0.5f);
+        
         private readonly IGridSystem _gridSystem;
         private readonly IEnemySpawnSettingsProvider _enemySpawnSettingsProvider;
         private readonly IEnemyFactory _factory;
         private readonly IEnemyModelsProvider _enemyModelsProvider;
+        private readonly IAttackModelsProvider _attackModelsProvider;
         private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _settingDisposable;
 
@@ -29,12 +32,14 @@ namespace Logic.Services.Level.Enemy
             IEnemySpawnSettingsProvider enemySpawnSettingsProvider,
             IEnemyFactory factory,
             IEnemyModelsProvider enemyModelsProvider,
+            IAttackModelsProvider attackModelsProvider,
             IEnemyProvider enemyProvider)
         {
             _gridSystem = gridSystem;
             _enemySpawnSettingsProvider = enemySpawnSettingsProvider;
             _factory = factory;
             _enemyModelsProvider = enemyModelsProvider;
+            _attackModelsProvider = attackModelsProvider;
             _enemyProvider = enemyProvider;
             
             StartSpawn(true);
@@ -46,7 +51,7 @@ namespace Logic.Services.Level.Enemy
             {
                 if (_spawnDisposable == null)
                 {
-                    _spawnDisposable = Observable.Interval(TimeSpan.FromSeconds(1f))
+                    _spawnDisposable = Observable.Interval(_cooldown)
                         .Subscribe(SpawnProcess);
                 }
             }
@@ -80,8 +85,11 @@ namespace Logic.Services.Level.Enemy
                 enemy = await _factory.CreateAsync(id);
 
                 var model = _enemyModelsProvider.GetEnemyModel(id);
+                var attackModel = _attackModelsProvider.GetAttackModel(model.AttackModelId);
                 
-                enemy.Initialize(model);
+                enemy.Initialize(model, attackModel);
+
+                AddEnemy(enemy);
             }
 
             PrepareEnemy(enemy);
@@ -89,11 +97,9 @@ namespace Logic.Services.Level.Enemy
 
         private void PrepareEnemy(IEnemy enemy)
         {
-            enemy.Reset();
-
             enemy.MoveTo(GetEnemyPosition());
-
-            AddEnemy(enemy);
+            
+            enemy.Reset();
         }
 
         private void AddEnemy(IEnemy enemy)

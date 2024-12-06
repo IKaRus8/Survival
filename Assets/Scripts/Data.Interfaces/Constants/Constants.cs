@@ -23,5 +23,11 @@ namespace Data.Interfaces.Constants
                 public const string SimpleHero = "hero_simple";
             }
         }
+
+        public static class Attack
+        {
+            public const string SimpleMelee = "melee_simple";
+            public const string SimpleRange = "range_simple";
+        }
     }
 }

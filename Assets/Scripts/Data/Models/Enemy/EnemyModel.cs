@@ -7,23 +7,17 @@ namespace Data.Models.Enemy
     {
         public string Id { get; }
         public float Health { get; }
-        public float AttackDamage { get;}
         public float MoveSpeed { get; }
-        public TimeSpan AttackDelay { get; }
-        public float AttackDistance { get; }
+        public string AttackModelId { get; }
         
         public EnemyModel(
             string id,
-            float attackDistance, 
-            float attackDelay, 
+            float health,
             float moveSpeed,
-            float attackDamage,
-            float health)
+            string attackModelId)
         {
-            AttackDistance = attackDistance;
-            AttackDelay = TimeSpan.FromSeconds(attackDelay);
             MoveSpeed = moveSpeed;
-            AttackDamage = attackDamage;
+            AttackModelId = attackModelId;
             Health = health;
             Id = id;
         }

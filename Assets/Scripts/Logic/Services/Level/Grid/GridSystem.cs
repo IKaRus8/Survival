@@ -17,8 +17,10 @@ namespace Logic.Services.Level.Grid
     public class GridSystem : IGridSystem, IDisposable
     {
         private const string GridPlaneKey = "grid_plane";
-        private const float Offset = 5;
-        private const int GridSize = 7;
+        private const float Offset = 5f;
+        private const int GridSize = 10;
+        private const int HalfGridSize = GridSize / 2;
+        private const float ViewDistance = HalfGridSize * Offset;
 
         private readonly List<IGridElement> _grid;
         private readonly IAssetService _assetService;
@@ -56,8 +58,6 @@ namespace Logic.Services.Level.Grid
                 return;
             }
             
-            Debug.LogError($"new center position: {position}");
-
             CreateLevelGrid(position).Forget();
         }
 
@@ -148,7 +148,7 @@ namespace Logic.Services.Level.Grid
             {
                 var distance = Vector3.Distance(_centerPosition, gridElement.Position);
 
-                if (distance > Offset * 4f)
+                if (distance > ViewDistance)
                 {
                     return gridElement;
                 }
@@ -159,16 +159,14 @@ namespace Logic.Services.Level.Grid
 
         private List<Vector3> GenerateGridOffsets()
         {
-            const int halfGridSize = GridSize / 2;
-
             var offsetList = new List<Vector3>();
 
             for (var x = 0; x < GridSize; x++)
             {
                 for (var z = 0; z < GridSize; z++)
                 {
-                    var xOffset = (x - halfGridSize) * Offset;
-                    var zOffset = (z - halfGridSize) * Offset;
+                    var xOffset = (x - HalfGridSize) * Offset;
+                    var zOffset = (z - HalfGridSize) * Offset;
                     
                     var offset = _centerPosition + new Vector3(xOffset, 0, zOffset);
 

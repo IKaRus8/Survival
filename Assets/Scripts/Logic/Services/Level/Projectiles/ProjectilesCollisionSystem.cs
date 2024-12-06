@@ -1,7 +1,7 @@
 using System;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Projectiles;
-using Logic.Interfaces.Services.Projectiles;
+using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.RuntimeData.Rectangles;
 using R3;
 using Utilities.Extensions;

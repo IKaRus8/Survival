@@ -28,14 +28,20 @@ namespace Logic.Services.Level.Enemy
 
             while (!token.IsCancellationRequested)
             {
-                await CheckCollisions();
+                await CheckCollisions(token);
             }
         }
 
-        private async UniTask CheckCollisions()
+        private async UniTask CheckCollisions(CancellationToken cancellationToken)
         {
-            await foreach (var enemiesInGrid in _rectanglesProvider.GetEnemiesByGridElements())
+            await foreach (var enemiesInGrid in 
+                           _rectanglesProvider.GetEnemiesByGridElements(cancellationToken))
             {
+                if (_cancellationTokenSource.IsCancellationRequested)
+                {
+                    return;
+                }
+                
                 // Проверяем пересечения между врагами внутри текущей зоны
                 for (var i = 0; i < enemiesInGrid.Length; i++)
                 {

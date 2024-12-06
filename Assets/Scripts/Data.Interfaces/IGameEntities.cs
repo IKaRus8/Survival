@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Data.Interfaces.Models;
+using Data.Interfaces.Models.Attack;
 
 namespace Data.Interfaces
 {
@@ -7,5 +8,6 @@ namespace Data.Interfaces
     {
         IReadOnlyCollection<IEnemyModel> EnemyModels { get; }
         IReadOnlyCollection<IHeroModel> HeroModels { get; }
+        IReadOnlyCollection<IAttackModel> AttackModels { get; }
     }
 }

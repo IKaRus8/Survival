@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
+using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Hero;
 using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
@@ -15,6 +16,7 @@ namespace Logic.Services.Level.Hero
 
           private readonly IAssetService _assetService;
           private readonly IHeroModelsProvider _heroModelsProvider;
+          private readonly IAttackModelsProvider _attackModelsProvider;
           private readonly IInstantiator _container;
           private readonly Transform _levelContainer;
 
@@ -22,10 +24,12 @@ namespace Logic.Services.Level.Hero
                IAssetService assetService,
                IHeroModelsProvider heroModelsProvider,
                ILevelSceneObjectContainer sceneObjectContainer,
+               IAttackModelsProvider attackModelsProvider,
                IInstantiator diContainer)
           {
                _assetService = assetService;
                _heroModelsProvider = heroModelsProvider;
+               _attackModelsProvider = attackModelsProvider;
                _container = diContainer;
                
                _levelContainer = sceneObjectContainer.LevelContainer;
@@ -38,8 +42,9 @@ namespace Logic.Services.Level.Hero
                var hero = _container.InstantiatePrefabForComponent<IHero>(heroGameObject, _levelContainer);
                
                var heroModel = _heroModelsProvider.GetHeroModel(HeroId);
+               var attackModel = _attackModelsProvider.GetAttackModel(heroModel.AttackModelId);
                
-               hero.Initialize(heroModel);
+               hero.Initialize(heroModel, attackModel);
 
                return hero;
           }

@@ -1,7 +1,7 @@
 using Logic.Interfaces.Services.Level;
-using Logic.Interfaces.Services.Projectiles;
+using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Unity;
-using Logic.Unity.Projectiles;
+using Logic.Interfaces.Unity.Projectiles;
 
 namespace Logic.Services.Level.Projectiles
 {
@@ -14,9 +14,9 @@ namespace Logic.Services.Level.Projectiles
             _damageSystem = damageSystem;
         }
         
-        public void DoDamage(Projectile projectile, IDamageable target)
+        public void DoDamage(IProjectile projectile, IDamageable target)
         {
-            _damageSystem.ToTarget(target).Do(projectile.ProjectileDamage.Value);
+            _damageSystem.ToTarget(target).Do(projectile.Damage);
         }
     }
 }

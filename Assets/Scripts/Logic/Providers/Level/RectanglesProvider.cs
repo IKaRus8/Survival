@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
@@ -71,7 +72,7 @@ namespace Logic.Providers.Level
             return enemiesInGrid;
         }
 
-        public async IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements()
+        public async IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements(CancellationToken cancellationToken)
         {
             var grid = GetGridRectangles();
 
@@ -82,6 +83,11 @@ namespace Logic.Providers.Level
             
             foreach (var gridRectangle in grid)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+                
                 yield return GetEnemyInRectangle(gridRectangle).ToArray();
 
                 await UniTask.Yield();

@@ -1,10 +1,11 @@
 using System;
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level.Enemies;
+using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
-using Logic.RuntimeData;
+using Logic.Interfaces.Unity.Enemy;
 using R3;
 using UnityEngine;
 
@@ -13,21 +14,19 @@ namespace Logic.Services.Level.Enemy
     public class EnemyStatesObserver : IEnemyStatesObserver, IDisposable
     {
         private readonly IEnemyProvider _enemyProvider;
+        private readonly IDamageSystem _damageSystem;
         private readonly IDisposable _playerDisposable;
-        private readonly List<EnemyStateModel> _enemyStates;
   
         private IDisposable _updateDisposable;
         private Transform _playerTransform;
 
-        public Subject<IReadOnlyCollection<EnemyStateModel>> EnemyStatesUpdated { get; }
-
         public EnemyStatesObserver(
             IEnemyProvider enemyProvider, 
-            IHeroHolder heroHolder)
+            IHeroHolder heroHolder,
+            IDamageSystem damageSystem)
         {
             _enemyProvider = enemyProvider;
-            EnemyStatesUpdated = new Subject<IReadOnlyCollection<EnemyStateModel>>();
-            _enemyStates = new List<EnemyStateModel>();
+            _damageSystem = damageSystem;
 
             _playerDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
@@ -46,23 +45,44 @@ namespace Logic.Services.Level.Enemy
 
         private void EnemyUpdate(Unit _)
         {
-            if (_playerTransform == null)
-            {
-                return;
-            }
-
-            _enemyStates.Clear();
-
             foreach (var enemy in _enemyProvider.AliveEnemies)
             {
                 var enemyToPlayerVector = _playerTransform.position - enemy.Position;
 
-                var distance = enemyToPlayerVector.sqrMagnitude;
+                var sqrDistance = enemyToPlayerVector.sqrMagnitude;
 
-                _enemyStates.Add(new EnemyStateModel(enemy, enemyToPlayerVector.normalized, distance));
+                var needMove = sqrDistance > enemy.EnemyAttackModel.SqrAttackDistance;
+
+                if (needMove)
+                {
+                    MoveEnemy(enemy, enemyToPlayerVector.normalized);
+                }
+                else
+                {
+                    TryAttack(enemy).Forget();
+                }
+            }
+        }
+
+        private void MoveEnemy(IEnemy enemy, Vector3 direction)
+        {
+            var moveOffset = direction 
+                             * enemy.Model.MoveSpeed 
+                             * Time.deltaTime;
+
+            enemy.Move(RandomHelper.GetRandomizedVector(moveOffset, 0.2f));
+        }
+        
+        private async UniTask TryAttack(IEnemy enemy)
+        {
+            if (!enemy.CanAttack)
+            {
+                return;
             }
             
-            EnemyStatesUpdated.OnNext(_enemyStates);
+            _damageSystem.ToHero().Do(enemy.EnemyAttackModel.Damage);
+            
+            await enemy.Attack();
         }
 
         public void Dispose()

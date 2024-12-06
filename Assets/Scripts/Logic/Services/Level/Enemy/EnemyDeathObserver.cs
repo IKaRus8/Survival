@@ -20,10 +20,10 @@ namespace Logic.Services.Level.Enemy
 
         private void UpdateState(Unit unit)
         {
-            CheckDeadEnemy();
+            FindDeadEnemy();
         }
 
-        private void CheckDeadEnemy()
+        private void FindDeadEnemy()
         {
             var enemies = _enemyProvider.AliveEnemies;
 

@@ -1,34 +1,47 @@
+using Data.Models.Attack;
 using Logic.Interfaces.Unity.Projectiles;
-using Logic.RuntimeData;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Logic.Unity.Projectiles
 {
     public class Projectile : MonoBehaviour, IProjectile
     {
+        [SerializeField, Required]
+        private TrailRenderer _trailRenderer;
+        
         private Vector3 _direction;
         private Transform _transform;
         
-        public DamageModel ProjectileDamage { get; set; }
-        public float Speed { get; set; }
+        public float Damage { get; private set; }
+        public float Speed { get; private set; }
         public Vector3 Position => _transform.position;
-        public bool IsActive { get; private set; }
+        public bool IsActive => gameObject.activeSelf;
 
         private void Awake()
         {
             _transform = transform;
         }
 
-        public void Active()
+        private void OnEnable()
         {
-            IsActive = true;
-            gameObject.SetActive(true);
+            _trailRenderer.enabled = true;
         }
 
-        public void Disable()
+        private void OnDisable()
         {
-            IsActive = false;
-            gameObject.SetActive(false);
+            _trailRenderer.enabled = false;
+        }
+
+        public void Initialization(
+            RangeAttackModel attackModel,
+            Vector3 startPosition,
+            Vector3 direction)
+        {
+            Damage = attackModel.Damage;
+            Speed = attackModel.ProjectileSpeed;
+            
+            Move(startPosition, direction);
         }
 
         public void Move(Vector3 startPosition, Vector3 direction)
@@ -40,12 +53,7 @@ namespace Logic.Unity.Projectiles
 
         private void Update()
         {
-            if (_direction == Vector3.zero)
-            {
-                return;
-            }
-            
-            transform.position += _direction * Speed * Time.deltaTime;
+            transform.position += _direction * (Speed * Time.deltaTime);
         }
     }
 }

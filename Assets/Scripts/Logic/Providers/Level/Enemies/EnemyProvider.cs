@@ -24,11 +24,6 @@ namespace Logic.Providers.Level.Enemies
         {
             _enemies.Add(enemy);
         }
-
-        public void RemoveEnemy(IEnemy enemy)
-        {
-            _enemies.Remove(enemy);
-        }
         
         private IEnumerable<IEnemy> GetAliveEnemies()
         {

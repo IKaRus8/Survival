@@ -2,28 +2,26 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-namespace Logic.Services.Level
+namespace Logic.Services.Level.Attack
 {
-    public class AttackModule
+    public class AttackProcessView
     {
-        private readonly float _damage;
-        private readonly TimeSpan _delay;
+        protected readonly TimeSpan _delay;
         
         private CancellationTokenSource _attackCancellationTokenSource;
         private UniTaskCompletionSource _currentAttackCompletionSource;
 
-        public AttackModule(float damage, TimeSpan delay)
+        public AttackProcessView(TimeSpan delay)
         {
-            _damage = damage;
             _delay = delay;
         }
 
-        public virtual async UniTask<float> Attack()
+        public virtual async UniTask<bool> Attack()
         {
             // Если атака уже выполняется
             if (_currentAttackCompletionSource != null)
             {
-                return 0f;
+                return false;
                 //await _currentAttackCompletionSource.Task;
             }
 
@@ -33,24 +31,26 @@ namespace Logic.Services.Level
             _attackCancellationTokenSource = new CancellationTokenSource();
             _currentAttackCompletionSource = new UniTaskCompletionSource();
 
+            bool result;
+
             try
             {
                 // Выполняем подготовку атаки с учетом возможности отмены
                 await AttackPrepare(_attackCancellationTokenSource.Token);
-
-                return _damage;
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException ex)
             {
+                _currentAttackCompletionSource.TrySetException(ex);
                 // Если атака была отменена
-                return 0f;
             }
             finally
             {
                 // Завершаем текущую атаку
-                _currentAttackCompletionSource.TrySetResult();
+                result = _currentAttackCompletionSource.TrySetResult();
                 _currentAttackCompletionSource = null;
             }
+                
+            return result;
         }
 
         public void CancelAttack()
@@ -59,7 +59,7 @@ namespace Logic.Services.Level
             _attackCancellationTokenSource?.Dispose();
         }
         
-        private async UniTask AttackPrepare(CancellationToken cancellationToken)
+        protected virtual async UniTask AttackPrepare(CancellationToken cancellationToken)
         {
             // Пример: Задержка для подготовки атаки
             await UniTask.Delay(_delay, cancellationToken: cancellationToken);

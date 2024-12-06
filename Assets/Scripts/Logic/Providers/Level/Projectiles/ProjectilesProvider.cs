@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Logic.Interfaces.Providers.Level.Projectiles;
+using Logic.Interfaces.Unity.Projectiles;
 using Logic.Services.Level.Pools;
 using Logic.Unity.Projectiles;
 
@@ -9,32 +10,25 @@ namespace Logic.Providers.Level.Projectiles
     public class ProjectilesProvider : IProjectilesProvider
     {
         private readonly ProjectilesPool _pool;
-        private readonly HashSet<Projectile> _projectiles;
 
-        public IReadOnlyCollection<Projectile> ActiveProjectiles => GetActiveProjectiles();
+        public IReadOnlyCollection<IProjectile> ActiveProjectiles => GetActiveProjectiles();
 
         public ProjectilesProvider(ProjectilesPool pool)
         {
             _pool = pool;
-            _projectiles = new HashSet<Projectile>();
-        }
-        
-        public void AddProjectile(Projectile projectile)
-        {
-            _projectiles.Add(projectile);
         }
 
-        public void RemoveProjectile(Projectile projectile)
+        public void RemoveProjectile(IProjectile projectile)
         {
             if (projectile.IsActive)
             {
-                _pool.Despawn(projectile);
+                _pool.Despawn((Projectile)projectile);
             }
         }
 
-        private IReadOnlyCollection<Projectile> GetActiveProjectiles()
+        private IProjectile[] GetActiveProjectiles()
         {
-            return _projectiles.Where(p => p.IsActive).ToArray();
+            return _pool.Projectiles.Where(p => p.IsActive).ToArray();
         }
     }
 }

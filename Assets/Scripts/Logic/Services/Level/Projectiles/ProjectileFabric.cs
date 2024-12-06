@@ -1,8 +1,8 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces.Providers.Level.Projectiles;
+using Data.Interfaces.Models.Attack;
+using Data.Models.Attack;
 using Logic.Interfaces.Services.Level.Projectiles;
-using Logic.RuntimeData;
 using Logic.Services.Level.Pools;
 using UnityEngine;
 
@@ -11,18 +11,15 @@ namespace Logic.Services.Level.Projectiles
     public class ProjectileFabric : IProjectileFabric
     {
         private readonly ProjectilesPool _projectilesPool;
-        private readonly IProjectilesProvider _projectilesProvider;
 
         private Vector3 _startPosition;
         private Vector3 _endPosition;
         private float _speed;
+        private RangeAttackModel _attackModel;
 
-        public ProjectileFabric(
-            ProjectilesPool projectilesPool,
-            IProjectilesProvider projectilesProvider)
+        public ProjectileFabric(ProjectilesPool projectilesPool)
         {
             _projectilesPool = projectilesPool;
-            _projectilesProvider = projectilesProvider;
         }
 
         public IProjectileFabric From(Vector3 startPosition)
@@ -53,16 +50,18 @@ namespace Logic.Services.Level.Projectiles
             return this;
         }
 
+        public IProjectileFabric WithAttackModel(IAttackModel model)
+        {
+            _attackModel = model as RangeAttackModel;
+
+            return this;
+        }
+
         public async UniTask SpawnAsync()
         {
-            var projectile = _projectilesPool.Spawn();
-            _projectilesProvider.AddProjectile(projectile);
-            
             var direction = (_endPosition - _startPosition).normalized;
-
-            projectile.ProjectileDamage = new DamageModel(10f);
-            projectile.Speed = _speed;
-            projectile.Move(_startPosition, direction);
+            
+            _projectilesPool.Spawn(_attackModel, _startPosition, direction);
         }
     }
 }

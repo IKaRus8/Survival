@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using Data.Interfaces;
 using Data.Interfaces.Constants;
 using Data.Interfaces.Models;
+using Data.Interfaces.Models.Attack;
 using Data.Models;
+using Data.Models.Attack;
 using Data.Models.Enemy;
 
 namespace Data
@@ -11,11 +13,13 @@ namespace Data
     {
         public IReadOnlyCollection<IEnemyModel> EnemyModels { get; }
         public IReadOnlyCollection<IHeroModel> HeroModels { get; }
+        public IReadOnlyCollection<IAttackModel> AttackModels { get; }
 
         public GameEntities()
         {
             EnemyModels = GetEnemyModels();
             HeroModels = GetHeroModels();
+            AttackModels = GetAttackModels();
         }
 
         private IEnemyModel[] GetEnemyModels()
@@ -24,18 +28,9 @@ namespace Data
             {
                 new EnemyModel(
                     Constants.Enemy.Id.SimpleEnemy,
-                    3f,
-                    1f,
-                    3f,
-                    10f,
-                    100f),
-                new EnemyModel(
-                    Constants.Enemy.Id.SimpleEnemy + "2",
-                    3f,
-                    10f,
-                    5f,
-                    100f,
-                    100f)
+                    50f,
+                    2f,
+                    Constants.Attack.SimpleMelee),
             };
         }
 
@@ -45,11 +40,27 @@ namespace Data
             {
                 new HeroModel(
                     Constants.Hero.Id.SimpleHero,
-                    200,
+                    300,
+                    5f,
+                    Constants.Attack.SimpleRange)
+            };
+        }
+
+        private IAttackModel[] GetAttackModels()
+        {
+            return new IAttackModel[]
+            {
+                new MeleeAttackModel(
+                    Constants.Attack.SimpleMelee,
+                    10f,
+                    1f),
+                
+                new RangeAttackModel(
+                    Constants.Attack.SimpleRange,
                     30f,
-                    3f,
-                    4f,
-                    0.5f)
+                    1f,
+                    15f,
+                    9f)
             };
         }
     }

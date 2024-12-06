@@ -1,4 +1,4 @@
-using Logic.Unity.Projectiles;
+using Logic.Interfaces.Unity.Projectiles;
 
 namespace Logic.RuntimeData.Rectangles
 {
@@ -6,9 +6,9 @@ namespace Logic.RuntimeData.Rectangles
     {
         private const float Radius = 0.2f;
         
-        public Projectile ProjectileLink { get; }
+        public IProjectile ProjectileLink { get; }
 
-        public ProjectileRectangle(Projectile projectile) : base(projectile.Position, Radius)
+        public ProjectileRectangle(IProjectile projectile) : base(projectile.Position, Radius)
         {
             ProjectileLink = projectile;
         }

@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4855274b154d4b6a83deac02231bb7fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyViewController: {fileID: 4423983000578431128}
+  _viewController: {fileID: 4423983000578431128}
 --- !u!1 &7113660354324056203 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 398339866587445777, guid: c2c0feaaf98f34b53a92922b5724ef0c,
