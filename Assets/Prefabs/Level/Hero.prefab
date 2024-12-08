@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weaponShootPoint: {fileID: 8672098890634942805}
+  _animator: {fileID: 8672098890642372311}
 --- !u!1001 &5727371397393009643
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -123,6 +124,12 @@ Transform:
 --- !u!4 &8672098890634942805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3972964382682190526, guid: 93b94039cf7541e8a7c9453819da38f0,
+    type: 3}
+  m_PrefabInstance: {fileID: 5727371397393009643}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8672098890642372311 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 3972964382691556668, guid: 93b94039cf7541e8a7c9453819da38f0,
     type: 3}
   m_PrefabInstance: {fileID: 5727371397393009643}
   m_PrefabAsset: {fileID: 0}

@@ -29,5 +29,10 @@ namespace Data.Interfaces.Constants
             public const string SimpleMelee = "melee_simple";
             public const string SimpleRange = "range_simple";
         }
+        
+        public static class Vfx
+        {
+            public const string ElectroHit = "electro_hit";
+        }
     }
 }

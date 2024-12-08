@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Services.Level;
+using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using R3;

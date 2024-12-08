@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
@@ -10,7 +11,7 @@ using UnityEngine;
 
 namespace Logic.Services.Level.Hero
 {
-    public class HeroAttackService : IDisposable
+    public class HeroAttackService : IPauseHandler, IDisposable
     {
         private readonly ReactiveProperty<IEnemy> _targetRx;
         private readonly IProjectileFabric _projectileFabric;
@@ -33,6 +34,19 @@ namespace Logic.Services.Level.Hero
             _heroDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
+        public void Pause()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+        }
+
+        public void Resume()
+        {
+            var token = _cancellationTokenSource.Token;
+            
+            AttackProcess(token).Forget();
+        }
+
         private void OnPlayerCreated(IHero hero)
         {
             if (hero == null)
@@ -42,9 +56,8 @@ namespace Logic.Services.Level.Hero
 
             _hero = hero;
             _shotPoint = hero.WeaponShootPoint;
-            var token = _cancellationTokenSource.Token;
             
-            AttackProcess(token).Forget();
+            Resume();
         }
 
         private async UniTaskVoid AttackProcess(CancellationToken cancellationToken)
@@ -64,6 +77,8 @@ namespace Logic.Services.Level.Hero
 
         private async UniTask Attack()
         {
+            await _hero.AttackPrepare();
+            
             // Запуск анимации выстрела или снаряда
             _projectileFabric
                 .From(_shotPoint.position)
@@ -85,7 +100,7 @@ namespace Logic.Services.Level.Hero
         public void Dispose()
         {
             _heroDisposable?.Dispose();
-            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource?.Dispose();
         }
     }
 }

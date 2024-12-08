@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
 using Data.Interfaces.Models;
@@ -5,16 +6,23 @@ using Data.Interfaces.Models.Attack;
 using DG.Tweening;
 using Logic.Interfaces.Unity;
 using Logic.Services.Level.Attack;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Logic.Unity.Player
 {
     public class Hero : MonoBehaviour, IHero
     {
-        private const float RotateDuration = 0.1f;
+        private const float RotateDuration = 0.2f;
         
-        [SerializeField]
+        private static readonly int _attack = Animator.StringToHash("attack");
+        private static readonly int _move = Animator.StringToHash("move");
+        private static readonly int _die = Animator.StringToHash("die");
+
+        [SerializeField, Required]
         private Transform _weaponShootPoint;
+        [SerializeField, Required]
+        private Animator _animator;
         
         private float _currentHealth;
         private Transform _transform;
@@ -47,6 +55,15 @@ namespace Logic.Unity.Player
 
         public void Move(Vector3 direction)
         {
+            if (direction == Vector3.zero)
+            {
+                _animator.SetBool(_move, false);
+                
+                return;
+            }
+            
+            _animator.SetBool(_move, true);
+            
             var newPosition = transform.position + (direction * Speed * Time.deltaTime);
             
             MoveTo(newPosition);
@@ -69,24 +86,35 @@ namespace Logic.Unity.Player
             _currentRotationTween = _transform.DORotateQuaternion(targetRotation, RotateDuration);
         }
 
-        public virtual async UniTask Attack()
+        public virtual async UniTask AttackPrepare()
         {
-            await _attackProcessView.Attack();
+            _animator.SetTrigger(_attack);
+    
+            // Задержка перед запуском снаряда
+            await UniTask.Delay(200);
         }
 
-        public void Die()
+        public virtual async UniTask Attack()
+        {
+            // Задержка для завершения атаки
+            await UniTask.Delay(HeroAttackModel.AttackDelay);
+            
+            _animator.ResetTrigger(_attack);
+        }
+
+        public async UniTask Die()
         {
             _currentHealth = 0;
+            
+            _animator.ResetTrigger(_attack);
+            _animator.SetTrigger(_die);
+            
+            await UniTask.Delay(2500);
         }
 
         public void TakeDamage(float damage)
         {
             _currentHealth -= damage;
-
-            if (_currentHealth <= 0f)
-            {
-                Die();
-            }
         }
 
         public void Heal(float healAmount)

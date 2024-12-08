@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Logic.Services.Level.Enemy
 {
-    public class EnemyStatesObserver : IEnemyStatesObserver, IDisposable
+    public class EnemyStatesObserver : IEnemyStatesObserver, IPauseHandler, IDisposable
     {
         private readonly IEnemyProvider _enemyProvider;
         private readonly IDamageSystem _damageSystem;
@@ -29,6 +29,18 @@ namespace Logic.Services.Level.Enemy
             _damageSystem = damageSystem;
 
             _playerDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
+
+            Resume();
+        }
+
+        public void Pause()
+        {
+            _updateDisposable?.Dispose();
+        }
+
+        public void Resume()
+        {
+            _updateDisposable = Observable.EveryUpdate().Subscribe(EnemyUpdate);
         }
 
         private void OnPlayerCreated(IHero hero)
@@ -40,7 +52,7 @@ namespace Logic.Services.Level.Enemy
             
             _playerTransform = hero.Transform;
             
-            _updateDisposable = Observable.EveryUpdate().Subscribe(EnemyUpdate);
+            
         }
 
         private void EnemyUpdate(Unit _)
@@ -52,7 +64,7 @@ namespace Logic.Services.Level.Enemy
                 var sqrDistance = enemyToPlayerVector.sqrMagnitude;
 
                 var needMove = sqrDistance > enemy.EnemyAttackModel.SqrAttackDistance;
-
+                
                 if (needMove)
                 {
                     MoveEnemy(enemy, enemyToPlayerVector.normalized);
@@ -70,6 +82,7 @@ namespace Logic.Services.Level.Enemy
                              * enemy.Model.MoveSpeed 
                              * Time.deltaTime;
 
+            enemy.Rotate(direction);
             enemy.Move(RandomHelper.GetRandomizedVector(moveOffset, 0.2f));
         }
         

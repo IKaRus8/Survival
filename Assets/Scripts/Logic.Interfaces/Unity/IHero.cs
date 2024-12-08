@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using Data.Interfaces.Models.Attack;
@@ -17,6 +18,7 @@ namespace Logic.Interfaces.Unity
         void Initialize(IHeroModel model, IAttackModel attackModel);
         void Move(Vector3 direction);
         void Rotate(Vector3 direction);
+        UniTask AttackPrepare();
         UniTask Attack();
     }
 }

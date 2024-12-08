@@ -9,8 +9,10 @@ namespace Logic.Unity.Enemy
 {
     public class EnemyViewController : MonoBehaviour, IEnemyViewController
     {
+        private static readonly int _color05 = Shader.PropertyToID("Color_C5D962E7");
+
         [SerializeField, Required]
-        private MeshRenderer _meshRenderer;
+        private SkinnedMeshRenderer _meshRenderer;
 
         private Color _defaultColor;
         private Sequence _blinkSequence;
@@ -18,7 +20,7 @@ namespace Logic.Unity.Enemy
 
         private void Awake()
         {
-            _defaultColor = _meshRenderer.material.color;
+            _defaultColor = _meshRenderer.material.GetColor(_color05);
         }
 
         public void Blink(Color blinkColor)
@@ -31,8 +33,8 @@ namespace Logic.Unity.Enemy
             _blinkSequence = DOTween.Sequence();
             
             _blinkSequence
-                .Append(_meshRenderer.material.DOColor(blinkColor, 0.2f))
-                .Append(_meshRenderer.material.DOColor(_defaultColor, 0.1f))
+                .Append(_meshRenderer.material.DOColor(blinkColor, _color05, 0.2f))
+                .Append(_meshRenderer.material.DOColor(_defaultColor, _color05, 0.1f))
                 .Play();
         }
 
@@ -49,8 +51,8 @@ namespace Logic.Unity.Enemy
             _blinkSequence.onUpdate += OnProcess;
 
             await _blinkSequence
-                .Append(_meshRenderer.material.DOColor(Color.white, 0.1f))
-                .Append(_meshRenderer.material.DOColor(_defaultColor, duration))
+                .Append(_meshRenderer.material.DOColor(Color.white, _color05, 0.1f))
+                .Append(_meshRenderer.material.DOColor(_defaultColor, _color05, duration))
                 .Play()
                 .AsyncWaitForCompletion();
         }

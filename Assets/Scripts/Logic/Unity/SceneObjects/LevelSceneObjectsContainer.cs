@@ -11,9 +11,12 @@ namespace Logic.Unity.SceneObjects
         private RectTransform _popupContainer;
         [SerializeField]
         private Transform _enemiesContainer;
+        [SerializeField]
+        private Transform _vfxContainer;
     
         public Transform GridParent => _gridParent;
         public Transform EnemiesContainer => _enemiesContainer;
+        public Transform VfxContainer => _vfxContainer;
         public Transform LevelContainer { get; private set; }
 
         private void Awake()

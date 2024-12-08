@@ -34,7 +34,7 @@ namespace Logic.Providers.Level.Enemies
 
         private IEnumerable<IEnemy> GetDeadEnemies()
         {
-            var deadEnemies = _enemies.Where(e => e.IsDead);
+            var deadEnemies = _enemies.Where(e => !e.Active);
 
             return deadEnemies;
         }

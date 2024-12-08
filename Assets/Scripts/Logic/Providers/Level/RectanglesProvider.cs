@@ -17,7 +17,7 @@ namespace Logic.Providers.Level
 {
     public class RectanglesProvider : IRectanglesProvider, IDisposable
     {
-        private const float MobSize = 1f;
+        private const float MobSize = 0.8f;
         
         private readonly IGridSystem _gridSystem;
         private readonly IEnemyProvider _enemyProvider;

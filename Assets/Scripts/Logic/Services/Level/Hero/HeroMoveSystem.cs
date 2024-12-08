@@ -39,11 +39,6 @@ namespace Logic.Services.Level.Hero
         private void MoveUpdate(Unit _)
         {
             var direction = _input.Direction;
-
-            if (direction == Vector3.zero)
-            {
-                return;
-            }
             
             _hero.Move(direction);      
         }

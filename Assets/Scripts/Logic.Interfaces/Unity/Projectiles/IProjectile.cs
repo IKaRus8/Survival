@@ -9,6 +9,7 @@ namespace Logic.Interfaces.Unity.Projectiles
         float Speed { get; }
         Vector3 Position { get; }
         bool IsActive { get; }
+        string DestroyVfxId { get; }
 
         void Initialization(
             RangeAttackModel attackModel,

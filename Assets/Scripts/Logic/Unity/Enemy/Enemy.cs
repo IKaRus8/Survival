@@ -3,6 +3,9 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using Data.Interfaces.Models.Attack;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using Logic.Interfaces.Unity.Enemy;
 using Logic.Services.Level.Attack;
 using Sirenix.OdinInspector;
@@ -12,14 +15,22 @@ namespace Logic.Unity.Enemy
 {
     public abstract class Enemy : MonoBehaviour, IEnemy
     {
+        private const float RotateDuration = 0.1f;
+        
+        private static readonly int _attack = Animator.StringToHash("attack");
+        private static readonly int _die = Animator.StringToHash("die");
+
         [SerializeField, Required]
         private EnemyViewController _viewController;
+        [SerializeField, Required]
+        private Animator _animator;
         
         private CancellationTokenSource _attackCancellationTokenSource;
         private UniTaskCompletionSource _currentAttackCompletionSource;
         private EnemyAttackProcessView _attackProcessView;
         private Transform _transform;
         private bool _isAttackProcess;
+        private TweenerCore<Quaternion,Quaternion,NoOptions> _currentRotationTween;
 
         public abstract string Id { get; }
         public float Health { get; private set; }
@@ -29,6 +40,7 @@ namespace Logic.Unity.Enemy
         public IEnemyModel Model { get; private set; }
 
         public IAttackModel EnemyAttackModel { get; private set; }
+        public bool Active => gameObject.activeSelf;
         public Vector3 Position => _transform.position;
 
         protected virtual void Awake()
@@ -54,20 +66,39 @@ namespace Logic.Unity.Enemy
             transform.position = newPosition;
         }
 
+        public void Rotate(Vector3 direction)
+        {
+            // Останавливаем текущую анимацию вращения, если она есть
+            _currentRotationTween?.Kill();
+
+            // Нормализуем направление, чтобы избежать проблем с масштабами вектора
+            //direction.y = 0; // Игнорируем вертикальный компонент
+            direction.Normalize();
+
+            // Вычисляем целевой угол поворота
+            var rotationAngle = Vector3.SignedAngle(Vector3.forward, direction, Vector3.up);
+            var targetRotation = Quaternion.Euler(0f, rotationAngle, 0f);
+    
+            // Запускаем плавный поворот
+            _currentRotationTween = _transform.DORotateQuaternion(targetRotation, RotateDuration);
+        }
+
         public virtual async UniTask Attack()
         {
             _isAttackProcess = true;
+            _animator.SetTrigger(_attack);
             
             await _attackProcessView.Attack();
             
             _isAttackProcess = false;
+            _animator.ResetTrigger(_attack);
         }
 
         public void TakeDamage(float damage)
         {
             Health -= damage;
             
-            Blink(Color.red);
+            Blink(Color.white);
         }
 
         public void Heal(float healAmount)
@@ -79,18 +110,23 @@ namespace Logic.Unity.Enemy
             Blink(Color.green);
         }
 
-        public virtual void Reset()
+        public virtual void ReInitialize()
         {
             Health = Model.Health;
             IsDead = false;
+            _animator.ResetTrigger(_die);
             
             gameObject.SetActive(true);
         }
 
-        public virtual void Die()
+        public virtual async UniTask Die()
         {
             Health = 0f;
             IsDead = true;
+
+            _animator.SetTrigger(_die);
+            
+            await UniTask.Delay(2000);
             
             gameObject.SetActive(false);
         }

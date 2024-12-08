@@ -1,6 +1,7 @@
 using System;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Projectiles;
+using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.RuntimeData.Rectangles;
 using R3;
@@ -12,16 +13,19 @@ namespace Logic.Services.Level.Projectiles
     {
         private readonly IRectanglesProvider _rectanglesProvider;
         private readonly IProjectileDamageSystem _damageSystem;
+        private readonly IVfxService _vfxService;
         private readonly IProjectilesProvider _projectilesProvider;
         private readonly IDisposable _updateDisposable;
 
         public ProjectilesCollisionSystem(
             IRectanglesProvider rectanglesProvider,
             IProjectileDamageSystem damageSystem,
+            IVfxService vfxService,
             IProjectilesProvider projectilesProvider)
         {
             _rectanglesProvider = rectanglesProvider;
             _damageSystem = damageSystem;
+            _vfxService = vfxService;
             _projectilesProvider = projectilesProvider;
             
             _updateDisposable = Observable.EveryUpdate().Subscribe(Check);
@@ -42,6 +46,8 @@ namespace Logic.Services.Level.Projectiles
                         _projectilesProvider.RemoveProjectile(projectile);
                         
                         _damageSystem.DoDamage(projectile, enemyRectangle.EnemyLink);
+
+                        _vfxService.ShowVfx(projectile.DestroyVfxId, projectile.Position);
                         
                         break;
                     }

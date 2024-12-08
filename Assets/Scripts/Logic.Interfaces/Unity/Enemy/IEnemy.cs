@@ -12,11 +12,13 @@ namespace Logic.Interfaces.Unity.Enemy
         bool CanAttack { get; }
         IEnemyModel Model { get; }
         IAttackModel EnemyAttackModel { get; }
+        bool Active { get; }
 
         void Initialize(IEnemyModel model, IAttackModel attackModel);
-        void Reset();
+        void ReInitialize();
         void Move(Vector3 offset);
         void MoveTo(Vector3 newPosition);
+        void Rotate(Vector3 direction);
         UniTask Attack();
     }
 }

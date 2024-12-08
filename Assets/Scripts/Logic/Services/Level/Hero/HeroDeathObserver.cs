@@ -1,18 +1,21 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Presenters;
+using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using R3;
 
 namespace Logic.Services.Level.Hero
 {
-    public class HeroDeathObserver : IDisposable
+    public class HeroDeathObserver : IHeroDeathObserver, IDisposable
     {
         private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
         private readonly CompositeDisposable _disposables;
         
         private IHero _hero;
+
+        public event Action HeroDie;
 
         public HeroDeathObserver(
             IHeroHolder heroHolder,
@@ -38,14 +41,23 @@ namespace Logic.Services.Level.Hero
 
         private void CheckIsPlayerDead(Unit _)
         {
-            if (!_hero.IsDead)
+            if (_hero.Health > 0f)
             {
                 return;
             }
             
-            _gameEndedPopupPresenter.ShowPopup().Forget();
-            
+            GameEnd().Forget();
+        }
+
+        private async UniTaskVoid GameEnd()
+        {
             Dispose();
+            
+            HeroDie?.Invoke();
+            
+            await _hero.Die();
+            
+            _gameEndedPopupPresenter.ShowPopup().Forget();
         }
 
         public void Dispose()

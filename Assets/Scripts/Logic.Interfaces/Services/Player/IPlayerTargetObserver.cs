@@ -1,4 +1,3 @@
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
 using R3;
 

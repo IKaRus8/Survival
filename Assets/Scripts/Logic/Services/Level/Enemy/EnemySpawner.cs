@@ -99,7 +99,7 @@ namespace Logic.Services.Level.Enemy
         {
             enemy.MoveTo(GetEnemyPosition());
             
-            enemy.Reset();
+            enemy.ReInitialize();
         }
 
         private void AddEnemy(IEnemy enemy)

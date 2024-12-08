@@ -1,36 +1,35 @@
 using Data.Models.Attack;
 using Logic.Interfaces.Unity.Projectiles;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Logic.Unity.Projectiles
 {
     public class Projectile : MonoBehaviour, IProjectile
     {
-        [SerializeField, Required]
-        private TrailRenderer _trailRenderer;
-        
         private Vector3 _direction;
         private Transform _transform;
         
         public float Damage { get; private set; }
         public float Speed { get; private set; }
         public Vector3 Position => _transform.position;
-        public bool IsActive => gameObject.activeSelf;
+        public bool IsActive {get; private set;}
+        public string DestroyVfxId { get; private set; }
 
         private void Awake()
         {
             _transform = transform;
         }
 
-        private void OnEnable()
+        public void Active()
         {
-            _trailRenderer.enabled = true;
+            IsActive = true;
+            gameObject.SetActive(true);
         }
 
-        private void OnDisable()
+        public void Disable()
         {
-            _trailRenderer.enabled = false;
+            IsActive = false;
+            gameObject.SetActive(false);
         }
 
         public void Initialization(
@@ -40,6 +39,7 @@ namespace Logic.Unity.Projectiles
         {
             Damage = attackModel.Damage;
             Speed = attackModel.ProjectileSpeed;
+            DestroyVfxId = attackModel.DestroyVfx;
             
             Move(startPosition, direction);
         }

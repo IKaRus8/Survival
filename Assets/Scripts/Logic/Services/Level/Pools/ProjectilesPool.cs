@@ -13,7 +13,19 @@ namespace Logic.Services.Level.Pools
         
         protected override void OnCreated(Projectile item)
         {
+            item.gameObject.SetActive(false);
+            
             Projectiles.Add(item);
+        }
+
+        protected override void OnSpawned(Projectile item)
+        {
+            item.Active();
+        }
+
+        protected override void OnDespawned(Projectile item)
+        {
+            item.Disable();
         }
 
         protected override void Reinitialize(

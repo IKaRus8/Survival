@@ -5,6 +5,7 @@ using Logic.Interfaces.Providers.Level.Hero;
 using Logic.Interfaces.Providers.Level.Projectiles;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
+using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Presenters;
 using Logic.Providers.Level;
@@ -65,6 +66,8 @@ namespace Logic.Installers
             Container.BindInterfacesTo<EnemyCollisionSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<ProjectilesCollisionSystem>().AsSingle().NonLazy();
             Container.Bind<IProjectileDamageSystem>().To<ProjectileDamageSystem>().AsTransient();
+            Container.BindInterfacesTo<PauseSystem>().AsSingle().NonLazy();
+            Container.Bind<IVfxService>().To<VfxService>().AsSingle();
 
             // Providers
             Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
