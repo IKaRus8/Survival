@@ -5,9 +5,11 @@ namespace Logic.RuntimeData.Rectangles
 {
     public class EnemyRectangle : Rectangle
     {
+        private const float Radius = 0.1f;
+        
         public IEnemy EnemyLink { get; private set; }
 
-        public EnemyRectangle(IEnemy enemy, Vector3 point, float radius) : base(point, radius)
+        public EnemyRectangle(IEnemy enemy, Vector3 point) : base(point, Radius)
         {
             EnemyLink = enemy;
         }

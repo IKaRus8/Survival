@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Logic.Services.Level.Enemy
 {
-    public class EnemySpawner : IDisposable
+    public class EnemySpawner : IPauseHandler, IDisposable
     {
         private readonly TimeSpan _cooldown = TimeSpan.FromSeconds(0.5f);
         
@@ -42,24 +42,25 @@ namespace Logic.Services.Level.Enemy
             _attackModelsProvider = attackModelsProvider;
             _enemyProvider = enemyProvider;
             
-            StartSpawn(true);
+            StartSpawn();
         }
 
-        private void StartSpawn(bool value)
+        public void Pause()
         {
-            if (value)
-            {
-                if (_spawnDisposable == null)
-                {
-                    _spawnDisposable = Observable.Interval(_cooldown)
-                        .Subscribe(SpawnProcess);
-                }
-            }
-            else
-            {
-                _spawnDisposable?.Dispose();
-                _spawnDisposable = null;
-            }
+            _spawnDisposable?.Dispose();
+        }
+
+        public void Resume()
+        {
+            StartSpawn();
+        }
+
+        private void StartSpawn()
+        {
+            _spawnDisposable?.Dispose();
+            
+            _spawnDisposable = Observable.Interval(_cooldown)
+                .Subscribe(SpawnProcess);
         }
 
         private void SpawnProcess(Unit _)

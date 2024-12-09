@@ -8,6 +8,7 @@ namespace Logic.Services.Level.Hero
 {
     public class HeroRotateSystem : IDisposable
     {
+        private readonly IInput _input;
         private readonly IPlayerTargetObserver _targetProvider;
         private readonly CompositeDisposable _disposables;
         
@@ -16,8 +17,10 @@ namespace Logic.Services.Level.Hero
 
         public HeroRotateSystem(
             IHeroHolder heroHolder,
+            IInput input,
             IPlayerTargetObserver targetProvider)
         {
+            _input = input;
             _targetProvider = targetProvider;
             _disposables = new CompositeDisposable();
         
@@ -44,8 +47,10 @@ namespace Logic.Services.Level.Hero
 
         private void RotateUpdate(Unit _)
         {
-            if (_hero == null || _target == null)
+            if (_target == null || _target.IsDead)
             {
+                _hero.Rotate(_input.Direction);
+                
                 return;
             }
 

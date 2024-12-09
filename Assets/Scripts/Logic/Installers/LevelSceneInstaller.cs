@@ -66,7 +66,7 @@ namespace Logic.Installers
             Container.BindInterfacesTo<EnemyCollisionSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<ProjectilesCollisionSystem>().AsSingle().NonLazy();
             Container.Bind<IProjectileDamageSystem>().To<ProjectileDamageSystem>().AsTransient();
-            Container.BindInterfacesTo<PauseSystem>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<PauseService>().AsSingle().NonLazy();
             Container.Bind<IVfxService>().To<VfxService>().AsSingle();
 
             // Providers
@@ -88,6 +88,7 @@ namespace Logic.Installers
 
             //Presenters
             Container.Bind<IGameEndedPopupPresenter>().To<GameEndedPopupPresenter>().AsSingle();
+            Container.Bind<ISettingsPopupPresenter>().To<SettingsPopupPresenter>().AsSingle();
         }
     }
 }

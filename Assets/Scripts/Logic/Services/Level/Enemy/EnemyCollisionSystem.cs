@@ -8,7 +8,7 @@ namespace Logic.Services.Level.Enemy
 {
     public class EnemyCollisionSystem : IDisposable
     {
-        private const float Offset = 0.05f;
+        private const float Offset = 0.1f;
 
         private readonly IRectanglesProvider _rectanglesProvider;
         private readonly IDisposable _updateDisposable;

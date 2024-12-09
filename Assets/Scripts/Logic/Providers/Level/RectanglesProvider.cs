@@ -17,8 +17,6 @@ namespace Logic.Providers.Level
 {
     public class RectanglesProvider : IRectanglesProvider, IDisposable
     {
-        private const float MobSize = 0.8f;
-        
         private readonly IGridSystem _gridSystem;
         private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _heroDisposable;
@@ -38,7 +36,7 @@ namespace Logic.Providers.Level
         
         public HashSet<EnemyRectangle> GetEnemyRectangles()
         {
-            return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position, MobSize)).ToHashSet();
+            return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position)).ToHashSet();
         }
 
         public HashSet<Rectangle> GetGridRectangles()
@@ -53,7 +51,7 @@ namespace Logic.Providers.Level
                 return new Rectangle(Vector3.zero, 0f);
             }
             
-            return new Rectangle(_heroTransform.position, MobSize);
+            return new Rectangle(_heroTransform.position, 0.8f);
         }
 
         public HashSet<EnemyRectangle> GetEnemyInRectangle(Rectangle rectangle)

@@ -17,9 +17,9 @@ namespace Data
         {
             return new[]
             {
-                new EnemySpawnParameter(10, 100),
-                new EnemySpawnParameter(20, 30),
-                new EnemySpawnParameter(30, 0)
+                new EnemySpawnParameter(30, 100),
+                new EnemySpawnParameter(50, 60),
+                new EnemySpawnParameter(80, 10)
             };
         }
     }

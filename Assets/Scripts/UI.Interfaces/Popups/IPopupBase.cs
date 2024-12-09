@@ -1,8 +1,10 @@
+using System;
+
 namespace UI.Interfaces.Popups
 {
     public interface IPopupBase
     {
-        string Key { get; }
+        event Action OnClose;
         
         void Show();
         

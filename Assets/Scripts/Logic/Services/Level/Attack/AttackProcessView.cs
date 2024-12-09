@@ -55,8 +55,12 @@ namespace Logic.Services.Level.Attack
 
         public void CancelAttack()
         {
-            _attackCancellationTokenSource?.Cancel();
-            _attackCancellationTokenSource?.Dispose();
+            if (_attackCancellationTokenSource != null && 
+                !_attackCancellationTokenSource.IsCancellationRequested)
+            {
+                _attackCancellationTokenSource?.Cancel();
+                _attackCancellationTokenSource?.Dispose();
+            }
         }
         
         protected virtual async UniTask AttackPrepare(CancellationToken cancellationToken)

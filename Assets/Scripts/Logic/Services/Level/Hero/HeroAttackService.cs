@@ -16,7 +16,7 @@ namespace Logic.Services.Level.Hero
         private readonly ReactiveProperty<IEnemy> _targetRx;
         private readonly IProjectileFabric _projectileFabric;
         private readonly IDisposable _heroDisposable;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource;
 
         private Transform _shotPoint;
         private IHero _hero;
@@ -42,6 +42,8 @@ namespace Logic.Services.Level.Hero
 
         public void Resume()
         {
+            _cancellationTokenSource = new CancellationTokenSource();
+
             var token = _cancellationTokenSource.Token;
             
             AttackProcess(token).Forget();

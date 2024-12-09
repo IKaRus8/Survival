@@ -29,7 +29,7 @@ namespace Data
                 new EnemyModel(
                     Constants.Enemy.Id.SimpleEnemy,
                     50f,
-                    1f,
+                    1.5f,
                     Constants.Attack.SimpleMelee),
             };
         }
@@ -41,7 +41,7 @@ namespace Data
                 new HeroModel(
                     Constants.Hero.Id.SimpleHero,
                     300,
-                    5f,
+                    4f,
                     Constants.Attack.SimpleRange)
             };
         }
@@ -58,9 +58,9 @@ namespace Data
                 new RangeAttackModel(
                     Constants.Attack.SimpleRange,
                     30f,
-                    0.5f,
+                    0.8f,
                     25f,
-                    5f,
+                    10f,
                     Constants.Vfx.ElectroHit)
             };
         }

@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Services;
 using Logic.Unity.SceneObjects;
-using UI.Interfaces.Popups;
 using UnityEngine;
 using Zenject;
 
@@ -20,7 +19,7 @@ namespace Logic.Services
             _instantiator = instantiator;
         }
         
-        public async UniTask<T> ShowPopup<T>(string key) where T : IPopupBase
+        public async UniTask<T> ShowPopup<T>(string key)
         {
             var popupPrefab = await _assetService.LoadAssetAsync<GameObject>(key);
 

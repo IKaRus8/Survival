@@ -123,10 +123,11 @@ namespace Logic.Unity.Enemy
         {
             Health = 0f;
             IsDead = true;
+            CancelAttack();
 
             _animator.SetTrigger(_die);
             
-            await UniTask.Delay(2000);
+            await UniTask.Delay(1300);
             
             gameObject.SetActive(false);
         }

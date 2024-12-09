@@ -50,6 +50,10 @@ namespace Logic.Unity.Enemy
             _blinkSequence = DOTween.Sequence();
             _blinkSequence.onUpdate += OnProcess;
 
+            await UniTask.WaitForSeconds(duration, cancellationToken: token);
+            
+            return;
+
             await _blinkSequence
                 .Append(_meshRenderer.material.DOColor(Color.white, _color05, 0.1f))
                 .Append(_meshRenderer.material.DOColor(_defaultColor, _color05, duration))

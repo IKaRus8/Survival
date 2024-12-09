@@ -5,12 +5,12 @@ using Logic.Interfaces.Services.Level.Hero;
 
 namespace Logic.Services.Level
 {
-    public class PauseSystem : IDisposable
+    public class PauseService : IPauseService, IDisposable
     {
         private readonly IHeroDeathObserver _heroDeathObserver;
         private readonly IEnumerable<IPauseHandler> _pauseHandler;
 
-        public PauseSystem(
+        public PauseService(
             IHeroDeathObserver heroDeathObserver,
             IEnumerable<IPauseHandler> pauseHandler)
         {
@@ -20,7 +20,7 @@ namespace Logic.Services.Level
             _heroDeathObserver.HeroDie += Pause;
         }
         
-        private void Pause()
+        public void Pause()
         {
             foreach (var handler in _pauseHandler)
             {
@@ -28,7 +28,7 @@ namespace Logic.Services.Level
             }
         }
 
-        private void Resume()
+        public void Resume()
         {
             foreach (var handler in _pauseHandler)
             {

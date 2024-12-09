@@ -13,8 +13,6 @@ namespace UI.Popups
 
         private ISceneLoader _sceneLoader;
 
-        public override string Key => "GameEndedPopup";
-
         [Inject]
         private void Construct(ISceneLoader sceneLoader)
         {

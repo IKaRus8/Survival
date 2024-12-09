@@ -1,6 +1,6 @@
 namespace UI.Interfaces.Popups
 {
-    public interface IGameEndedPopup : IPopupBase
+    public interface IGameEndedPopup
     {
     }
 }
