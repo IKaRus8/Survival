@@ -1,0 +1,36 @@
+using System;
+using Logic.Interfaces.Providers.Level;
+using Logic.Interfaces.Providers.Level.Enemies;
+using Logic.Interfaces.Services.DefendLevel;
+using Logic.Interfaces.Services.Level.Enemy;
+using UnityEngine;
+
+namespace Logic.Services.DefendLevel
+{
+    public class DefendEnemySpawner : EnemySpawnerBase
+    {
+        private readonly IEnemySpawnPointsProvider _spawnPointsProvider;
+        
+        protected override TimeSpan Cooldown => TimeSpan.FromSeconds(0.3f);
+        
+        public DefendEnemySpawner(
+            IEnemySpawnPointsProvider spawnPointsProvider,
+            IEnemySpawnSettingsProvider enemySpawnSettingsProvider,
+            IEnemyFactory factory,
+            IEnemyModelsProvider enemyModelsProvider,
+            IAttackModelsProvider attackModelsProvider,
+            IEnemyProvider enemyProvider) 
+            : base(enemySpawnSettingsProvider,
+            factory,
+            enemyModelsProvider,
+            attackModelsProvider,
+            enemyProvider)
+        {
+            _spawnPointsProvider = spawnPointsProvider;
+        }
+        protected override Vector3 GetSpawnPosition()
+        {
+            return _spawnPointsProvider.GetRandomSpawnPoint();
+        }
+    }
+}

@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Services;
-using Logic.Unity.SceneObjects;
+using Logic.Interfaces.Services.Level;
 using UnityEngine;
 using Zenject;
 
@@ -23,7 +23,8 @@ namespace Logic.Services
         {
             var popupPrefab = await _assetService.LoadAssetAsync<GameObject>(key);
 
-            var popup = _instantiator.InstantiatePrefabForComponent<T>(popupPrefab, BaseSceneObjectsContainer.PopupContainer);
+            var popup = _instantiator.InstantiatePrefabForComponent<T>(popupPrefab, 
+                IBaseSceneObjectContainer.PopupContainer);
 
             return popup;
         }

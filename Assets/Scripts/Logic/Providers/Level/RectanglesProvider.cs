@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
-using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Player;
 using Logic.RuntimeData.Rectangles;
 using R3;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace Logic.Providers.Level
         private readonly IGridSystem _gridSystem;
         private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _heroDisposable;
-        
+
         private Transform _heroTransform;
 
         public RectanglesProvider(
@@ -33,7 +34,7 @@ namespace Logic.Providers.Level
 
             _heroDisposable = heroHolder.HeroRx.Subscribe(OnHeroCreated);
         }
-        
+
         public HashSet<EnemyRectangle> GetEnemyRectangles()
         {
             return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position)).ToHashSet();
@@ -50,7 +51,7 @@ namespace Logic.Providers.Level
             {
                 return new Rectangle(Vector3.zero, 0f);
             }
-            
+
             return new Rectangle(_heroTransform.position, 0.8f);
         }
 
@@ -66,11 +67,12 @@ namespace Logic.Providers.Level
                     enemiesInGrid.Add(enemy);
                 }
             }
-            
+
             return enemiesInGrid;
         }
 
-        public async IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements(CancellationToken cancellationToken)
+        public async IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements(
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
             var grid = GetGridRectangles();
 
@@ -78,14 +80,14 @@ namespace Logic.Providers.Level
             {
                 yield return Array.Empty<EnemyRectangle>();
             }
-            
+
             foreach (var gridRectangle in grid)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
                     break;
                 }
-                
+
                 yield return GetEnemyInRectangle(gridRectangle).ToArray();
 
                 await UniTask.Yield();
@@ -95,7 +97,7 @@ namespace Logic.Providers.Level
         public HashSet<EnemyRectangle> GetNearestEnemyRectangles(Rectangle rectangle)
         {
             var result = new HashSet<EnemyRectangle>();
-            
+
             var gridRectangles = GetGridRectangleBy(rectangle);
 
             foreach (var enemyRectangle in GetEnemyInRectangle(gridRectangles))
@@ -125,7 +127,7 @@ namespace Logic.Providers.Level
             {
                 return;
             }
-            
+
             _heroTransform = hero.Transform;
         }
 

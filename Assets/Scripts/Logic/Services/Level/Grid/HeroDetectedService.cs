@@ -3,6 +3,7 @@ using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Player;
 using R3;
 using Utilities.Extensions;
 

@@ -3,6 +3,7 @@ using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
+using Logic.Interfaces.Unity.Player;
 using R3;
 using UnityEngine;
 using Utilities.Extensions;

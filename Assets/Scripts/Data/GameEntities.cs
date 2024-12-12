@@ -22,7 +22,7 @@ namespace Data
             AttackModels = GetAttackModels();
         }
 
-        private IEnemyModel[] GetEnemyModels()
+        private static IEnemyModel[] GetEnemyModels()
         {
             return new IEnemyModel[]
             {
@@ -34,19 +34,19 @@ namespace Data
             };
         }
 
-        private IHeroModel[] GetHeroModels()
+        private static IHeroModel[] GetHeroModels()
         {
             return new IHeroModel[]
             {
                 new HeroModel(
                     Constants.Hero.Id.SimpleHero,
-                    300,
+                    3000f,
                     4f,
                     Constants.Attack.SimpleRange)
             };
         }
 
-        private IAttackModel[] GetAttackModels()
+        private static IAttackModel[] GetAttackModels()
         {
             return new IAttackModel[]
             {

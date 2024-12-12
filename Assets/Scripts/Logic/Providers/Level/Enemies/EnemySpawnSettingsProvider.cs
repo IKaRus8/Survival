@@ -16,7 +16,8 @@ namespace Logic.Providers.Level.Enemies
         {
             _enemyProvider = enemyProvider;
 
-            _spawnParameters = gameSettings.EnemySpawnParameters.OrderBy(p => p.Quantity).ToArray();
+            _spawnParameters = gameSettings.EnemySpawnParameters
+                .OrderBy(p => p.Quantity).ToArray();
         }
 
         public float GetChanceForSpawn()

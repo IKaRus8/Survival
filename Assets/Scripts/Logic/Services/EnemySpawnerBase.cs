@@ -10,13 +10,12 @@ using Logic.Interfaces.Unity.Enemy;
 using R3;
 using UnityEngine;
 
-namespace Logic.Services.Level.Enemy
+namespace Logic.Services
 {
-    public class EnemySpawner : IPauseHandler, IDisposable
+    public abstract class EnemySpawnerBase : IPauseHandler, IDisposable
     {
-        private readonly TimeSpan _cooldown = TimeSpan.FromSeconds(0.5f);
+        protected abstract TimeSpan Cooldown { get; }
         
-        private readonly IGridSystem _gridSystem;
         private readonly IEnemySpawnSettingsProvider _enemySpawnSettingsProvider;
         private readonly IEnemyFactory _factory;
         private readonly IEnemyModelsProvider _enemyModelsProvider;
@@ -27,15 +26,13 @@ namespace Logic.Services.Level.Enemy
         private GameObject _enemyPrefab;
         private IDisposable _spawnDisposable;
 
-        public EnemySpawner(
-            IGridSystem gridSystem,
+        protected EnemySpawnerBase(
             IEnemySpawnSettingsProvider enemySpawnSettingsProvider,
             IEnemyFactory factory,
             IEnemyModelsProvider enemyModelsProvider,
             IAttackModelsProvider attackModelsProvider,
             IEnemyProvider enemyProvider)
         {
-            _gridSystem = gridSystem;
             _enemySpawnSettingsProvider = enemySpawnSettingsProvider;
             _factory = factory;
             _enemyModelsProvider = enemyModelsProvider;
@@ -55,11 +52,13 @@ namespace Logic.Services.Level.Enemy
             StartSpawn();
         }
 
+        protected abstract Vector3 GetSpawnPosition();
+
         private void StartSpawn()
         {
             _spawnDisposable?.Dispose();
             
-            _spawnDisposable = Observable.Interval(_cooldown)
+            _spawnDisposable = Observable.Interval(Cooldown)
                 .Subscribe(SpawnProcess);
         }
 
@@ -98,7 +97,7 @@ namespace Logic.Services.Level.Enemy
 
         private void PrepareEnemy(IEnemy enemy)
         {
-            enemy.MoveTo(GetEnemyPosition());
+            enemy.MoveTo(GetSpawnPosition());
             
             enemy.ReInitialize();
         }
@@ -106,13 +105,6 @@ namespace Logic.Services.Level.Enemy
         private void AddEnemy(IEnemy enemy)
         {
             _enemyProvider.AddEnemy(enemy);
-        }
-
-        private Vector3 GetEnemyPosition()
-        {
-            var gridElementRectangle = _gridSystem.GetRandomGridPlaneWithOutHero().ElementRectangle;
-
-            return gridElementRectangle.RandomPosition;
         }
 
         public void Dispose()

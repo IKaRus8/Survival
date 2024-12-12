@@ -1,10 +1,9 @@
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Models;
 using Data.Interfaces.Models.Attack;
 using UnityEngine;
 
-namespace Logic.Interfaces.Unity
+namespace Logic.Interfaces.Unity.Player
 {
     public interface IHero : IDamageable 
     {

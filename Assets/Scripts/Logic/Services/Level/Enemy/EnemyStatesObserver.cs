@@ -2,10 +2,11 @@ using System;
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
+using Logic.Interfaces.Services.Level.Attack;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Player;
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
+using Logic.Interfaces.Unity.Player;
 using R3;
 using UnityEngine;
 
@@ -14,11 +15,11 @@ namespace Logic.Services.Level.Enemy
     public class EnemyStatesObserver : IEnemyStatesObserver, IPauseHandler, IDisposable
     {
         private readonly IEnemyProvider _enemyProvider;
-        private readonly IDamageSystem _damageSystem;
+        protected readonly IDamageSystem _damageSystem;
         private readonly IDisposable _playerDisposable;
   
         private IDisposable _updateDisposable;
-        private Transform _playerTransform;
+        protected Transform _playerTransform;
 
         public EnemyStatesObserver(
             IEnemyProvider enemyProvider, 
@@ -29,8 +30,6 @@ namespace Logic.Services.Level.Enemy
             _damageSystem = damageSystem;
 
             _playerDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
-
-            Resume();
         }
 
         public void Pause()
@@ -43,7 +42,7 @@ namespace Logic.Services.Level.Enemy
             _updateDisposable = Observable.EveryUpdate().Subscribe(EnemyUpdate);
         }
 
-        private void OnPlayerCreated(IHero hero)
+        protected virtual void OnPlayerCreated(IHero hero)
         {
             if (hero == null)
             {
@@ -51,23 +50,23 @@ namespace Logic.Services.Level.Enemy
             }
             
             _playerTransform = hero.Transform;
-            
-            
+
+            Resume();
         }
 
         private void EnemyUpdate(Unit _)
         {
             foreach (var enemy in _enemyProvider.AliveEnemies)
             {
-                var enemyToPlayerVector = _playerTransform.position - enemy.Position;
+                var enemyToTargetVector = GetVectorTarget(enemy.Position);
 
-                var sqrDistance = enemyToPlayerVector.sqrMagnitude;
+                var sqrDistance = enemyToTargetVector.sqrMagnitude;
 
                 var needMove = sqrDistance > enemy.EnemyAttackModel.SqrAttackDistance;
                 
                 if (needMove)
                 {
-                    MoveEnemy(enemy, enemyToPlayerVector.normalized);
+                    MoveEnemy(enemy, enemyToTargetVector.normalized);
                 }
                 else
                 {
@@ -76,7 +75,7 @@ namespace Logic.Services.Level.Enemy
             }
         }
 
-        private void MoveEnemy(IEnemy enemy, Vector3 direction)
+        protected virtual void MoveEnemy(IEnemy enemy, Vector3 direction)
         {
             var moveOffset = direction 
                              * enemy.Model.MoveSpeed 
@@ -86,7 +85,7 @@ namespace Logic.Services.Level.Enemy
             enemy.Move(RandomHelper.GetRandomizedVector(moveOffset, 0.2f));
         }
         
-        private async UniTask TryAttack(IEnemy enemy)
+        protected virtual async UniTask TryAttack(IEnemy enemy)
         {
             if (!enemy.CanAttack)
             {
@@ -98,7 +97,12 @@ namespace Logic.Services.Level.Enemy
             await enemy.Attack();
         }
 
-        public void Dispose()
+        protected virtual Vector3 GetVectorTarget(Vector3 position)
+        {
+            return _playerTransform.position - position;
+        }
+
+        public virtual void Dispose()
         {
             _playerDisposable?.Dispose();
             _updateDisposable?.Dispose();

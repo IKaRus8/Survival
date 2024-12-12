@@ -1,27 +1,23 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Player;
-using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Player;
 using R3;
 
-namespace Logic.Services.Level.Hero
+namespace Logic.Services.Level
 {
-    public class HeroDeathObserver : IHeroDeathObserver, IDisposable
+    public abstract class HeroDeathObserver : IHeroDeathObserver, IDisposable
     {
-        private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
         private readonly CompositeDisposable _disposables;
-        
+
         private IHero _hero;
 
         public event Action HeroDie;
 
-        public HeroDeathObserver(
-            IHeroHolder heroHolder,
-            IGameEndedPopupPresenter gameEndedPopupPresenter)
+        protected HeroDeathObserver(
+            IHeroHolder heroHolder)
         {
-            _gameEndedPopupPresenter = gameEndedPopupPresenter;
             _disposables = new CompositeDisposable();
             
             heroHolder.HeroRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
@@ -46,18 +42,16 @@ namespace Logic.Services.Level.Hero
                 return;
             }
             
-            GameEnd().Forget();
+            OnHeroDie().Forget();
         }
 
-        private async UniTaskVoid GameEnd()
+        protected virtual async UniTask OnHeroDie()
         {
             Dispose();
-            
+
             HeroDie?.Invoke();
-            
+
             await _hero.Die();
-            
-            _gameEndedPopupPresenter.ShowPopup().Forget();
         }
 
         public void Dispose()

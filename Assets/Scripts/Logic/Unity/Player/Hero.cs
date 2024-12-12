@@ -5,6 +5,7 @@ using Data.Interfaces.Models;
 using Data.Interfaces.Models.Attack;
 using DG.Tweening;
 using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Player;
 using Logic.Services.Level.Attack;
 using Sirenix.OdinInspector;
 using UnityEngine;

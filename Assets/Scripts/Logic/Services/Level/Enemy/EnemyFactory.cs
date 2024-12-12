@@ -18,7 +18,7 @@ namespace Logic.Services.Level.Enemy
         public EnemyFactory(
             DiContainer container,
             IAssetService assetService,
-            ILevelSceneObjectContainer sceneObjectContainer)
+            IBaseSceneObjectContainer sceneObjectContainer)
         {
             _container = container;
             _assetService = assetService;

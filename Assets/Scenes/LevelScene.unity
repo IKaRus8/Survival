@@ -588,9 +588,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 598355e9a6e44f843aa8bbf206b8feb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _joystick: {fileID: 1414365011}
   _camera: {fileID: 2019116382}
-  _levelSceneObjectsContainer: {fileID: 708748483}
   _bulletPrefab: {fileID: 6756244108611802762, guid: dccc47b88b43928468ec7a445319f743,
     type: 3}
   _bulletsParent: {fileID: 1012340778}
@@ -624,10 +622,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a882e06bb07c4d49998d847281f3cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridParent: {fileID: 1179395467}
   _popupContainer: {fileID: 262529512}
   _enemiesContainer: {fileID: 1320262754}
   _vfxContainer: {fileID: 209056129}
+  _gridParent: {fileID: 1179395467}
 --- !u!4 &708748484
 Transform:
   m_ObjectHideFlags: 0
@@ -991,18 +989,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1440801390}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1414365011 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8531754572694481587, guid: a7189aa913b975d4daebd584e2de6725,
-    type: 3}
-  m_PrefabInstance: {fileID: 1440801390}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a47f546fc70ec8428172694e78e4288, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1440801390
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1402,7 +1388,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 1
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0

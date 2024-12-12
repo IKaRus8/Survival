@@ -8,11 +8,11 @@ namespace Logic.Services.Level.Enemy
 {
     public class EnemyCollisionSystem : IDisposable
     {
-        private const float Offset = 0.1f;
+        private const float Offset = 0.2f;
 
         private readonly IRectanglesProvider _rectanglesProvider;
         private readonly IDisposable _updateDisposable;
-        private CancellationTokenSource _cancellationTokenSource;
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         public EnemyCollisionSystem(IRectanglesProvider rectanglesProvider)
         {

@@ -6,6 +6,7 @@ using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
+using Logic.Interfaces.Unity.Player;
 using R3;
 using UnityEngine;
 
@@ -36,8 +37,11 @@ namespace Logic.Services.Level.Hero
 
         public void Pause()
         {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
+            if(!_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource?.Cancel();
+                _cancellationTokenSource?.Dispose();
+            }
         }
 
         public void Resume()

@@ -1,23 +1,21 @@
 using System;
 using Cysharp.Threading.Tasks;
-using Logic.Interfaces.Services.Level;
+using Data.Interfaces.Constants;
 using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Player;
-using Logic.Interfaces.Unity;
+using Logic.Interfaces.Unity.Player;
 using R3;
 
 namespace Logic.Services.Level.Hero
 {
-    public class HeroHolder : IHeroHolder, IDisposable
+    public class HeroHolder : IHeroHolder
     {
         private readonly IHeroSpawner _heroSpawner;
-        private readonly CompositeDisposable _disposable;
        
         public ReactiveProperty<IHero> HeroRx { get; }
 
         public HeroHolder(IHeroSpawner heroSpawner)
         {
-            _disposable = new CompositeDisposable();
             _heroSpawner = heroSpawner;
             HeroRx = new ReactiveProperty<IHero>();
         
@@ -26,7 +24,7 @@ namespace Logic.Services.Level.Hero
 
         private async UniTaskVoid CreatePlayer()
         {
-            var player = await _heroSpawner.CreateAsync();
+            var player = await _heroSpawner.CreateAsync(Constants.Hero.Id.SimpleHero);
         
             SetPlayer(player);
         }
@@ -35,10 +33,5 @@ namespace Logic.Services.Level.Hero
         {
             HeroRx.Value = hero;         
         }
-
-        public void Dispose()
-        {
-            _disposable?.Dispose();
-        }  
     }
 }

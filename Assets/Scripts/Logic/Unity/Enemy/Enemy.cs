@@ -127,7 +127,7 @@ namespace Logic.Unity.Enemy
 
             _animator.SetTrigger(_die);
             
-            await UniTask.Delay(1300);
+            await UniTask.Delay(1000);
             
             gameObject.SetActive(false);
         }

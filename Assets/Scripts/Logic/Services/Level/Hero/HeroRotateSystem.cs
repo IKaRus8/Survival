@@ -2,6 +2,7 @@ using System;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
+using Logic.Interfaces.Unity.Player;
 using R3;
 
 namespace Logic.Services.Level.Hero

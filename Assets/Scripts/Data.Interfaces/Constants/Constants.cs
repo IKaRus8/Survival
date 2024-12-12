@@ -13,6 +13,7 @@ namespace Data.Interfaces.Constants
             public static class Id
             {
                 public const string SimpleEnemy = "enemy_simple";
+                public const string NavEnemy = "enemy_nav";
             }
         }
 
