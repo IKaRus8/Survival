@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 
 namespace Logic.Interfaces.Unity
 {
-    public interface IDamageable
+    public interface IDamageable : IEntity
     {
         float Health { get; }
         bool IsDead { get; }

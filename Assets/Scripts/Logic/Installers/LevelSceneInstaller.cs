@@ -1,12 +1,14 @@
-using Logic.Interfaces.Services.Level;
+using Data.Interfaces.Constants;
+using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Player;
 using Logic.Providers.Level;
+using Logic.Providers.Level.Enemies;
 using Logic.Services.Level.Enemy;
 using Logic.Services.Level.Grid;
 using Logic.Services.Level.Hero;
 using Logic.Services.Level.Pools;
-using Logic.Services.Level.Projectiles;
 using Logic.Unity.Projectiles;
+using Logic.Unity.SceneObjects;
 using UnityEngine;
 using Zenject;
 
@@ -25,20 +27,22 @@ namespace Logic.Installers
         {
             // Scene objects 
             Container.Bind<Camera>().FromInstance(_camera).AsSingle();
-            Container.BindInterfacesTo<ILevelSceneObjectContainer>().FromComponentInHierarchy().AsSingle();
+            Container.BindInterfacesTo<LevelSceneObjectsContainer>()
+                .FromComponentInHierarchy().AsSingle();
             
             // Services
-            Container.Bind<IHeroHolder>().To<HeroHolder>().AsSingle();
-            Container.BindInterfacesTo<GridSystem>().AsSingle().NonLazy();
+            Container.Bind<IHeroHolder>().To<SurvivalLevelHeroHolder>().AsSingle();
+            Container.BindInterfacesTo<GridSystem>().AsSingle();
             Container.BindInterfacesTo<LevelEnemySpawner>().AsSingle().NonLazy();
             Container.BindInterfacesTo<LevelHeroDeathObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HeroDetectedService>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyCollisionSystem>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<ProjectilesCollisionSystem>().AsSingle().NonLazy();
+            Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle()
+                .WithArguments(Constants.Settings.Spawn.LevelSpawnSettings);
             
             // Providers
-            Container.BindInterfacesTo<RectanglesProvider>().AsSingle();
+            Container.BindInterfacesTo<SurvivalLevelRectanglesProvider>().AsSingle();
             
             
             // Pools

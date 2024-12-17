@@ -9,33 +9,36 @@ namespace Logic.Services.Level
 {
     public abstract class HeroDeathObserver : IHeroDeathObserver, IDisposable
     {
-        private readonly CompositeDisposable _disposables;
+        protected readonly IHeroHolder _heroHolder;
+        private readonly IDisposable _heroDisposable;
 
+        private IDisposable _updateDisposable;
         private IHero _hero;
 
         public event Action HeroDie;
 
-        protected HeroDeathObserver(
-            IHeroHolder heroHolder)
+        protected HeroDeathObserver(IHeroHolder heroHolder)
         {
-            _disposables = new CompositeDisposable();
+            _heroHolder = heroHolder;
             
-            heroHolder.HeroRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
+            _heroDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
         private void OnPlayerCreated(IHero hero)
         {
             if (hero == null)
             {
+                _updateDisposable?.Dispose();
+                    
                 return;
             }
 
             _hero = hero;
             
-            Observable.EveryUpdate().Subscribe(CheckIsPlayerDead).AddTo(_disposables);
+            _updateDisposable = Observable.EveryUpdate().Subscribe(CheckIsHeroDead);
         }
 
-        private void CheckIsPlayerDead(Unit _)
+        private void CheckIsHeroDead(Unit _)
         {
             if (_hero.Health > 0f)
             {
@@ -47,8 +50,7 @@ namespace Logic.Services.Level
 
         protected virtual async UniTask OnHeroDie()
         {
-            Dispose();
-
+            _heroHolder.HeroDie();
             HeroDie?.Invoke();
 
             await _hero.Die();
@@ -56,7 +58,8 @@ namespace Logic.Services.Level
 
         public void Dispose()
         {
-            _disposables?.Dispose();
+            _heroDisposable?.Dispose();
+            _updateDisposable?.Dispose();
         }
     }
 }

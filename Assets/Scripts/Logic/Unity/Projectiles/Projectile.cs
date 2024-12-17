@@ -8,6 +8,8 @@ namespace Logic.Unity.Projectiles
     {
         private Vector3 _direction;
         private Transform _transform;
+        private float _lifeTime;
+        private float _maxLifeTime;
         
         public float Damage { get; private set; }
         public float Speed { get; private set; }
@@ -40,6 +42,7 @@ namespace Logic.Unity.Projectiles
             Damage = attackModel.Damage;
             Speed = attackModel.ProjectileSpeed;
             DestroyVfxId = attackModel.DestroyVfx;
+            _maxLifeTime = attackModel.ProjectileLifeTime;
             
             Move(startPosition, direction);
         }
@@ -53,7 +56,7 @@ namespace Logic.Unity.Projectiles
 
         private void Update()
         {
-            transform.position += _direction * (Speed * Time.deltaTime);
+            _transform.position += _direction * (Speed * Time.deltaTime);
         }
     }
 }

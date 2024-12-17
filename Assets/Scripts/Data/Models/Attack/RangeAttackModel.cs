@@ -2,6 +2,7 @@ namespace Data.Models.Attack
 {
     public class RangeAttackModel : AttackModel
     {
+        public float ProjectileLifeTime { get; }
         public float ProjectileSpeed { get; }
         public string DestroyVfx { get; }
 
@@ -16,6 +17,7 @@ namespace Data.Models.Attack
         {
             ProjectileSpeed = projectileSpeed;
             DestroyVfx = destroyVfx;
+            ProjectileLifeTime = 3f;
         }
     }
 }

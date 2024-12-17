@@ -16,17 +16,17 @@ MonoBehaviour:
   m_GUID: cb08bcd8d9f92b84fa9b0c0199931ea9
   m_SerializeEntries:
   - m_GUID: 7bf4f996b4a2c9d47b21e3890d63d0d7
-    m_Address: LevelScene
+    m_Address: SurvivalLevelScene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ac561638f90046a483d27884eb4c920
+    m_Address: hero_simple
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ba0ab515e5da74342a36c980eb55e8f0
     m_Address: grid_plane
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: d4e5e6d250ccd6843a951ce1612e5d0d
-    m_Address: hero_simple
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -11,7 +11,7 @@ namespace Logic.Services.Level.Grid
 {
     public class HeroDetectedService : IDisposable
     {
-        private readonly IRectanglesProvider _rectanglesProvider;
+        private readonly ISurvivalLevelRectanglesProvider _rectanglesProvider;
         private readonly IGridSystem _gridSystem;
         private readonly IDisposable _heroDisposable;
 
@@ -21,7 +21,7 @@ namespace Logic.Services.Level.Grid
 
         public HeroDetectedService(
             IHeroHolder heroHolder,
-            IRectanglesProvider rectanglesProvider,
+            ISurvivalLevelRectanglesProvider rectanglesProvider,
             IGridSystem gridSystem)
         {
             _rectanglesProvider = rectanglesProvider;
@@ -35,6 +35,8 @@ namespace Logic.Services.Level.Grid
         {
             if (hero == null)
             {
+                _updateDisposable?.Dispose();
+                
                 return;
             }
             

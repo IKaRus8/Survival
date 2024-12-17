@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
-using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity.Player;
 using Logic.RuntimeData.Rectangles;
@@ -18,18 +14,15 @@ namespace Logic.Providers.Level
 {
     public class RectanglesProvider : IRectanglesProvider, IDisposable
     {
-        private readonly IGridSystem _gridSystem;
         private readonly IEnemyProvider _enemyProvider;
         private readonly IDisposable _heroDisposable;
 
         private Transform _heroTransform;
 
         public RectanglesProvider(
-            IGridSystem gridSystem,
             IEnemyProvider enemyProvider,
             IHeroHolder heroHolder)
         {
-            _gridSystem = gridSystem;
             _enemyProvider = enemyProvider;
 
             _heroDisposable = heroHolder.HeroRx.Subscribe(OnHeroCreated);
@@ -38,11 +31,6 @@ namespace Logic.Providers.Level
         public HashSet<EnemyRectangle> GetEnemyRectangles()
         {
             return _enemyProvider.AliveEnemies.Select(e => new EnemyRectangle(e, e.Position)).ToHashSet();
-        }
-
-        public HashSet<Rectangle> GetGridRectangles()
-        {
-            return _gridSystem.Grid.Select(g => g.ElementRectangle).ToHashSet();
         }
 
         public Rectangle GetHeroRectangle()
@@ -71,30 +59,7 @@ namespace Logic.Providers.Level
             return enemiesInGrid;
         }
 
-        public async IAsyncEnumerable<EnemyRectangle[]> GetEnemiesByGridElements(
-            [EnumeratorCancellation] CancellationToken cancellationToken)
-        {
-            var grid = GetGridRectangles();
-
-            if (grid.IsNullOrEmpty())
-            {
-                yield return Array.Empty<EnemyRectangle>();
-            }
-
-            foreach (var gridRectangle in grid)
-            {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                yield return GetEnemyInRectangle(gridRectangle).ToArray();
-
-                await UniTask.Yield();
-            }
-        }
-
-        public HashSet<EnemyRectangle> GetNearestEnemyRectangles(Rectangle rectangle)
+        public virtual HashSet<EnemyRectangle> GetNearestEnemyRectangles(Rectangle rectangle)
         {
             var result = new HashSet<EnemyRectangle>();
 
@@ -108,19 +73,6 @@ namespace Logic.Providers.Level
             return result;
         }
 
-        public Rectangle GetGridRectangleBy(Rectangle rectangle)
-        {
-            foreach (var gridRectangle in GetGridRectangles())
-            {
-                if (rectangle.IsIntersection(gridRectangle))
-                {
-                    return gridRectangle;
-                }
-            }
-
-            return new Rectangle(Vector3.zero, 0f);
-        }
-
         private void OnHeroCreated(IHero hero)
         {
             if (hero == null)
@@ -129,6 +81,11 @@ namespace Logic.Providers.Level
             }
 
             _heroTransform = hero.Transform;
+        }
+
+        public virtual Rectangle GetGridRectangleBy(Rectangle rectangle)
+        {
+            return new Rectangle(Vector3.zero, 300f);
         }
 
         public void Dispose()

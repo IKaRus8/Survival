@@ -5,6 +5,6 @@ namespace Data.Interfaces
 {
     public interface IGameSettings
     {
-        IReadOnlyCollection<EnemySpawnParameter> EnemySpawnParameters { get; }
+        IReadOnlyCollection<EnemySpawnSettings> SpawnSettings { get; }
     }
 }

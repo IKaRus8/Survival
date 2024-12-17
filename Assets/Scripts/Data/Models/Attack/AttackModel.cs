@@ -1,6 +1,5 @@
 using System;
 using Data.Interfaces.Models.Attack;
-using Unity.Mathematics;
 
 namespace Data.Models.Attack
 {
@@ -20,7 +19,7 @@ namespace Data.Models.Attack
             ID = id;
             Damage = damage;
             AttackDelay = TimeSpan.FromSeconds(1 / attackSpeed);
-            SqrAttackDistance = math.sqrt(attackDistance);
+            SqrAttackDistance = attackDistance * attackDistance;
         }
     }
 }

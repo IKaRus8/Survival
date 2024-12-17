@@ -36,7 +36,7 @@ namespace Logic.Unity.Enemy
         public float Health { get; private set; }
         public bool IsDead { get; private set; }
 
-        public bool CanAttack => !_isAttackProcess;
+        public bool IsAttack => _isAttackProcess;
         public IEnemyModel Model { get; private set; }
 
         public IAttackModel EnemyAttackModel { get; private set; }
@@ -83,11 +83,17 @@ namespace Logic.Unity.Enemy
             _currentRotationTween = _transform.DORotateQuaternion(targetRotation, RotateDuration);
         }
 
-        public virtual async UniTask Attack()
+        public virtual async UniTask AttackPrepare()
         {
             _isAttackProcess = true;
             _animator.SetTrigger(_attack);
-            
+    
+            // Задержка перед запуском снаряда
+            await UniTask.Delay(400);
+        }
+
+        public virtual async UniTask Attack()
+        {
             await _attackProcessView.Attack();
             
             _isAttackProcess = false;
@@ -134,6 +140,8 @@ namespace Logic.Unity.Enemy
 
         public void CancelAttack()
         {
+            _isAttackProcess = false;
+            
             _attackProcessView.CancelAttack();
         }
 

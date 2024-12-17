@@ -39,19 +39,19 @@ namespace Logic.Installers
             Container.BindInterfacesTo<DamageSystem>().AsSingle().NonLazy();
             Container.Bind<IProjectileFabric>().To<ProjectileFabric>().AsTransient();
             Container.Bind<IProjectileDamageSystem>().To<ProjectileDamageSystem>().AsTransient();
-            Container.BindInterfacesTo<PauseService>().AsSingle().NonLazy();
+            Container.Bind<IPauseService>().To<PauseService>().AsSingle();
             Container.Bind<IVfxService>().To<VfxService>().AsSingle();
             Container.Bind<IEnemyFactory>().To<EnemyFactory>().AsTransient();
+            Container.BindInterfacesTo<ProjectilesCollisionSystem>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<PlayerTargetObserver>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<HeroAttackService>().AsSingle().NonLazy();
 
             // Providers
             Container.BindInterfacesTo<EnemyProvider>().AsSingle();
-            Container.BindInterfacesTo<PlayerTargetObserver>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<HeroAttackService>().AsSingle().NonLazy();
             Container.Bind<IEnemyModelsProvider>().To<EnemyModelsProvider>().AsSingle();
             Container.Bind<IHeroModelsProvider>().To<HeroModelsProvider>().AsSingle();
             Container.Bind<IProjectilesProvider>().To<ProjectilesProvider>().AsSingle();
             Container.Bind<IAttackModelsProvider>().To<AttackModelsProvider>().AsSingle();
-            Container.Bind<IEnemySpawnSettingsProvider>().To<EnemySpawnSettingsProvider>().AsSingle();
 
             //Presenters
             Container.Bind<IGameEndedPopupPresenter>().To<GameEndedPopupPresenter>().AsSingle();

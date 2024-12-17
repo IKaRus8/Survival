@@ -5,6 +5,7 @@ using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Unity.Player;
+using Unity.Mathematics;
 using UnityEngine;
 using Zenject;
 
@@ -35,8 +36,13 @@ namespace Logic.Services.Level.Hero
           public async UniTask<IHero> CreateAsync(string heroId)
           {
                var heroGameObject = await _assetService.LoadAssetAsync<GameObject>(heroId);
+               var position = RandomHelper.GetRandomVector(6f);
 
-               var hero = _container.InstantiatePrefabForComponent<IHero>(heroGameObject, _sceneObjectContainer.LevelContainer);
+               var hero = _container.InstantiatePrefabForComponent<IHero>(
+                    heroGameObject,
+                    position,
+                    quaternion.identity, 
+                    _sceneObjectContainer.LevelContainer);
                
                var heroModel = _heroModelsProvider.GetHeroModel(heroId);
                var attackModel = _attackModelsProvider.GetAttackModel(heroModel.AttackModelId);

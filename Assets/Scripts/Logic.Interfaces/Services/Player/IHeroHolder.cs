@@ -1,11 +1,14 @@
-using Logic.Interfaces.Unity;
+using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Unity.Player;
 using R3;
 
 namespace Logic.Interfaces.Services.Player
 {
-    public interface  IHeroHolder 
+    public interface IHeroHolder
     {
         ReactiveProperty<IHero> HeroRx { get; }
+
+        UniTaskVoid CreateHero();
+        void HeroDie();
     }
 }

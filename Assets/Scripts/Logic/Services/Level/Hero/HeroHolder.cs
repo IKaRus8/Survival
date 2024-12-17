@@ -1,16 +1,17 @@
-using System;
 using Cysharp.Threading.Tasks;
-using Data.Interfaces.Constants;
 using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity.Player;
 using R3;
+using UnityEngine;
 
 namespace Logic.Services.Level.Hero
 {
-    public class HeroHolder : IHeroHolder
+    public abstract class HeroHolder : IHeroHolder
     {
         private readonly IHeroSpawner _heroSpawner;
+        
+        protected abstract string HeroId { get; }
        
         public ReactiveProperty<IHero> HeroRx { get; }
 
@@ -19,17 +20,24 @@ namespace Logic.Services.Level.Hero
             _heroSpawner = heroSpawner;
             HeroRx = new ReactiveProperty<IHero>();
         
-            CreatePlayer().Forget();
+            CreateHero().Forget();
         }
 
-        private async UniTaskVoid CreatePlayer()
+        public async UniTaskVoid CreateHero()
         {
-            var player = await _heroSpawner.CreateAsync(Constants.Hero.Id.SimpleHero);
+            var hero = await _heroSpawner.CreateAsync(HeroId);
         
-            SetPlayer(player);
+            SetHero(hero);
         }
 
-        private void SetPlayer(IHero hero)
+        public void HeroDie()
+        {
+            Object.Destroy(HeroRx.Value.Transform.gameObject, 2f);
+            
+            SetHero(null);
+        }
+
+        private void SetHero(IHero hero)
         {
             HeroRx.Value = hero;         
         }

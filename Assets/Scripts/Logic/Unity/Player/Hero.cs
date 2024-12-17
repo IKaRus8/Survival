@@ -4,7 +4,6 @@ using Data.Interfaces.Constants;
 using Data.Interfaces.Models;
 using Data.Interfaces.Models.Attack;
 using DG.Tweening;
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Player;
 using Logic.Services.Level.Attack;
 using Sirenix.OdinInspector;
@@ -34,6 +33,7 @@ namespace Logic.Unity.Player
         public float Speed => Model.Speed;
         public float Health => _currentHealth;
         public Transform Transform => _transform;
+        public Vector3 Position => _transform.position;
         public Transform WeaponShootPoint => _weaponShootPoint;
         public IHeroModel Model { get; private set; }
         public IAttackModel HeroAttackModel { get; private set; }
@@ -72,6 +72,11 @@ namespace Logic.Unity.Player
 
         public void Rotate(Vector3 direction)
         {
+            if (direction == Vector3.zero)
+            {
+                return;
+            }
+            
             // Останавливаем текущую анимацию вращения, если она есть
             _currentRotationTween?.Kill();
 

@@ -10,9 +10,13 @@ namespace Logic.Services.DefendLevel
         {
         }
 
-        protected override UniTask OnHeroDie()
+        protected override async UniTask OnHeroDie()
         {
-            return base.OnHeroDie();
+            base.OnHeroDie().Forget();
+
+            await UniTask.Delay(3000);
+
+            _heroHolder.CreateHero();
         }
     }
 }

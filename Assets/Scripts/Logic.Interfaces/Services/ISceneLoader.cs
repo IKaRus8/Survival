@@ -8,6 +8,8 @@ namespace Logic.Interfaces.Services
 
         UniTask LoadMenuSceneAsync();
 
-        UniTask LoadLevelSceneAsync();
+        UniTask LoadSurvivalLevelSceneAsync();
+
+        UniTask LoadDefendLevelSceneAsync();
     }
 }

@@ -1,40 +1,40 @@
 using System;
-using Logic.Interfaces;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Player;
 using R3;
-using UnityEngine;
 
 namespace Logic.Services.Level.Hero
 {
     public class HeroMoveSystem : IDisposable
     {
         private readonly IInput _input;
-        private readonly CompositeDisposable _disposables;
+        private readonly IDisposable _heroDisposable;
         
         private IHero _hero;
+        private IDisposable _updateDisposable;
         
         public HeroMoveSystem(
             IHeroHolder heroHolder,
             IInput input)
         {
             _input = input;
-            _disposables = new CompositeDisposable();
             
-            heroHolder.HeroRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
+            _heroDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
         private void OnPlayerCreated(IHero hero)
         {
             if (hero == null)
             {
+                _updateDisposable?.Dispose();
+                    
                 return;
             }
             
             _hero = hero;
             
-            Observable.EveryUpdate().Subscribe(MoveUpdate).AddTo(_disposables);
+            _updateDisposable = Observable.EveryUpdate().Subscribe(MoveUpdate);
         }
 
         private void MoveUpdate(Unit _)
@@ -46,7 +46,8 @@ namespace Logic.Services.Level.Hero
 
         public void Dispose()
         {
-            _disposables?.Dispose();
+            _heroDisposable?.Dispose();
+            _updateDisposable?.Dispose();
         }
     }
 }

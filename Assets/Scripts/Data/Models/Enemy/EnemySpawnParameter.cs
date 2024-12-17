@@ -1,7 +1,7 @@
 
 namespace Data.Models.Enemy
 {
-    public class EnemySpawnParameter
+    public struct EnemySpawnParameter
     {
         public int Quantity { get; }
         public float Chance { get; }
@@ -9,7 +9,7 @@ namespace Data.Models.Enemy
         public EnemySpawnParameter(int quantity, int chance)
         {
             Quantity = quantity;
-            Chance = chance / 100f;
+            Chance = chance * 0.01f;
         }
     }
 }

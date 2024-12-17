@@ -11,8 +11,9 @@ namespace Logic.Services.Level.Hero
     {
         private readonly IInput _input;
         private readonly IPlayerTargetObserver _targetProvider;
-        private readonly CompositeDisposable _disposables;
+        private readonly IDisposable _heroDisposables;
         
+        private CompositeDisposable _updateDisposables;
         private IHero _hero;
         private IEnemy _target;
 
@@ -23,22 +24,25 @@ namespace Logic.Services.Level.Hero
         {
             _input = input;
             _targetProvider = targetProvider;
-            _disposables = new CompositeDisposable();
+            _updateDisposables = new CompositeDisposable();
         
-            heroHolder.HeroRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
+            _heroDisposables = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }    
 
         private void OnPlayerCreated(IHero hero)
         {
             if (hero == null)
             {
+                _updateDisposables?.Dispose();
+                _updateDisposables = new CompositeDisposable();
+                
                 return;
             }
 
             _hero = hero;
 
-            _targetProvider.TargetRx.Subscribe(OnTargetChanged).AddTo(_disposables);
-            Observable.EveryUpdate().Subscribe(RotateUpdate).AddTo(_disposables);
+            _targetProvider.TargetRx.Subscribe(OnTargetChanged).AddTo(_updateDisposables);
+            Observable.EveryUpdate().Subscribe(RotateUpdate).AddTo(_updateDisposables);
         }
 
         private void OnTargetChanged(IEnemy enemy)
@@ -65,7 +69,8 @@ namespace Logic.Services.Level.Hero
 
         public void Dispose()
         {
-            _disposables?.Dispose();
+            _updateDisposables?.Dispose();
+            _heroDisposables?.Dispose();
         }
     }
 }

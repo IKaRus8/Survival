@@ -29,7 +29,7 @@ namespace UI.Buttons
         {
             _button.interactable = false;
 
-            _sceneLoader.LoadLevelSceneAsync().Forget();
+            _sceneLoader.LoadSurvivalLevelSceneAsync().Forget();
         }
     }
 }

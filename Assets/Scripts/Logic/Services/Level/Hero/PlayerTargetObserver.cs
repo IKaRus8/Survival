@@ -1,7 +1,6 @@
 using System;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Player;
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
 using Logic.Interfaces.Unity.Player;
 using R3;
@@ -15,8 +14,9 @@ namespace Logic.Services.Level.Hero
         private const float MaxTargetDistance = 80f;
         
         private readonly IEnemyProvider _enemyProvider;
-        private readonly CompositeDisposable _disposables;
+        private readonly IDisposable _heroDisposable;
         
+        private IDisposable _updateDisposable;
         private Transform _heroTransform;
 
         public ReactiveProperty<IEnemy> TargetRx { get; }
@@ -28,23 +28,25 @@ namespace Logic.Services.Level.Hero
             _enemyProvider = enemyProvider;
             
             TargetRx = new ReactiveProperty<IEnemy>();
-            _disposables = new CompositeDisposable();
             
-            heroHolder.HeroRx.Subscribe(OnHeroCreated).AddTo(_disposables);
+            _heroDisposable = heroHolder.HeroRx.Subscribe(OnHeroCreated);
         }
 
         private void OnHeroCreated(IHero hero)
         {
             if (hero == null)
             {
+                _updateDisposable?.Dispose();
+                TargetRx.Value = null;
+                
                 return;
             }
 
             _heroTransform = hero.Transform;
 
-            Observable.Interval(TimeSpan.FromSeconds(0.3f))
-                .Subscribe(_ => FindNearestAliveTarget())
-                .AddTo(_disposables);
+            _updateDisposable = Observable
+                .Interval(TimeSpan.FromSeconds(0.3f))
+                .Subscribe(_ => FindNearestAliveTarget());
         }
 
         private void FindNearestAliveTarget()
@@ -90,7 +92,8 @@ namespace Logic.Services.Level.Hero
 
         public void Dispose()
         {
-            _disposables?.Dispose();
+            _heroDisposable?.Dispose();
+            _updateDisposable?.Dispose();
         }
     }
 }

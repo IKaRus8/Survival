@@ -1,7 +1,10 @@
+using System;
 using System.Linq;
 using Data.Interfaces;
 using Data.Models.Enemy;
 using Logic.Interfaces.Providers.Level.Enemies;
+using UnityEngine;
+using Utilities.Extensions;
 
 namespace Logic.Providers.Level.Enemies
 {
@@ -9,14 +12,29 @@ namespace Logic.Providers.Level.Enemies
     {
         private readonly IEnemyProvider _enemyProvider;
         private readonly EnemySpawnParameter[] _spawnParameters;
+        
+        public TimeSpan SpawnCooldown { get; }
 
         public EnemySpawnSettingsProvider(
             IEnemyProvider enemyProvider,
-            IGameSettings gameSettings)
+            IGameSettings gameSettings,
+            string spawnSettingsId)
         {
             _enemyProvider = enemyProvider;
 
-            _spawnParameters = gameSettings.EnemySpawnParameters
+            var settings = gameSettings.SpawnSettings
+                .FirstOrDefault(p => p.Id == spawnSettingsId);
+
+            if (settings.IsEmpty)
+            {
+                Debug.LogError($"Could not find spawn parameter with id: {spawnSettingsId}");
+                
+                return;
+            }
+            
+            SpawnCooldown = settings.SpawnCooldown;
+            
+            _spawnParameters = settings.Parameters
                 .OrderBy(p => p.Quantity).ToArray();
         }
 

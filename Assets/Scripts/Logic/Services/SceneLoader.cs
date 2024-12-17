@@ -17,9 +17,14 @@ namespace Logic.Services
             await LoadSceneAsync(Constants.Scenes.MenuScene);
         }
 
-        public async UniTask LoadLevelSceneAsync()
+        public async UniTask LoadSurvivalLevelSceneAsync()
         {
-            await LoadSceneAsync(Constants.Scenes.LevelScene);
+            await LoadSceneAsync(Constants.Scenes.SurvivalLevelScene);
+        }
+
+        public async UniTask LoadDefendLevelSceneAsync()
+        {
+            await LoadSceneAsync(Constants.Scenes.DefendLevelScene);
         }
     }
 }

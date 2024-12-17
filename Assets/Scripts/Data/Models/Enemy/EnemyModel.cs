@@ -1,9 +1,8 @@
-using System;
 using Data.Interfaces.Models;
 
 namespace Data.Models.Enemy
 {
-    public class EnemyModel : IEnemyModel
+    public struct EnemyModel : IEnemyModel
     {
         public string Id { get; }
         public float Health { get; }

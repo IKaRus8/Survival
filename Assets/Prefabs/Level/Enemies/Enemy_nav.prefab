@@ -75,6 +75,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1305084127562058765}
+    - targetCorrespondingSourceObject: {fileID: 7805968747758130856, guid: c2c0feaaf98f34b53a92922b5724ef0c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3635382087771925658}
+    - targetCorrespondingSourceObject: {fileID: 398339866587445777, guid: c2c0feaaf98f34b53a92922b5724ef0c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2168540505176015710}
   m_SourcePrefab: {fileID: 100100000, guid: c2c0feaaf98f34b53a92922b5724ef0c, type: 3}
 --- !u!4 &315846717412134142 stripped
 Transform:
@@ -82,6 +90,25 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1294969369900142249}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1477048978514834616 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 398339866587445777, guid: c2c0feaaf98f34b53a92922b5724ef0c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1294969369900142249}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2168540505176015710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1477048978514834616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31bfee08260f43afbe4b66689839155c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _meshRenderer: {fileID: 6708973052104349915}
 --- !u!1 &9055886660512012289 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7805968747758130856, guid: c2c0feaaf98f34b53a92922b5724ef0c,
@@ -97,8 +124,8 @@ NavMeshAgent:
   m_GameObject: {fileID: 9055886660512012289}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.98
-  m_Speed: 3.5
+  m_Radius: 0.77
+  m_Speed: 2
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -106,10 +133,25 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2.12
+  m_Height: 1.56
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &3635382087771925658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9055886660512012289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a542683dcd8b467198148ff695d5c96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _viewController: {fileID: 2168540505176015710}
+  _animator: {fileID: 6708973052100142619}
+  _agent: {fileID: 1305084127562058765}
 --- !u!1001 &7191696818314478633
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -122,6 +164,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LizardWarriorPAMaskTint
+      objectReference: {fileID: 0}
+    - target: {fileID: 4527530870830992880, guid: 068d6af161244ecb8cabdf87b955fb96,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4527530870830992880, guid: 068d6af161244ecb8cabdf87b955fb96,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4527530870830992880, guid: 068d6af161244ecb8cabdf87b955fb96,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 4527530870830992880, guid: 068d6af161244ecb8cabdf87b955fb96,
         type: 3}
@@ -173,11 +230,28 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4527530870830992880, guid: 068d6af161244ecb8cabdf87b955fb96,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 068d6af161244ecb8cabdf87b955fb96, type: 3}
+--- !u!95 &6708973052100142619 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4527530870837994034, guid: 068d6af161244ecb8cabdf87b955fb96,
+    type: 3}
+  m_PrefabInstance: {fileID: 7191696818314478633}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6708973052104349915 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4527530870833683698, guid: 068d6af161244ecb8cabdf87b955fb96,
+    type: 3}
+  m_PrefabInstance: {fileID: 7191696818314478633}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6708973052107819481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4527530870830992880, guid: 068d6af161244ecb8cabdf87b955fb96,

@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Data.Interfaces.Constants;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
@@ -14,7 +13,8 @@ namespace Logic.Services
 {
     public abstract class EnemySpawnerBase : IPauseHandler, IDisposable
     {
-        protected abstract TimeSpan Cooldown { get; }
+        protected abstract string EnemyId { get; }
+        protected abstract string SpawnSettingsId { get; }
         
         private readonly IEnemySpawnSettingsProvider _enemySpawnSettingsProvider;
         private readonly IEnemyFactory _factory;
@@ -58,16 +58,16 @@ namespace Logic.Services
         {
             _spawnDisposable?.Dispose();
             
-            _spawnDisposable = Observable.Interval(Cooldown)
+            _spawnDisposable = Observable.Interval(_enemySpawnSettingsProvider.SpawnCooldown)
                 .Subscribe(SpawnProcess);
         }
 
         private void SpawnProcess(Unit _)
         {
-            SpawnEnemy(Constants.Enemy.Id.SimpleEnemy).Forget();
+            SpawnEnemy().Forget();
         }
 
-        private async UniTaskVoid SpawnEnemy(string id)
+        private async UniTaskVoid SpawnEnemy()
         {
             var spawnProbability = _enemySpawnSettingsProvider.GetChanceForSpawn();
 
@@ -78,13 +78,13 @@ namespace Logic.Services
                 return;
             }
             
-            var enemy = _enemyProvider.DeadEnemies.FirstOrDefault(e => e.Id == id);
+            var enemy = _enemyProvider.DeadEnemies.FirstOrDefault(e => e.Id == EnemyId);
 
             if (enemy == null)
             {
-                enemy = await _factory.CreateAsync(id);
+                enemy = await _factory.CreateAsync(EnemyId);
 
-                var model = _enemyModelsProvider.GetEnemyModel(id);
+                var model = _enemyModelsProvider.GetEnemyModel(EnemyId);
                 var attackModel = _attackModelsProvider.GetAttackModel(model.AttackModelId);
                 
                 enemy.Initialize(model, attackModel);

@@ -31,6 +31,12 @@ namespace Data
                     50f,
                     1.5f,
                     Constants.Attack.SimpleMelee),
+
+                new EnemyModel(
+                    Constants.Enemy.Id.NavEnemy,
+                    60f,
+                    1.5f,
+                    Constants.Attack.BigMelee),
             };
         }
 
@@ -40,9 +46,15 @@ namespace Data
             {
                 new HeroModel(
                     Constants.Hero.Id.SimpleHero,
-                    3000f,
+                    500f,
                     4f,
-                    Constants.Attack.SimpleRange)
+                    Constants.Attack.SimpleRange),
+                
+                new HeroModel(
+                    Constants.Hero.Id.DefendHero,
+                    300f,
+                    3f,
+                    Constants.Attack.LongRange),
             };
         }
 
@@ -53,15 +65,30 @@ namespace Data
                 new MeleeAttackModel(
                     Constants.Attack.SimpleMelee,
                     10f,
-                    1f),
-                
+                    1f,
+                    1.5f),
+
                 new RangeAttackModel(
                     Constants.Attack.SimpleRange,
                     30f,
                     0.8f,
                     25f,
                     10f,
-                    Constants.Vfx.ElectroHit)
+                    Constants.Vfx.ElectroHit),
+
+                new MeleeAttackModel(
+                    Constants.Attack.BigMelee,
+                    20f,
+                    0.9f,
+                    3.5f),
+
+                new RangeAttackModel(
+                    Constants.Attack.LongRange,
+                    20f,
+                    0.8f,
+                    40f,
+                    15f,
+                    Constants.Vfx.ElectroHit),
             };
         }
     }

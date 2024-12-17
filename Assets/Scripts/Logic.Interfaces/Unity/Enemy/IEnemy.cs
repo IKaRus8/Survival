@@ -8,8 +8,7 @@ namespace Logic.Interfaces.Unity.Enemy
     public interface IEnemy : IDamageable
     {
         string Id { get; }
-        Vector3 Position { get; }
-        bool CanAttack { get; }
+        bool IsAttack { get; }
         IEnemyModel Model { get; }
         IAttackModel EnemyAttackModel { get; }
         bool Active { get; }
@@ -19,6 +18,7 @@ namespace Logic.Interfaces.Unity.Enemy
         void Move(Vector3 offset);
         void MoveTo(Vector3 newPosition);
         void Rotate(Vector3 direction);
+        UniTask AttackPrepare();
         UniTask Attack();
     }
 }

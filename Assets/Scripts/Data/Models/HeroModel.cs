@@ -2,7 +2,7 @@ using Data.Interfaces.Models;
 
 namespace Data.Models
 {
-    public class HeroModel : IHeroModel
+    public struct HeroModel : IHeroModel
     {
         public string Id { get; }
         public float Health { get; }

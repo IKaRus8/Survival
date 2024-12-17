@@ -1,4 +1,4 @@
-using System;
+using Data.Interfaces.Constants;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level;
@@ -11,7 +11,8 @@ namespace Logic.Services.Level.Enemy
     {
         private readonly IGridSystem _gridSystem;
 
-        protected override TimeSpan Cooldown => TimeSpan.FromSeconds(0.5f);
+        protected override string EnemyId => Constants.Enemy.Id.SimpleEnemy;
+        protected override string SpawnSettingsId => Constants.Settings.Spawn.LevelSpawnSettings;
 
         public LevelEnemySpawner(
             IGridSystem gridSystem,

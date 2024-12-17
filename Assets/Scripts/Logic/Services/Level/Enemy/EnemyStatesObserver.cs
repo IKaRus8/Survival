@@ -5,6 +5,7 @@ using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Attack;
 using Logic.Interfaces.Services.Level.Enemy;
 using Logic.Interfaces.Services.Player;
+using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
 using Logic.Interfaces.Unity.Player;
 using R3;
@@ -19,7 +20,7 @@ namespace Logic.Services.Level.Enemy
         private readonly IDisposable _playerDisposable;
   
         private IDisposable _updateDisposable;
-        protected Transform _playerTransform;
+        protected IDamageable _hero;
 
         public EnemyStatesObserver(
             IEnemyProvider enemyProvider, 
@@ -46,10 +47,12 @@ namespace Logic.Services.Level.Enemy
         {
             if (hero == null)
             {
+                Pause();
+                
                 return;
             }
             
-            _playerTransform = hero.Transform;
+            _hero = hero;
 
             Resume();
         }
@@ -58,54 +61,80 @@ namespace Logic.Services.Level.Enemy
         {
             foreach (var enemy in _enemyProvider.AliveEnemies)
             {
-                var enemyToTargetVector = GetVectorTarget(enemy.Position);
+                var targetModel = GetTargetModel(enemy.Position, _hero);
 
-                var sqrDistance = enemyToTargetVector.sqrMagnitude;
-
-                var needMove = sqrDistance > enemy.EnemyAttackModel.SqrAttackDistance;
+                var needMove = targetModel.Distance > enemy.EnemyAttackModel.SqrAttackDistance;
                 
                 if (needMove)
                 {
-                    MoveEnemy(enemy, enemyToTargetVector.normalized);
+                    MoveEnemy(enemy, targetModel);
                 }
                 else
                 {
-                    TryAttack(enemy).Forget();
+                    TryAttack(enemy, targetModel.Target).Forget();
                 }
             }
         }
 
-        protected virtual void MoveEnemy(IEnemy enemy, Vector3 direction)
+        protected virtual void MoveEnemy(IEnemy enemy, TargetModel targetModel)
         {
-            var moveOffset = direction 
-                             * enemy.Model.MoveSpeed 
-                             * Time.deltaTime;
-
-            enemy.Rotate(direction);
-            enemy.Move(RandomHelper.GetRandomizedVector(moveOffset, 0.2f));
-        }
-        
-        protected virtual async UniTask TryAttack(IEnemy enemy)
-        {
-            if (!enemy.CanAttack)
+            if (enemy.IsAttack)
             {
                 return;
             }
             
-            _damageSystem.ToHero().Do(enemy.EnemyAttackModel.Damage);
+            var moveOffset = targetModel.Direction 
+                             * enemy.Model.MoveSpeed 
+                             * Time.deltaTime;
+
+            enemy.Rotate(targetModel.Direction);
+            enemy.Move(RandomHelper.GetRandomizedVector(moveOffset, 0.2f));
+        }
+        
+        protected virtual async UniTask TryAttack(IEnemy enemy, IDamageable target)
+        {
+            if (enemy.IsAttack)
+            {
+                return;
+            }
+
+            await enemy.AttackPrepare();
             
-            await enemy.Attack();
+            _damageSystem.ToTarget(target).Do(enemy.EnemyAttackModel.Damage);
+            
+            enemy.Attack().Forget();
         }
 
-        protected virtual Vector3 GetVectorTarget(Vector3 position)
+        protected virtual TargetModel GetTargetModel(Vector3 position, IDamageable target)
         {
-            return _playerTransform.position - position;
+            var enemyToTargetVector = target.Position - position;
+            var sqrDistance = enemyToTargetVector.sqrMagnitude;
+            var direction = enemyToTargetVector.normalized;
+
+            return new TargetModel(target, direction, sqrDistance);
         }
 
         public virtual void Dispose()
         {
             _playerDisposable?.Dispose();
             _updateDisposable?.Dispose();
+        }
+        
+        protected class TargetModel
+        {
+            public IDamageable Target { get; }
+            public Vector3 Direction { get; }
+            public float Distance { get; }
+
+            public TargetModel(
+                IDamageable target,
+                Vector3 direction,
+                float distance)
+            {
+                Target = target;
+                Direction = direction;
+                Distance = distance;
+            }
         }
     }
 }

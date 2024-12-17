@@ -4,7 +4,6 @@ using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Projectiles;
 using Logic.Interfaces.Services.Player;
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
 using Logic.Interfaces.Unity.Player;
 using R3;
@@ -57,6 +56,8 @@ namespace Logic.Services.Level.Hero
         {
             if (hero == null)
             {
+                Pause();
+                
                 return;
             }
 

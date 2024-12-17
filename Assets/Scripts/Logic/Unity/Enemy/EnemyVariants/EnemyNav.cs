@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Data.Interfaces.Constants;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -14,7 +15,30 @@ namespace Logic.Unity.Enemy.EnemyVariants
 
         public override void Move(Vector3 targetPosition)
         {
+            _agent.isStopped = false;
+            
             _agent.destination = targetPosition;
+        }
+
+        public override UniTask AttackPrepare()
+        {
+            _agent.isStopped = true;
+            
+            return base.AttackPrepare();
+        }
+
+        public override UniTask Die()
+        {
+            _agent.isStopped = true;
+            
+            return base.Die();
+        }
+
+        public override void ReInitialize()
+        {
+            base.ReInitialize();
+            
+            _agent.isStopped = false;
         }
     }
 }

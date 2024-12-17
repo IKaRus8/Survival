@@ -12,7 +12,7 @@ namespace Logic.Services.Level
 
         public VfxService(
             IAssetService assetService,
-            ILevelSceneObjectContainer objectContainer)
+            IBaseSceneObjectContainer objectContainer)
         {
             _assetService = assetService;
             

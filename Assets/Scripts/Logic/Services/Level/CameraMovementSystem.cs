@@ -1,6 +1,5 @@
 using System;
 using Logic.Interfaces.Services.Player;
-using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Player;
 using R3;
 using UnityEngine;
@@ -11,8 +10,9 @@ namespace Logic.Services.Level
     {
         private readonly Vector3 offset = new(0, 10, -5);
         private readonly Transform _transform;
-        private readonly CompositeDisposable _disposables;
-    
+        private readonly IDisposable _heroDisposable;
+        
+        private IDisposable _updateDisposable;
         private Transform _playerTransform;
 
         public CameraMovementSystem(
@@ -20,21 +20,22 @@ namespace Logic.Services.Level
             Camera camera)
         {
             _transform = camera.transform;
-            _disposables = new CompositeDisposable();
 
-            heroHolder.HeroRx.Subscribe(OnPlayerCreated).AddTo(_disposables);
+            _heroDisposable = heroHolder.HeroRx.Subscribe(OnPlayerCreated);
         }
 
         private void OnPlayerCreated(IHero hero)
         {
             if (hero == null)
             {
+                _updateDisposable?.Dispose();
+                
                 return;
             }
 
             _playerTransform = hero.Transform;
 
-            Observable.EveryUpdate().Subscribe(UpdateCameraPosition).AddTo(_disposables);
+            _updateDisposable = Observable.EveryUpdate().Subscribe(UpdateCameraPosition);
         }
 
         private void UpdateCameraPosition(Unit _)
@@ -44,7 +45,8 @@ namespace Logic.Services.Level
 
         public void Dispose()
         {
-            _disposables?.Dispose();
+            _heroDisposable?.Dispose();
+            _updateDisposable?.Dispose();
         }
     }
 }

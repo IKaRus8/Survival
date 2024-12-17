@@ -10,11 +10,11 @@ namespace Logic.Services.Level.Enemy
     {
         private const float Offset = 0.2f;
 
-        private readonly IRectanglesProvider _rectanglesProvider;
+        private readonly ISurvivalLevelRectanglesProvider _rectanglesProvider;
         private readonly IDisposable _updateDisposable;
         private readonly CancellationTokenSource _cancellationTokenSource;
 
-        public EnemyCollisionSystem(IRectanglesProvider rectanglesProvider)
+        public EnemyCollisionSystem(ISurvivalLevelRectanglesProvider rectanglesProvider)
         {
             _rectanglesProvider = rectanglesProvider;
             _cancellationTokenSource = new CancellationTokenSource();
