@@ -5,7 +5,7 @@ using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Unity.Player;
 using R3;
 
-namespace Logic.Services.DefendLevel
+namespace Logic.Services.Level.Defend
 {
     public class DefendObjectDeathObserver : IDisposable
     {

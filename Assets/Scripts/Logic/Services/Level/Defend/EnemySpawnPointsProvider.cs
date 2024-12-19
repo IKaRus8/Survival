@@ -2,7 +2,7 @@ using Logic.Interfaces.Services.DefendLevel;
 using UnityEngine;
 using Utilities.Extensions;
 
-namespace Logic.Services.DefendLevel
+namespace Logic.Services.Level.Defend
 {
     public class EnemySpawnPointsProvider : IEnemySpawnPointsProvider
     {

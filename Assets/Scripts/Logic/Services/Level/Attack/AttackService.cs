@@ -1,5 +1,4 @@
 using Logic.Interfaces.Providers.Level;
-using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Attack;
 
 namespace Logic.Services.Level.Attack

@@ -3,14 +3,14 @@ using Logic.Interfaces.Presenters;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 
-namespace Logic.Services.Level.Hero
+namespace Logic.Services.Level.Survival.Hero
 {
-    public class LevelHeroDeathObserver : HeroDeathObserver
+    public class SurvivalLevelHeroDeathObserver : HeroDeathObserver
     {
         private readonly IPauseService _pauseService;
         private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
 
-        public LevelHeroDeathObserver(
+        public SurvivalLevelHeroDeathObserver(
             IHeroHolder heroHolder, 
             IPauseService pauseService,
             IGameEndedPopupPresenter gameEndedPopupPresenter) 

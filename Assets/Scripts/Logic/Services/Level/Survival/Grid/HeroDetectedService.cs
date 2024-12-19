@@ -7,7 +7,7 @@ using Logic.Interfaces.Unity.Player;
 using R3;
 using Utilities.Extensions;
 
-namespace Logic.Services.Level.Grid
+namespace Logic.Services.Level.Survival.Grid
 {
     public class HeroDetectedService : IDisposable
     {

@@ -18,6 +18,9 @@ using Logic.Services.Level.Attack;
 using Logic.Services.Level.Enemy;
 using Logic.Services.Level.Hero;
 using Logic.Services.Level.Projectiles;
+using Logic.Services.Level.Survival;
+using Logic.Services.Level.Survival.Enemy;
+using Logic.Services.Level.Survival.Hero;
 using Zenject;
 
 namespace Logic.Installers

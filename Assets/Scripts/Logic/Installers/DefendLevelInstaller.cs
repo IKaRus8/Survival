@@ -5,7 +5,7 @@ using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity.Player;
 using Logic.Providers.Level;
 using Logic.Providers.Level.Enemies;
-using Logic.Services.DefendLevel;
+using Logic.Services.Level.Defend;
 using Logic.Services.Level.Pools;
 using Logic.Unity.Projectiles;
 using Logic.Unity.SceneObjects;

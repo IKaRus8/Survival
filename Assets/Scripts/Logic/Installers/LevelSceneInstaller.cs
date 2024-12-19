@@ -4,9 +4,10 @@ using Logic.Interfaces.Services.Player;
 using Logic.Providers.Level;
 using Logic.Providers.Level.Enemies;
 using Logic.Services.Level.Enemy;
-using Logic.Services.Level.Grid;
-using Logic.Services.Level.Hero;
 using Logic.Services.Level.Pools;
+using Logic.Services.Level.Survival.Enemy;
+using Logic.Services.Level.Survival.Grid;
+using Logic.Services.Level.Survival.Hero;
 using Logic.Unity.Projectiles;
 using Logic.Unity.SceneObjects;
 using UnityEngine;
@@ -33,8 +34,8 @@ namespace Logic.Installers
             // Services
             Container.Bind<IHeroHolder>().To<SurvivalLevelHeroHolder>().AsSingle();
             Container.BindInterfacesTo<GridSystem>().AsSingle();
-            Container.BindInterfacesTo<LevelEnemySpawner>().AsSingle().NonLazy();
-            Container.BindInterfacesTo<LevelHeroDeathObserver>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<SurvivalLevelEnemySpawner>().AsSingle().NonLazy();
+            Container.BindInterfacesTo<SurvivalLevelHeroDeathObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyStatesObserver>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HeroDetectedService>().AsSingle().NonLazy();
             Container.BindInterfacesTo<EnemyCollisionSystem>().AsSingle().NonLazy();

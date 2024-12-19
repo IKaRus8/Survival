@@ -1,8 +1,8 @@
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Services.Player;
-using Logic.Services.Level;
+using Logic.Services.Level.Survival;
 
-namespace Logic.Services.DefendLevel
+namespace Logic.Services.Level.Defend
 {
     public class DefendHeroDeathObserver : HeroDeathObserver
     {

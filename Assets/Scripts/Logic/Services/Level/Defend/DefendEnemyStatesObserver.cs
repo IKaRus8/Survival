@@ -5,9 +5,10 @@ using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Enemy;
 using Logic.Interfaces.Unity.Player;
 using Logic.Services.Level.Enemy;
+using Logic.Services.Level.Survival.Enemy;
 using UnityEngine;
 
-namespace Logic.Services.DefendLevel
+namespace Logic.Services.Level.Defend
 {
     public class DefendEnemyStatesObserver : EnemyStatesObserver
     {

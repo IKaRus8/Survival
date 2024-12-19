@@ -5,16 +5,16 @@ using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Enemy;
 using UnityEngine;
 
-namespace Logic.Services.Level.Enemy
+namespace Logic.Services.Level.Survival.Enemy
 {
-    public class LevelEnemySpawner : EnemySpawnerBase
+    public class SurvivalLevelEnemySpawner : EnemySpawnerBase
     {
         private readonly IGridSystem _gridSystem;
 
         protected override string EnemyId => Constants.Enemy.Id.SimpleEnemy;
         protected override string SpawnSettingsId => Constants.Settings.Spawn.LevelSpawnSettings;
 
-        public LevelEnemySpawner(
+        public SurvivalLevelEnemySpawner(
             IGridSystem gridSystem,
             IEnemySpawnSettingsProvider enemySpawnSettingsProvider,
             IEnemyFactory factory,

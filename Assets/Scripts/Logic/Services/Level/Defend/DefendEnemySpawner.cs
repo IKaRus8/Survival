@@ -1,4 +1,3 @@
-using System;
 using Data.Interfaces.Constants;
 using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
@@ -6,7 +5,7 @@ using Logic.Interfaces.Services.DefendLevel;
 using Logic.Interfaces.Services.Level.Enemy;
 using UnityEngine;
 
-namespace Logic.Services.DefendLevel
+namespace Logic.Services.Level.Defend
 {
     public class DefendEnemySpawner : EnemySpawnerBase
     {

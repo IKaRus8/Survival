@@ -12,7 +12,7 @@ using UnityEngine;
 using Utilities.Extensions;
 using Object = UnityEngine.Object;
 
-namespace Logic.Services.Level.Grid
+namespace Logic.Services.Level.Survival.Grid
 {
     public class GridSystem : IGridSystem, IDisposable
     {

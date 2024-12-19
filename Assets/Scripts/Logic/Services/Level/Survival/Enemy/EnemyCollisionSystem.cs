@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Providers.Level;
 using Utilities.Extensions;
 
-namespace Logic.Services.Level.Enemy
+namespace Logic.Services.Level.Survival.Enemy
 {
     public class EnemyCollisionSystem : IDisposable
     {
