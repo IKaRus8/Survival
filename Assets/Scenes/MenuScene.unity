@@ -577,6 +577,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayButton (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6138743048592132358, guid: 773aa403177cb4cf49180c40dd7a195d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7185667406605355427, guid: 773aa403177cb4cf49180c40dd7a195d,
         type: 3}
       propertyPath: m_text
@@ -900,12 +905,12 @@ PrefabInstance:
     - target: {fileID: 7185667406605355427, guid: 773aa403177cb4cf49180c40dd7a195d,
         type: 3}
       propertyPath: m_text
-      value: play survival
+      value: play
       objectReference: {fileID: 0}
     - target: {fileID: 7185667406605355427, guid: 773aa403177cb4cf49180c40dd7a195d,
         type: 3}
       propertyPath: m_fontSize
-      value: 66.15
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 7185667406605355427, guid: 773aa403177cb4cf49180c40dd7a195d,
         type: 3}

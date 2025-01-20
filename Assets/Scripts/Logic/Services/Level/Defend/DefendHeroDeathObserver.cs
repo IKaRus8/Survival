@@ -16,7 +16,7 @@ namespace Logic.Services.Level.Defend
 
             await UniTask.Delay(3000);
 
-            _heroHolder.CreateHero();
+            //_heroHolder.CreateHeroAsync().Forget();
         }
     }
 }

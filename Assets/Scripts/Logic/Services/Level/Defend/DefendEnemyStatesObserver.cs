@@ -1,3 +1,4 @@
+using Assets.Scripts.Logic.Interfaces.Services.DefendLevel;
 using Logic.Interfaces.Providers.Level.Enemies;
 using Logic.Interfaces.Services.Level.Attack;
 using Logic.Interfaces.Services.Player;
@@ -18,7 +19,7 @@ namespace Logic.Services.Level.Defend
 
         public DefendEnemyStatesObserver(
             IEnemyProvider enemyProvider,
-            IHeroHolder heroHolder, 
+            IDefendHeroesHolder heroHolder, 
             IDefendObject defendObject,
             IDamageSystem damageSystem) 
             : base(enemyProvider, heroHolder, damageSystem)

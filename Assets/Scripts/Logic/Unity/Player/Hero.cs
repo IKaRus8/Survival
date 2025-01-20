@@ -7,11 +7,12 @@ using DG.Tweening;
 using Logic.Interfaces.Unity.Player;
 using Logic.Services.Level.Attack;
 using Sirenix.OdinInspector;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Logic.Unity.Player
 {
-    public class Hero : MonoBehaviour, IHero
+    public class Hero : NetworkBehaviour, IHero
     {
         private const float RotateDuration = 0.2f;
         

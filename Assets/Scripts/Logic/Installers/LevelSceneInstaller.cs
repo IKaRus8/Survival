@@ -1,9 +1,11 @@
 using Data.Interfaces.Constants;
 using Logic.Interfaces.Providers.Level.Enemies;
+using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Player;
 using Logic.Providers.Level;
 using Logic.Providers.Level.Enemies;
 using Logic.Services.Level.Enemy;
+using Logic.Services.Level.Hero;
 using Logic.Services.Level.Pools;
 using Logic.Services.Level.Survival.Enemy;
 using Logic.Services.Level.Survival.Grid;
@@ -30,9 +32,10 @@ namespace Logic.Installers
             Container.Bind<Camera>().FromInstance(_camera).AsSingle();
             Container.BindInterfacesTo<LevelSceneObjectsContainer>()
                 .FromComponentInHierarchy().AsSingle();
-            
-            // Services
-            Container.Bind<IHeroHolder>().To<SurvivalLevelHeroHolder>().AsSingle();
+
+			// Services
+			Container.Bind<IHeroSpawner>().To<HeroSpawner>().AsTransient();
+			Container.Bind<IHeroHolder>().To<SurvivalLevelHeroHolder>().AsSingle();
             Container.BindInterfacesTo<GridSystem>().AsSingle();
             Container.BindInterfacesTo<SurvivalLevelEnemySpawner>().AsSingle().NonLazy();
             Container.BindInterfacesTo<SurvivalLevelHeroDeathObserver>().AsSingle().NonLazy();

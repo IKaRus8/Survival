@@ -8,7 +8,6 @@ namespace Logic.Interfaces.Services.Player
     {
         ReactiveProperty<IHero> HeroRx { get; }
 
-        UniTaskVoid CreateHero();
-        void HeroDie();
+		void HeroDie();
     }
 }

@@ -33,7 +33,6 @@ namespace Logic.Installers
             Container.Bind<Joystick>().FromComponentInHierarchy().AsSingle();
 
             // Services
-            Container.Bind<IHeroSpawner>().To<HeroCreator>().AsTransient();
             Container.BindInterfacesTo<MobileInput>().AsSingle();
             Container.BindInterfacesTo<HeroMoveSystem>().AsSingle().NonLazy();
             Container.BindInterfacesTo<HeroRotateSystem>().AsSingle().NonLazy();

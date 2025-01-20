@@ -19,11 +19,11 @@ namespace Logic.Services.Level.Hero
         {
             _heroSpawner = heroSpawner;
             HeroRx = new ReactiveProperty<IHero>();
-        
-            CreateHero().Forget();
+
+			CreateHeroAsync().Forget();
         }
 
-        public async UniTaskVoid CreateHero()
+		public async UniTaskVoid CreateHeroAsync()
         {
             var hero = await _heroSpawner.CreateAsync(HeroId);
         
