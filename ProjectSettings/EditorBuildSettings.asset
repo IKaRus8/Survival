@@ -8,12 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/StartScene.unity
     guid: 2ab3ebca4797b4847b689ee81af7f5a8
-  - enabled: 1
-    path: Assets/Scenes/MenuScene.unity
-    guid: 4ea8ac656e06d8e4fb5018266c0ddd1c
-  - enabled: 1
-    path: Assets/Scenes/DefendLevelScene.unity
-    guid: 978812ae5b6dd4c9fb838cd083789b94
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: a9c83d03fcfe56f49aea53ac7341b229,
       type: 2}
