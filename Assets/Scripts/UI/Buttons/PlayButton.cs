@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Logic.Interfaces.Services;
+using Logic.Interfaces.Services.Level;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -9,13 +10,13 @@ namespace UI.Buttons
     [RequireComponent(typeof(Button))]
     public class PlayButton : MonoBehaviour
     {
-        private ISceneLoader _sceneLoader;
         private Button _button;
+        private ILevelLoader _levelLoader;
 
         [Inject]
-        public void Construct(ISceneLoader sceneLoader)
+        public void Construct(ILevelLoader levelLoader)
         {
-            _sceneLoader = sceneLoader;
+            _levelLoader = levelLoader;
         }
 
         public void Awake()
@@ -29,7 +30,7 @@ namespace UI.Buttons
         {
             _button.interactable = false;
 
-            _sceneLoader.LoadSurvivalLevelSceneAsync().Forget();
+            _levelLoader.LoadLevel();
         }
     }
 }

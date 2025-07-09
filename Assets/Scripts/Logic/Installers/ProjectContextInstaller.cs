@@ -1,7 +1,9 @@
 using Data;
 using Data.Interfaces;
 using Logic.Interfaces.Services;
+using Logic.Interfaces.Services.Level;
 using Logic.Services;
+using Logic.Services.Level;
 using Zenject;
 
 namespace Logic.Installers
@@ -16,6 +18,8 @@ namespace Logic.Installers
             Container.Bind<IGameEntities>().To<GameEntities>().AsSingle();
             Container.Bind<IGameSettings>().To<GameSettings>().AsSingle();
             Container.Bind<IPopupSystem>().To<PopupSystem>().AsSingle();
+            Container.Bind<ITimerService>().To<TimerService>().AsSingle();
+            Container.BindInterfacesTo<LevelLoader>().AsSingle();
         }
     }
 }

@@ -7,26 +7,21 @@ namespace Logic.Services.Level.Survival.Hero
 {
     public class SurvivalLevelHeroDeathObserver : HeroDeathObserver
     {
-        private readonly IPauseService _pauseService;
-        private readonly IGameEndedPopupPresenter _gameEndedPopupPresenter;
+        private readonly IGameOverService _gameOverService;
 
         public SurvivalLevelHeroDeathObserver(
             IHeroHolder heroHolder, 
-            IPauseService pauseService,
-            IGameEndedPopupPresenter gameEndedPopupPresenter) 
+            IGameOverService gameOverService) 
             : base(heroHolder)
         {
-            _pauseService = pauseService;
-            _gameEndedPopupPresenter = gameEndedPopupPresenter;
+            _gameOverService = gameOverService;
         }
 
         protected override async UniTask OnHeroDie()
         {
             await base.OnHeroDie();
             
-            _pauseService.Pause();
-            
-            _gameEndedPopupPresenter.ShowPopup().Forget();
+            _gameOverService.LevelFailed();
         }
     }
 }
