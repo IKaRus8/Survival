@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 83a722c12103c473296ad83ef603e513
+    m_Address: orb.heal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9ac561638f90046a483d27884eb4c920
     m_Address: hero_simple
     m_ReadOnly: 0

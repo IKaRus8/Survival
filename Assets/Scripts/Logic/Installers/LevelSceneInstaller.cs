@@ -1,5 +1,7 @@
 using Data.Interfaces.Constants;
+using Logic.Interfaces.Providers.Level;
 using Logic.Interfaces.Providers.Level.Enemies;
+using Logic.Interfaces.Services;
 using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Level.Hero;
 using Logic.Interfaces.Services.Player;
@@ -51,9 +53,14 @@ namespace Logic.Installers
                 .WithArguments(Constants.Settings.Spawn.LevelSpawnSettings);
             Container.Bind<LevelTimer>().AsSingle().NonLazy();
             Container.Bind<IGameOverService>().To<GameOverService>().AsTransient();
+            Container.BindInterfacesTo<OrbSystem>().AsSingle().NonLazy();
+            Container.Bind<IOrbSpawner>().To<OrbSpawner>().AsTransient();
+            Container.BindInterfacesTo<OrbTaker>().AsSingle().NonLazy();
             
             // Providers
             Container.BindInterfacesTo<SurvivalLevelRectanglesProvider>().AsSingle();
+            Container.Bind<IOrbSpawnConfigProvider>().To<OrbSpawnConfigProvider>().AsTransient();
+            Container.Bind<IOrbsProvider>().To<OrbsProvider>().AsSingle();
             
             
             // Pools

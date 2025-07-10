@@ -84,7 +84,15 @@ namespace Logic.Services.Level.Hero
 
         private async UniTask Attack()
         {
+            var target = _targetRx.Value;
+            
             await _hero.AttackPrepare();
+
+            if (_targetRx.Value == null
+                || _targetRx.Value != target)
+            {
+                return;
+            }
             
             // Запуск анимации выстрела или снаряда
             _projectileFabric

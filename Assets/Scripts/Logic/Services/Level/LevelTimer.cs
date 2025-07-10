@@ -10,7 +10,7 @@ namespace Logic.Services.Level
     public class LevelTimer : IDisposable
     {
         private const string LevelTimerId = "timer.level";
-        private readonly TimeSpan _levelDuration = TimeSpan.FromSeconds(60);
+        private readonly TimeSpan _levelDuration = TimeSpan.FromSeconds(120);
         
         private readonly ITimerService _timerService;
         private readonly ILevelTimerView _levelTimerView;

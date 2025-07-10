@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Data.Interfaces;
 using Data.Interfaces.Constants;
+using Data.Models;
 using Data.Models.Enemy;
 
 namespace Data
@@ -8,10 +9,12 @@ namespace Data
     public class GameSettings : IGameSettings
     {
         public IReadOnlyCollection<EnemySpawnSettings> SpawnSettings { get; }
+        public OrbSpawnConfig OrbSpawnConfig { get; }
 
         public GameSettings()
         {
             SpawnSettings = GetEnemySpawnParameters();
+            OrbSpawnConfig = GetOrbSpawnConfig();
         }
 
         private EnemySpawnSettings[] GetEnemySpawnParameters()
@@ -40,6 +43,14 @@ namespace Data
                     }
                 ),
             };
+        }
+
+        private OrbSpawnConfig GetOrbSpawnConfig()
+        {
+            return new OrbSpawnConfig(
+                new OrbSpawnParameters(Constants.Orbs.HealOrb, 0.1f)
+                //new OrbSpawnParameters(Constants.Orbs.ExpOrb, 0.3f)
+                );
         }
     }
 }

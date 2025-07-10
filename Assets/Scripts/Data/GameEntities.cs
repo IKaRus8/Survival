@@ -46,7 +46,7 @@ namespace Data
             {
                 new HeroModel(
                     Constants.Hero.Id.SimpleHero,
-                    500f,
+                    300f,
                     4f,
                     Constants.Attack.SimpleRange),
                 
@@ -71,9 +71,9 @@ namespace Data
                 new RangeAttackModel(
                     Constants.Attack.SimpleRange,
                     30f,
-                    0.8f,
-                    25f,
-                    10f,
+                    1.1f,
+                    15f,
+                    13f,
                     Constants.Vfx.ElectroHit),
 
                 new MeleeAttackModel(

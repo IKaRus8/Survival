@@ -48,5 +48,11 @@ namespace Data.Interfaces.Constants
                 public const string DefendSpawnSettings = "defend_spawn_settings";
             }
         }
+        
+        public static class Orbs
+        {
+            public const string ExpOrb = "orb.exp";
+            public const string HealOrb = "orb.heal";
+        }
     }
 }

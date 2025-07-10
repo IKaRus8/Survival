@@ -7,8 +7,11 @@ namespace Logic.Unity.SceneObjects
     {
         [SerializeField] 
         private Transform _gridParent;
+        [SerializeField]
+        private Transform _orbsContainer;
     
         public Transform GridParent => _gridParent;
+        public Transform OrbsContainer => _orbsContainer;
 
         protected override void Awake()
         {
