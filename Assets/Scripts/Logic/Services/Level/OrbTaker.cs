@@ -2,6 +2,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using Data.Interfaces.Enums;
 using Logic.Interfaces.Providers.Level;
+using Logic.Interfaces.Services.Level;
 using Logic.Interfaces.Services.Player;
 using Logic.Interfaces.Unity;
 using Logic.Interfaces.Unity.Player;
@@ -11,7 +12,7 @@ using Utilities.Extensions;
 
 namespace Logic.Services.Level
 {
-    public class OrbTaker : IDisposable
+    public class OrbTaker : IPauseHandler, IDisposable
     {
         private readonly IOrbsProvider _orbsProvider;
         private readonly IDisposable _heroDisposable;
@@ -27,6 +28,16 @@ namespace Logic.Services.Level
 
             _heroDisposable = heroHolder.HeroRx.Subscribe(OnHeroCreated);
         }
+        
+        public void Pause()
+        {
+            _tickDisposable?.Dispose();
+        }
+
+        public void Resume()
+        {
+            _tickDisposable = Observable.Interval(TimeSpan.FromSeconds(1)).Subscribe(Tick);
+        }
 
         private void OnHeroCreated(IHero hero)
         {
@@ -39,7 +50,7 @@ namespace Logic.Services.Level
             
             _heroDisposable?.Dispose();
             
-            _tickDisposable = Observable.Interval(TimeSpan.FromSeconds(1)).Subscribe(Tick);
+            Resume();
         }
 
         private void Tick(Unit _)
